@@ -6,12 +6,18 @@
     "dev": "vite dev --port 3000",
     "build": "vite build",
     "serve": "vite preview",
+    "start": "node .output/server/index.mjs",
     "test": "vitest run",
     "format": "biome format --write .",
     "lint": "biome lint",
     "lint:fix": "biome lint --write --unsafe .",
     "check": "biome check",
-    "generate-api": "openapi-ts --file hey-api.config.ts"
+    "generate-api": "openapi-ts --file hey-api.config.ts",
+    "docker:build": "docker build -t abp-react-tanstack .",
+    "docker:run": "docker run -p 3000:3000 abp-react-tanstack",
+    "docker:up": "docker build -t abp-react-tanstack . && docker run -p 3000:3000 abp-react-tanstack",
+    "docker:compose:up": "docker-compose up --build",
+    "docker:compose:down": "docker-compose down"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
