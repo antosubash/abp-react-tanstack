@@ -1,21 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
 import { abpApplicationConfigurationGetOptions } from "@/client/@tanstack/react-query.gen";
-import { client } from "@/client/client.gen";
-import { API_CONSTANTS } from "@/lib/constants";
 
 export const Route = createFileRoute("/demo/client")({
 	component: ApiClientDemo,
 });
 
 function ApiClientDemo() {
-	// Configure the API client to use the proxy
-	useEffect(() => {
-		client.setConfig({
-			baseUrl: window.location.origin + API_CONSTANTS.PROXY_PATH,
-		});
-	}, []);
+
 	const {
 		data: applicationConfiguration,
 		isLoading,
