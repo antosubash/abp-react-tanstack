@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { userGetListOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { abpApplicationConfigurationGetOptions } from "@/lib/api/@tanstack/react-query.gen";
 
 export const Route = createFileRoute("/demo/client")({
 	component: ApiClientDemo,
@@ -8,26 +8,18 @@ export const Route = createFileRoute("/demo/client")({
 
 function ApiClientDemo() {
 	const {
-		data: usersResponse,
+		data: applicationConfiguration,
 		isLoading,
 		error,
 		isError,
 	} = useQuery(
-		userGetListOptions({
+		abpApplicationConfigurationGetOptions({
 			query: {
-				SkipCount: 0,
-				MaxResultCount: 10,
+				IncludeLocalizationResources: false,
 			},
 		}),
 	);
-
-	if (isLoading) {
-		return (
-			<div className="flex items-center justify-center min-h-screen">
-				<div className="text-lg">Loading users...</div>
-			</div>
-		);
-	}
+	
 
 	if (isError) {
 		return (
@@ -39,7 +31,15 @@ function ApiClientDemo() {
 		);
 	}
 
-	const users = usersResponse?.items || [];
+	if (isLoading) {
+		return (
+			<div className="flex items-center justify-center min-h-screen">
+				<div className="text-lg">Loading application configuration...</div>
+			</div>
+		);
+	}
+
+	const currentUser = applicationConfiguration?.currentUser || [];
 
 	return (
 		<div
@@ -57,30 +57,8 @@ function ApiClientDemo() {
 				</p>
 
 				<div className="mb-4">
-					<h2 className="text-lg mb-2">
-						Total Users: {usersResponse?.totalCount || 0}
-					</h2>
 					<div className="grid gap-3">
-						{users.map((user: any) => (
-							<div
-								key={user.id}
-								className="bg-white/10 border border-white/20 rounded-lg p-4 backdrop-blur-sm shadow-md"
-							>
-								<div className="flex justify-between items-center">
-									<div>
-										<h3 className="text-lg font-semibold">{user.userName}</h3>
-										<p className="text-sm text-gray-300">{user.email}</p>
-									</div>
-									<div className="text-sm text-gray-400">
-										{user.isActive ? (
-											<span className="text-green-400">Active</span>
-										) : (
-											<span className="text-red-400">Inactive</span>
-										)}
-									</div>
-								</div>
-							</div>
-						))}
+						<pre className="text-sm text-gray-300">{JSON.stringify(currentUser, null, 2)}</pre>
 					</div>
 				</div>
 			</div>
