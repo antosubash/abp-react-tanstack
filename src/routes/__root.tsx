@@ -4,6 +4,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Header from "../components/Header";
+import { AuthProvider } from "../hooks/use-auth";
 
 // Configure API client to use proxy
 // import "@/lib/api-config";
@@ -55,27 +56,29 @@ export const Route = createRootRoute({
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<QueryClientProvider client={queryClient}>
-			<html lang="en">
-				<head>
-					<HeadContent />
-				</head>
-				<body>
-					<Header />
-					{children}
-					<TanStackDevtools
-						config={{
-							position: "bottom-right",
-						}}
-						plugins={[
-							{
-								name: "Tanstack Router",
-								render: <TanStackRouterDevtoolsPanel />,
-							},
-						]}
-					/>
-					<Scripts />
-				</body>
-			</html>
+			<AuthProvider>
+				<html lang="en">
+					<head>
+						<HeadContent />
+					</head>
+					<body>
+						<Header />
+						{children}
+						<TanStackDevtools
+							config={{
+								position: "bottom-right",
+							}}
+							plugins={[
+								{
+									name: "Tanstack Router",
+									render: <TanStackRouterDevtoolsPanel />,
+								},
+							]}
+						/>
+						<Scripts />
+					</body>
+				</html>
+			</AuthProvider>
 		</QueryClientProvider>
 	);
 }

@@ -7,7 +7,6 @@ export const Route = createFileRoute("/demo/client")({
 });
 
 function ApiClientDemo() {
-
 	const {
 		data: applicationConfiguration,
 		isLoading,
