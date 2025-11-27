@@ -228,6 +228,10 @@ export default App;
 
 You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
 
+#### API Client Demo
+
+Check out the live demo at `/demo/api-client` to see the generated API client with TanStack Query in action.
+
 ## State Management
 
 Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
@@ -300,6 +304,119 @@ We use the `Derived` class to create a new store that is derived from another st
 Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
 
 You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
+
+## API Client Generation
+
+This project uses [Hey API](https://heyapi.dev/) to generate a TypeScript SDK client from the ABP API OpenAPI specification.
+
+### Regenerating the API Client
+
+To regenerate the API client when the backend API changes:
+
+```bash
+pnpm generate-api
+```
+
+This will:
+- Fetch the latest OpenAPI spec from `https://abp.antosubash.com/swagger/v1/swagger.json`
+- Generate TypeScript types and client functions in `src/lib/api/`
+- Clean the output directory before generating new files
+
+### Configuration
+
+The API generation is configured in `hey-api.config.ts`. You can modify this file to:
+- Change the input OpenAPI URL
+- Adjust output settings
+- Configure different client types
+- Enable/disable plugins
+
+### Generated Features
+
+The API client includes the following plugins:
+
+- **Zod Validation**: Type-safe validation schemas for all API requests and responses
+- **TanStack Query**: Ready-to-use React Query hooks for data fetching and mutations
+
+### Using the Generated API Client
+
+#### Direct API Calls
+
+Import and use the generated functions directly:
+
+```typescript
+import { loginLogin, userGetList } from '@/lib/api';
+
+// Login example
+const loginResult = await loginLogin({
+  body: {
+    userNameOrEmailAddress: 'user@example.com',
+    password: 'password123'
+  }
+});
+
+// Get users list
+const users = await userGetList({
+  query: {
+    skipCount: 0,
+    maxResultCount: 10
+  }
+});
+```
+
+#### With TanStack Query Hooks
+
+Use the generated React Query hooks for better data management:
+
+```typescript
+import { useQuery, useMutation } from '@tanstack/react-query';
+import {
+  userGetListOptions,
+  userCreateMutation,
+  loginLoginMutation
+} from '@/lib/api';
+
+// Query example
+const { data: users, isLoading } = useQuery(userGetListOptions({
+  query: {
+    skipCount: 0,
+    maxResultCount: 10
+  }
+}));
+
+// Mutation example
+const loginMutation = useMutation(loginLoginMutation());
+const createUserMutation = useMutation(userCreateMutation());
+
+const handleLogin = () => {
+  loginMutation.mutate({
+    body: {
+      userNameOrEmailAddress: 'user@example.com',
+      password: 'password123'
+    }
+  });
+};
+```
+
+#### With Zod Validation
+
+Use the generated Zod schemas for runtime validation:
+
+```typescript
+import { zLoginLoginData, zUserCreateData } from '@/lib/api';
+
+// Validate login data
+const loginData = zLoginLoginData.parse({
+  userNameOrEmailAddress: 'user@example.com',
+  password: 'password123'
+});
+
+// Validate user creation data
+const userData = zUserCreateData.parse({
+  userName: 'newuser',
+  emailAddress: 'newuser@example.com',
+  password: 'securepassword'
+});
+```
 
 # Demo files
 
