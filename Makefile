@@ -1,6 +1,5 @@
 # Makefile for abp-react-tanstack project
 
-
 .PHONY: help install dev build serve test lint format check generate-api clean kill
 
 # Default target
@@ -49,10 +48,12 @@ generate-api: ## Generate API client
 clean: ## Clean build artifacts
 	rm -rf dist
 	rm -rf node_modules
+	rm -rf .output
+	rm -rf .tanstack
 
 # Kill processes
-kill: ## Kill all running Node.js processes
-	pkill -f node || true
+kill: ## Kill Vite development server
+	pkill -f vite || true
 
 # Combined tasks
 setup: install ## Install dependencies and setup project
