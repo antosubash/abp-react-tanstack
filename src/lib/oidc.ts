@@ -134,7 +134,6 @@ export async function exchangeCodeForTokens(
 		return tokenSet;
 	} catch (error) {
 		console.error("Token exchange failed:", error);
-		console.log(error);
 
 		// Provide more specific error messages based on error type
 		if (error instanceof Error) {
