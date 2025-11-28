@@ -2,18 +2,14 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import {
 	IconDashboard,
-	IconHelp,
 	IconHome,
 	IconInnerShadowTop,
 	IconNetwork,
 	IconNote,
-	IconSearch,
-	IconSettings,
 	IconFunction,
 } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
 	Sidebar,
@@ -78,23 +74,6 @@ const data = {
 					url: "/demo/start/ssr/data-only",
 				},
 			],
-		},
-	],
-	navSecondary: [
-		{
-			title: "Settings",
-			url: "#",
-			icon: IconSettings,
-		},
-		{
-			title: "Get Help",
-			url: "#",
-			icon: IconHelp,
-		},
-		{
-			title: "Search",
-			url: "#",
-			icon: IconSearch,
 		},
 	],
 };
@@ -164,8 +143,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>
-
-				<NavSecondary items={data.navSecondary} className="mt-auto" />
 			</SidebarContent>
 			<SidebarFooter>
 				<NavUser />
