@@ -40,7 +40,7 @@ export const OIDC_CONSTANTS = {
 	SESSION_COOKIE_NAME: "tanstack-oidc-session",
 
 	// Scopes
-	SCOPES: ["openid", "profile", "email"],
+	SCOPES: ["openid", "profile", "email", "offline_access", "AbpTemplate"],
 
 	// Additional OIDC parameters
 	RESPONSE_TYPE: "code",
