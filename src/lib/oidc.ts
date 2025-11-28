@@ -1,17 +1,17 @@
 import {
-	discovery,
-	randomState,
-	randomPKCECodeVerifier,
-	calculatePKCECodeChallenge,
+	authorizationCodeGrant,
 	buildAuthorizationUrl,
 	buildEndSessionUrl,
-	authorizationCodeGrant,
-	refreshTokenGrant,
-	fetchUserInfo,
-	tokenRevocation,
 	type Configuration,
+	calculatePKCECodeChallenge,
+	discovery,
+	fetchUserInfo,
+	randomPKCECodeVerifier,
+	randomState,
+	refreshTokenGrant,
 	type TokenEndpointResponse,
 	type TokenEndpointResponseHelpers,
+	tokenRevocation,
 } from "openid-client";
 import { OIDC_CONSTANTS } from "./constants";
 

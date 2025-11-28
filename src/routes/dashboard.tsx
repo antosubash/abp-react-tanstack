@@ -1,6 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useMemo } from "react";
+import {
+	Bar,
+	BarChart,
+	CartesianGrid,
+	Cell,
+	Pie,
+	PieChart,
+	Tooltip,
+	XAxis,
+	YAxis,
+} from "recharts";
+import dashboardData from "../app/dashboard/data.json";
+import { DataTable } from "../components/data-table";
 import { ProtectedRoute } from "../components/ProtectedRoute";
-import { useAuthState } from "../hooks/use-auth";
 import {
 	Card,
 	CardContent,
@@ -8,22 +21,9 @@ import {
 	CardHeader,
 	CardTitle,
 } from "../components/ui/card";
+import { type ChartConfig, ChartContainer } from "../components/ui/chart";
 import { Progress } from "../components/ui/progress";
-import { ChartContainer, type ChartConfig } from "../components/ui/chart";
-import {
-	PieChart,
-	Pie,
-	Cell,
-	BarChart,
-	Bar,
-	XAxis,
-	YAxis,
-	CartesianGrid,
-	Tooltip,
-} from "recharts";
-import { DataTable } from "../components/data-table";
-import dashboardData from "../app/dashboard/data.json";
-import { useMemo } from "react";
+import { useAuthState } from "../hooks/use-auth";
 
 export const Route = createFileRoute("/dashboard")({
 	component: DashboardComponent,

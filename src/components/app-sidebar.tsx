@@ -1,16 +1,22 @@
-import { Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
 import {
+	IconCode,
 	IconDashboard,
+	IconFunction,
 	IconHome,
 	IconInnerShadowTop,
 	IconNetwork,
 	IconNote,
-	IconFunction,
 } from "@tabler/icons-react";
+import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
 	Sidebar,
 	SidebarContent,
@@ -26,11 +32,6 @@ import {
 	SidebarMenuSubButton,
 	SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 
 const data = {
 	navMain: [
@@ -46,6 +47,11 @@ const data = {
 		},
 	],
 	demos: [
+		{
+			title: "API Client",
+			url: "/demo/client",
+			icon: IconCode,
+		},
 		{
 			title: "Server Functions",
 			url: "/demo/start/server-funcs",

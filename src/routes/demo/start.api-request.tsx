@@ -1,6 +1,14 @@
-import { useEffect, useState } from "react";
-
 import { createFileRoute } from "@tanstack/react-router";
+import { Database } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 
 function getNames() {
 	return fetch("/demo/api/names").then(
@@ -20,26 +28,34 @@ function Home() {
 	}, []);
 
 	return (
-		<div
-			className="flex items-center justify-center min-h-screen p-4 text-white"
-			style={{
-				backgroundColor: "#000",
-				backgroundImage:
-					"radial-gradient(ellipse 60% 60% at 0% 100%, #444 0%, #222 60%, #000 100%)",
-			}}
-		>
-			<div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
-				<h1 className="text-2xl mb-4">Start API Request Demo - Names List</h1>
-				<ul className="mb-4 space-y-2">
-					{names.map((name) => (
-						<li
-							key={name}
-							className="bg-white/10 border border-white/20 rounded-lg p-3 backdrop-blur-sm shadow-md"
-						>
-							<span className="text-lg text-white">{name}</span>
-						</li>
-					))}
-				</ul>
+		<div className="w-full bg-slate-900">
+			<div className="w-full px-6 py-8">
+				<div className="flex items-center justify-center min-h-screen">
+					<Card className="w-full max-w-2xl bg-slate-800/50 backdrop-blur-sm border-slate-700">
+						<CardHeader>
+							<div className="flex items-center gap-2 mb-2">
+								<Database className="h-5 w-5 text-blue-400" />
+								<Badge variant="secondary">API Request Demo</Badge>
+							</div>
+							<CardTitle className="text-white text-2xl">Names List</CardTitle>
+							<CardDescription>
+								This demo shows API request functionality
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<ul className="space-y-2">
+								{names.map((name) => (
+									<li
+										key={name}
+										className="flex items-center gap-3 bg-slate-700/50 border border-slate-600 rounded-lg p-3"
+									>
+										<span className="text-lg text-white">{name}</span>
+									</li>
+								))}
+							</ul>
+						</CardContent>
+					</Card>
+				</div>
 			</div>
 		</div>
 	);

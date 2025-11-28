@@ -1,7 +1,11 @@
 import fs from "node:fs";
-import { useCallback, useState } from "react";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { CheckCircle2, Plus } from "lucide-react";
+import { useCallback, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 /*
 const loggingMiddleware = createMiddleware().server(
@@ -63,46 +67,68 @@ function Home() {
 	}, [todo, router.invalidate]);
 
 	return (
-		<div
-			className="flex items-center justify-center min-h-screen bg-gradient-to-br from-zinc-800 to-black p-4 text-white"
-			style={{
-				backgroundImage:
-					"radial-gradient(50% 50% at 20% 60%, #23272a 0%, #18181b 50%, #000000 100%)",
-			}}
-		>
-			<div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
-				<h1 className="text-2xl mb-4">Start Server Functions - Todo Example</h1>
-				<ul className="mb-4 space-y-2">
-					{todos?.map((t: { id: number; name: string }) => (
-						<li
-							key={t.id}
-							className="bg-white/10 border border-white/20 rounded-lg p-3 backdrop-blur-sm shadow-md"
-						>
-							<span className="text-lg text-white">{t.name}</span>
-						</li>
-					))}
-				</ul>
-				<div className="flex flex-col gap-2">
-					<input
-						type="text"
-						value={todo}
-						onChange={(e) => setTodo(e.target.value)}
-						onKeyDown={(e) => {
-							if (e.key === "Enter") {
-								submitTodo();
-							}
-						}}
-						placeholder="Enter a new todo..."
-						className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 backdrop-blur-sm text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-					/>
-					<button
-						type="button"
-						disabled={todo.trim().length === 0}
-						onClick={submitTodo}
-						className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors"
-					>
-						Add todo
-					</button>
+		<div className="w-full bg-slate-900">
+			<div className="w-full px-6 py-8">
+				<div className="flex items-center justify-center min-h-screen">
+					<div className="w-full max-w-2xl bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
+						<div className="flex items-center gap-2 mb-4">
+							<CheckCircle2 className="h-5 w-5 text-green-400" />
+							<Badge variant="secondary">Server Functions Demo</Badge>
+						</div>
+						<h2 className="text-white text-2xl font-semibold mb-2">
+							Todo List with Server Functions
+						</h2>
+						<p className="text-slate-400 mb-4">
+							Add and manage todos using TanStack Start server functions
+						</p>
+						<div className="space-y-4">
+							{todos && todos.length > 0 && (
+								<div className="space-y-2">
+									<h3 className="text-sm font-medium text-slate-300">
+										Your Todos
+									</h3>
+									<ul className="space-y-2">
+										{todos.map((t: { id: number; name: string }) => (
+											<li
+												key={t.id}
+												className="flex items-center gap-3 bg-slate-700/50 border border-slate-600 rounded-lg p-3"
+											>
+												<CheckCircle2 className="h-4 w-4 text-green-400 flex-shrink-0" />
+												<span className="text-slate-200">{t.name}</span>
+											</li>
+										))}
+									</ul>
+								</div>
+							)}
+							<div className="space-y-3">
+								<h3 className="text-sm font-medium text-slate-300">
+									Add New Todo
+								</h3>
+								<div className="flex gap-2">
+									<Input
+										type="text"
+										value={todo}
+										onChange={(e) => setTodo(e.target.value)}
+										onKeyDown={(e) => {
+											if (e.key === "Enter") {
+												submitTodo();
+											}
+										}}
+										placeholder="Enter a new todo..."
+										className="flex-1"
+									/>
+									<Button
+										onClick={submitTodo}
+										disabled={todo.trim().length === 0}
+										className="shrink-0"
+									>
+										<Plus className="h-4 w-4 mr-2" />
+										Add
+									</Button>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

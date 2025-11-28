@@ -1,15 +1,15 @@
-import {
-	getUserInfo,
-	refreshToken,
-	revokeToken,
-	getEndSessionUrl,
-} from "./oidc";
 import type {
 	TokenEndpointResponse,
 	TokenEndpointResponseHelpers,
 } from "openid-client";
-import { sessionUtils, type User, type SessionData } from "./session";
 import { OIDC_CONSTANTS } from "./constants";
+import {
+	getEndSessionUrl,
+	getUserInfo,
+	refreshToken,
+	revokeToken,
+} from "./oidc";
+import { type SessionData, sessionUtils, type User } from "./session";
 
 /**
  * Get session from request

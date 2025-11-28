@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getSession, clearSession } from "@tanstack/react-start/server";
-import { exchangeCodeForTokens } from "../lib/oidc";
+import { clearSession, getSession } from "@tanstack/react-start/server";
 import { createSession } from "../lib/auth-server";
 import { OIDC_CONSTANTS } from "../lib/constants";
+import { exchangeCodeForTokens } from "../lib/oidc";
 import type { SessionData } from "../lib/session";
 
 type OIDCSessionData = SessionData & {

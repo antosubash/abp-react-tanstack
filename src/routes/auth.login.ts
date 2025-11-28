@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
 import { updateSession } from "@tanstack/react-start/server";
-import { getAuthUrl } from "../lib/oidc";
 import { OIDC_CONSTANTS } from "../lib/constants";
+import { getAuthUrl } from "../lib/oidc";
 
 export const Route = createFileRoute("/auth/login")({
 	server: {

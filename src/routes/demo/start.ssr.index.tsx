@@ -1,41 +1,73 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Database, Layers, Zap } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/demo/start/ssr/")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const demos = [
+		{
+			to: "/demo/start/ssr/spa-mode",
+			title: "SPA Mode",
+			description: "Single Page Application with client-side routing",
+			icon: <Layers className="h-6 w-6" />,
+			color: "bg-pink-500 hover:bg-pink-600",
+		},
+		{
+			to: "/demo/start/ssr/full-ssr",
+			title: "Full SSR",
+			description: "Complete server-side rendering with hydration",
+			icon: <Zap className="h-6 w-6" />,
+			color: "bg-purple-500 hover:bg-purple-600",
+		},
+		{
+			to: "/demo/start/ssr/data-only",
+			title: "Data Only",
+			description: "Server-side data fetching without full rendering",
+			icon: <Database className="h-6 w-6" />,
+			color: "bg-green-500 hover:bg-green-600",
+		},
+	];
+
 	return (
-		<div
-			className="flex items-center justify-center min-h-screen bg-gradient-to-br from-zinc-900 to-black p-4 text-white"
-			style={{
-				backgroundImage:
-					"radial-gradient(50% 50% at 20% 60%, #1a1a1a 0%, #0a0a0a 50%, #000000 100%)",
-			}}
-		>
-			<div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
-				<h1 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-pink-500 via-purple-500 to-green-400 bg-clip-text text-transparent">
-					SSR Demos
-				</h1>
-				<div className="flex flex-col gap-4">
-					<Link
-						to="/demo/start/ssr/spa-mode"
-						className="text-2xl font-bold py-6 px-8 rounded-lg bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white text-center shadow-lg transform transition-all hover:scale-105 hover:shadow-pink-500/50 border-2 border-pink-400"
-					>
-						SPA Mode
-					</Link>
-					<Link
-						to="/demo/start/ssr/full-ssr"
-						className="text-2xl font-bold py-6 px-8 rounded-lg bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white text-center shadow-lg transform transition-all hover:scale-105 hover:shadow-purple-500/50 border-2 border-purple-400"
-					>
-						Full SSR
-					</Link>
-					<Link
-						to="/demo/start/ssr/data-only"
-						className="text-2xl font-bold py-6 px-8 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-center shadow-lg transform transition-all hover:scale-105 hover:shadow-green-500/50 border-2 border-green-400"
-					>
-						Data Only
-					</Link>
+		<div className="w-full bg-slate-900">
+			<div className="w-full px-6 py-8">
+				<div className="flex items-center justify-center min-h-screen">
+					<div className="w-full max-w-4xl bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
+						<div className="text-center">
+							<div className="flex items-center justify-center gap-2 mb-4">
+								<Badge variant="secondary">SSR Demos</Badge>
+							</div>
+							<h2 className="text-4xl font-bold text-white mb-2">
+								Server-Side Rendering Examples
+							</h2>
+							<p className="text-slate-400 mb-6">
+								Explore different SSR approaches with TanStack Start
+							</p>
+						</div>
+						<div className="grid gap-4 md:grid-cols-1">
+							{demos.map((demo) => (
+								<Button
+									key={demo.to}
+									asChild
+									className={`${demo.color} h-auto p-6 text-white font-semibold shadow-lg transition-all hover:shadow-xl`}
+								>
+									<Link to={demo.to} className="flex items-center gap-4">
+										<div className="flex-shrink-0">{demo.icon}</div>
+										<div className="text-left">
+											<div className="text-xl font-bold">{demo.title}</div>
+											<div className="text-sm opacity-90">
+												{demo.description}
+											</div>
+										</div>
+									</Link>
+								</Button>
+							))}
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

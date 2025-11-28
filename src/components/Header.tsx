@@ -1,6 +1,4 @@
 import { Link } from "@tanstack/react-router";
-
-import { useState } from "react";
 import {
 	ChevronDown,
 	ChevronRight,
@@ -14,6 +12,7 @@ import {
 	User,
 	X,
 } from "lucide-react";
+import { useState } from "react";
 import { useAuth, useAuthState } from "../hooks/use-auth";
 
 export default function Header() {

@@ -1,17 +1,8 @@
-import { useAuth } from "@/hooks/use-auth";
-import {
-	IconCreditCard,
-	IconDotsVertical,
-	IconLogout,
-	IconNotification,
-	IconUserCircle,
-} from "@tabler/icons-react";
-
+import { IconDotsVertical, IconLogout } from "@tabler/icons-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
-	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
@@ -23,6 +14,7 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/hooks/use-auth";
 
 export function NavUser({
 	user,
@@ -101,21 +93,6 @@ export function NavUser({
 								</div>
 							</div>
 						</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuGroup>
-							<DropdownMenuItem>
-								<IconUserCircle />
-								Account
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<IconCreditCard />
-								Billing
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<IconNotification />
-								Notifications
-							</DropdownMenuItem>
-						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem onClick={logout}>
 							<IconLogout />

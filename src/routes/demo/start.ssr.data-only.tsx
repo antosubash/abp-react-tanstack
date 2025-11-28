@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Database } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { getPunkSongs } from "@/data/demo.punk-songs";
 
 export const Route = createFileRoute("/demo/start/ssr/data-only")({
@@ -11,30 +13,41 @@ function RouteComponent() {
 	const punkSongs = Route.useLoaderData();
 
 	return (
-		<div
-			className="flex items-center justify-center min-h-screen bg-gradient-to-br from-zinc-800 to-black p-4 text-white"
-			style={{
-				backgroundImage:
-					"radial-gradient(50% 50% at 20% 60%, #1a1a1a 0%, #0a0a0a 50%, #000000 100%)",
-			}}
-		>
-			<div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
-				<h1 className="text-3xl font-bold mb-6 text-pink-400">
-					Data Only SSR - Punk Songs
-				</h1>
-				<ul className="space-y-3">
-					{punkSongs.map((song) => (
-						<li
-							key={song.id}
-							className="bg-white/10 border border-white/20 rounded-lg p-4 backdrop-blur-sm shadow-md"
-						>
-							<span className="text-lg text-white font-medium">
-								{song.name}
-							</span>
-							<span className="text-white/60"> - {song.artist}</span>
-						</li>
-					))}
-				</ul>
+		<div className="w-full bg-slate-900">
+			<div className="w-full px-6 py-8">
+				<div className="flex items-center justify-center min-h-screen">
+					<div className="w-full max-w-3xl bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
+						<div className="flex items-center gap-2 mb-4">
+							<Database className="h-5 w-5 text-pink-400" />
+							<Badge variant="secondary">Data-Only SSR Demo</Badge>
+						</div>
+						<h2 className="text-white text-3xl font-semibold mb-2">
+							Punk Songs Collection
+						</h2>
+						<p className="text-slate-400 mb-4">
+							This page demonstrates data-only SSR where data is pre-fetched on
+							the server but rendering happens on the client
+						</p>
+						<div className="space-y-3">
+							{punkSongs.map((song) => (
+								<div
+									key={song.id}
+									className="flex items-center justify-between bg-slate-700/50 border border-slate-600 rounded-lg p-4 hover:bg-slate-700/70 transition-colors"
+								>
+									<div>
+										<span className="text-lg text-white font-medium">
+											{song.name}
+										</span>
+										<span className="text-slate-400 ml-2">- {song.artist}</span>
+									</div>
+									<Badge variant="outline" className="text-pink-400">
+										Punk
+									</Badge>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	);

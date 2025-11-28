@@ -1,11 +1,11 @@
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
 	createContext,
+	type ReactNode,
 	useContext,
 	useEffect,
 	useState,
-	type ReactNode,
 } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Types
 export interface User {

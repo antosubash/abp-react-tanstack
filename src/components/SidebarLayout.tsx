@@ -1,12 +1,6 @@
 import { useLocation } from "@tanstack/react-router";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
-	SidebarInset,
-	SidebarProvider,
-	SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import {
 	Breadcrumb,
 	BreadcrumbItem,
 	BreadcrumbLink,
@@ -14,6 +8,12 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import {
+	SidebarInset,
+	SidebarProvider,
+	SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 interface SidebarLayoutProps {
 	children: React.ReactNode;
@@ -24,6 +24,7 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
 
 	const getPageTitle = (pathname: string) => {
 		if (pathname === "/dashboard") return "Dashboard";
+		if (pathname.startsWith("/demo/client")) return "API Client";
 		if (pathname.startsWith("/demo/start/server-funcs"))
 			return "Server Functions";
 		if (pathname.startsWith("/demo/start/api-request")) return "API Request";

@@ -1,9 +1,9 @@
 // utils/session.ts
 import {
-	useSession,
+	clearSession,
 	getSession,
 	updateSession,
-	clearSession,
+	useSession,
 } from "@tanstack/react-start/server";
 import { OIDC_CONSTANTS } from "./constants";
 
