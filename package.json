@@ -10,7 +10,7 @@
     "start": "node .output/server/index.mjs",
     "test": "vitest run",
     "format": "biome format --write .",
-    "format:check": "biome format --check .",
+    "format:check": "biome format .",
     "lint": "biome lint",
     "lint:fix": "biome lint --write --unsafe .",
     "check": "biome check",
