@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { IconDots, IconPencil, IconPlus, IconTrash, IconUsers } from "@tabler/icons-react";
+import {
+	IconDots,
+	IconPencil,
+	IconPlus,
+	IconTrash,
+	IconUsers,
+	IconShield,
+} from "@tabler/icons-react";
 import {
 	type ColumnDef,
 	flexRender,
@@ -56,7 +63,9 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserForm, type UserFormData } from "@/components/UserForm";
+import { UserPermissionsModal } from "@/components/UserPermissionsModal";
 import { useUserFormStore } from "@/lib/user-form-store";
+import { useUserPermissionModalStore } from "@/lib/user-permission-store";
 
 export function UsersList() {
 	const [sorting, setSorting] = useState<SortingState>([]);
@@ -76,6 +85,8 @@ export function UsersList() {
 		openEditForm,
 		closeForm,
 	} = useUserFormStore();
+
+	const { openModal: openPermissionsModal } = useUserPermissionModalStore();
 
 	const queryOptions = {
 		query: {
@@ -199,6 +210,10 @@ export function UsersList() {
 		openCreateForm();
 	};
 
+	const handleOpenPermissions = (user: IdentityUserDto) => {
+		openPermissionsModal(user);
+	};
+
 	const columns: ColumnDef<IdentityUserDto>[] = [
 		{
 			accessorKey: "userName",
@@ -260,6 +275,12 @@ export function UsersList() {
 						<DropdownMenuItem onClick={() => handleEditUser(row.original)}>
 							<IconPencil className="mr-2 h-4 w-4" />
 							Edit
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => handleOpenPermissions(row.original)}
+						>
+							<IconShield className="mr-2 h-4 w-4" />
+							Permissions
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem
@@ -559,6 +580,7 @@ export function UsersList() {
 				isLoading={createUserMutation.isPending || updateUserMutation.isPending}
 				mode={editingUser ? "edit" : "create"}
 			/>
+			<UserPermissionsModal />
 		</div>
 	);
 }
