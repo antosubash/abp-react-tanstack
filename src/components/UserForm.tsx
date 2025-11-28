@@ -36,7 +36,7 @@ const userFormSchema = z.object({
 	confirmPassword: z.string().optional(),
 });
 
-type UserFormData = z.infer<typeof userFormSchema>;
+export type UserFormData = z.infer<typeof userFormSchema>;
 
 interface UserFormProps {
 	user?: IdentityUserDto | null;

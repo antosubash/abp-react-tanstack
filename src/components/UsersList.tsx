@@ -105,7 +105,7 @@ export function UsersList() {
 	const users = usersResponse?.items || [];
 	const totalCount = usersResponse?.totalCount || 0;
 
-	const handleCreateUser = async (data: any) => {
+	const handleCreateUser = async (data: UserFormData) => {
 		try {
 			setLoading(true);
 			await createUserMutation.mutateAsync({
@@ -117,21 +117,23 @@ export function UsersList() {
 					phoneNumber: data.phoneNumber || null,
 					isActive: data.isActive,
 					lockoutEnabled: data.lockoutEnabled,
-					password: data.password,
+					password: data.password || "",
 				},
 			});
 			queryClient.invalidateQueries({ queryKey: ["userGetList"] });
 			toast.success("User created successfully");
 			closeForm();
-		} catch (error: any) {
-			toast.error(error?.message || "Failed to create user");
+		} catch (error: unknown) {
+			const errorMessage =
+				error instanceof Error ? error.message : "Failed to create user";
+			toast.error(errorMessage);
 			throw error;
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	const handleUpdateUser = async (data: any) => {
+	const handleUpdateUser = async (data: UserFormData) => {
 		if (!editingUser?.id) return;
 		try {
 			setLoading(true);
@@ -152,8 +154,10 @@ export function UsersList() {
 			queryClient.invalidateQueries({ queryKey: ["userGetList"] });
 			toast.success("User updated successfully");
 			closeForm();
-		} catch (error: any) {
-			toast.error(error?.message || "Failed to update user");
+		} catch (error: unknown) {
+			const errorMessage =
+				error instanceof Error ? error.message : "Failed to update user";
+			toast.error(errorMessage);
 			throw error;
 		} finally {
 			setLoading(false);
@@ -167,8 +171,10 @@ export function UsersList() {
 			});
 			queryClient.invalidateQueries({ queryKey: ["userGetList"] });
 			toast.success("User deleted successfully");
-		} catch (error: any) {
-			toast.error(error?.message || "Failed to delete user");
+		} catch (error: unknown) {
+			const errorMessage =
+				error instanceof Error ? error.message : "Failed to delete user";
+			toast.error(errorMessage);
 			throw error;
 		}
 	};
@@ -249,7 +255,9 @@ export function UsersList() {
 							disabled={deleteUserMutation.isPending}
 							onClick={() => {
 								if (confirm("Are you sure you want to delete this user?")) {
-									handleDeleteUser(row.original.id!);
+									if (row.original.id) {
+										handleDeleteUser(row.original.id);
+									}
 								}
 							}}
 						>
@@ -329,8 +337,8 @@ export function UsersList() {
 					<TableBody>
 						{isLoading ? (
 							// Loading skeleton
-							Array.from({ length: pagination.pageSize }).map((_, index) => (
-								<TableRow key={index}>
+							Array.from({ length: pagination.pageSize }).map(() => (
+								<TableRow key={crypto.randomUUID()}>
 									<TableCell>
 										<Skeleton className="h-4 w-24" />
 									</TableCell>
