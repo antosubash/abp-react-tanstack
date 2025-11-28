@@ -1,6 +1,6 @@
 # Makefile for abp-react-tanstack project
 
-.PHONY: help install dev build serve test lint format check generate-api clean kill
+.PHONY: help install dev build serve test lint format check type-check generate-api clean kill
 
 # Default target
 help: ## Show this help message
@@ -39,6 +39,9 @@ format: ## Format code
 
 check: ## Check code quality (lint + format)
 	pnpm check
+
+type-check: ## Run TypeScript type checking
+	pnpm typecheck
 
 # API generation
 generate-api: ## Generate API client
