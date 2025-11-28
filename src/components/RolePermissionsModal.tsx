@@ -81,7 +81,7 @@ export function RolePermissionsModal() {
 			if (permissionsResponse.groups) {
 				// Set the API groups for mapping
 				setApiGroups(permissionsResponse.groups);
-				
+
 				permissionsResponse.groups.forEach((group) => {
 					if (group.permissions) {
 						// Add all permissions to the allPermissions list
@@ -100,7 +100,13 @@ export function RolePermissionsModal() {
 			setAllPermissions(allPermissions);
 			setRolePermissions(rolePermissions);
 		}
-	}, [permissionsResponse, role?.id, setAllPermissions, setRolePermissions, setApiGroups]);
+	}, [
+		permissionsResponse,
+		role?.id,
+		setAllPermissions,
+		setRolePermissions,
+		setApiGroups,
+	]);
 
 	// Update loading state
 	useEffect(() => {

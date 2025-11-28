@@ -178,13 +178,13 @@ export const usePermissionModalStore = create<PermissionModalState>(
 		setApiGroups: (groups: PermissionGroupDto[]) => {
 			// Create a mapping from group display name to permission names
 			const map: Record<string, string[]> = {};
-			
+
 			groups.forEach((group) => {
 				if (!group.name) return;
-				
+
 				const groupName = group.displayName || group.name;
 				map[groupName] = [];
-				
+
 				if (group.permissions) {
 					group.permissions.forEach((permission) => {
 						if (permission.name) {
@@ -193,7 +193,7 @@ export const usePermissionModalStore = create<PermissionModalState>(
 					});
 				}
 			});
-			
+
 			set({
 				apiGroups: groups,
 				groupNameToPermissionsMap: map,
@@ -202,19 +202,19 @@ export const usePermissionModalStore = create<PermissionModalState>(
 
 		updateGroupPermissions: (groupName: string, isGranted: boolean) => {
 			const { allPermissions, searchTerm, groupNameToPermissionsMap } = get();
-			
+
 			// Get the permission names that belong to this group
 			const groupPermissionNames = groupNameToPermissionsMap[groupName] || [];
-			
+
 			const updatePermissionList = (permissions: PermissionGrantInfoDto[]) =>
 				permissions.map((permission) => {
 					if (!permission.name) return permission;
-					
+
 					// Check if this permission belongs to the specified group
 					if (groupPermissionNames.includes(permission.name)) {
 						return { ...permission, isGranted };
 					}
-					
+
 					return permission;
 				});
 
