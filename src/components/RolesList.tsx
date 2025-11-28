@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { IconEdit, IconPlus, IconTrash, IconUsers } from "@tabler/icons-react";
+import { IconEdit, IconPlus, IconTrash, IconShield } from "@tabler/icons-react";
 import {
 	type ColumnDef,
 	flexRender,
@@ -13,13 +13,13 @@ import {
 import { toast } from "sonner";
 
 import {
-	userCreateMutation,
-	userDeleteMutation,
-	userGetListOptions,
-	userGetListQueryKey,
-	userUpdateMutation,
+	roleCreateMutation,
+	roleDeleteMutation,
+	roleGetListOptions,
+	roleGetListQueryKey,
+	roleUpdateMutation,
 } from "@/client/@tanstack/react-query.gen";
-import type { IdentityUserDto } from "@/client/types.gen";
+import type { IdentityRoleDto } from "@/client/types.gen";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,10 +55,10 @@ import {
 } from "@/components/ui/table";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserForm, type UserFormData } from "@/components/UserForm";
-import { useUserFormStore } from "@/lib/user-form-store";
+import { RoleForm, type RoleFormData } from "@/components/RoleForm";
+import { useRoleFormStore } from "@/lib/role-form-store";
 
-export function UsersList() {
+export function RolesList() {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
@@ -69,13 +69,13 @@ export function UsersList() {
 	const queryClient = useQueryClient();
 
 	const {
-		user: editingUser,
+		role: editingRole,
 		open: formOpen,
 		setLoading,
 		openCreateForm,
 		openEditForm,
 		closeForm,
-	} = useUserFormStore();
+	} = useRoleFormStore();
 
 	const queryOptions = {
 		query: {
@@ -85,50 +85,45 @@ export function UsersList() {
 	};
 
 	const {
-		data: usersResponse,
+		data: rolesResponse,
 		isLoading,
 		error,
 		isError,
-	} = useQuery(userGetListOptions(queryOptions));
+	} = useQuery(roleGetListOptions(queryOptions));
 
-	const createUserMutation = useMutation({
-		...userCreateMutation(),
+	const createRoleMutation = useMutation({
+		...roleCreateMutation(),
 	});
 
-	const updateUserMutation = useMutation({
-		...userUpdateMutation(),
+	const updateRoleMutation = useMutation({
+		...roleUpdateMutation(),
 	});
 
-	const deleteUserMutation = useMutation({
-		...userDeleteMutation(),
+	const deleteRoleMutation = useMutation({
+		...roleDeleteMutation(),
 	});
 
-	const users = usersResponse?.items || [];
-	const totalCount = usersResponse?.totalCount || 0;
+	const roles = rolesResponse?.items || [];
+	const totalCount = rolesResponse?.totalCount || 0;
 
-	const handleCreateUser = async (data: UserFormData) => {
+	const handleCreateRole = async (data: RoleFormData) => {
 		try {
 			setLoading(true);
-			await createUserMutation.mutateAsync({
+			await createRoleMutation.mutateAsync({
 				body: {
-					userName: data.userName,
-					name: data.name || null,
-					surname: data.surname || null,
-					email: data.email,
-					phoneNumber: data.phoneNumber || null,
-					isActive: data.isActive,
-					lockoutEnabled: data.lockoutEnabled,
-					password: data.password || "",
+					name: data.name,
+					isDefault: data.isDefault,
+					isPublic: data.isPublic,
 				},
 			});
 			queryClient.invalidateQueries({
-				queryKey: userGetListQueryKey(queryOptions),
+				queryKey: roleGetListQueryKey(queryOptions),
 			});
-			toast.success("User created successfully");
+			toast.success("Role created successfully");
 			closeForm();
 		} catch (error: unknown) {
 			const errorMessage =
-				error instanceof Error ? error.message : "Failed to create user";
+				error instanceof Error ? error.message : "Failed to create role";
 			toast.error(errorMessage);
 			throw error;
 		} finally {
@@ -136,37 +131,36 @@ export function UsersList() {
 		}
 	};
 
-	const handleUpdateUser = async (data: UserFormData) => {
-		if (!editingUser?.id) return;
+	const handleUpdateRole = async (data: RoleFormData) => {
+		if (!editingRole?.id) return;
 		try {
 			setLoading(true);
-			await updateUserMutation.mutateAsync({
-				path: { id: editingUser.id },
+			await updateRoleMutation.mutateAsync({
+				path: { id: editingRole.id },
 				body: {
-					userName: data.userName,
-					name: data.name || null,
-					surname: data.surname || null,
-					email: data.email,
-					phoneNumber: data.phoneNumber || null,
-					isActive: data.isActive,
-					lockoutEnabled: data.lockoutEnabled,
-					password: data.password || null,
-					concurrencyStamp: editingUser.concurrencyStamp || null,
+					name: data.name,
+					isDefault: data.isDefault,
+					isPublic: data.isPublic,
+					concurrencyStamp: editingRole.concurrencyStamp || null,
 				},
 			});
-			// Invalidate and refetch the user list to update the table
+			// Invalidate and refetch the role list to update the table
 			await queryClient.invalidateQueries({
-				queryKey: userGetListQueryKey(queryOptions),
+				queryKey: [roleGetListQueryKey({})],
+			});
+			// Invalidate and refetch the role list to update the table
+			await queryClient.invalidateQueries({
+				queryKey: roleGetListQueryKey(queryOptions),
 			});
 			// Also force a refetch to ensure immediate UI update
 			await queryClient.refetchQueries({
-				queryKey: userGetListQueryKey(queryOptions),
+				queryKey: roleGetListQueryKey(queryOptions),
 			});
-			toast.success("User updated successfully");
+			toast.success("Role updated successfully");
 			closeForm();
 		} catch (error: unknown) {
 			const errorMessage =
-				error instanceof Error ? error.message : "Failed to update user";
+				error instanceof Error ? error.message : "Failed to update role";
 			toast.error(errorMessage);
 			throw error;
 		} finally {
@@ -174,64 +168,61 @@ export function UsersList() {
 		}
 	};
 
-	const handleDeleteUser = async (userId: string) => {
+	const handleDeleteRole = async (roleId: string) => {
 		try {
-			await deleteUserMutation.mutateAsync({
-				path: { id: userId },
+			await deleteRoleMutation.mutateAsync({
+				path: { id: roleId },
 			});
 			queryClient.invalidateQueries({
-				queryKey: userGetListQueryKey(queryOptions),
+				queryKey: roleGetListQueryKey(queryOptions),
 			});
-			toast.success("User deleted successfully");
+			toast.success("Role deleted successfully");
 		} catch (error: unknown) {
 			const errorMessage =
-				error instanceof Error ? error.message : "Failed to delete user";
+				error instanceof Error ? error.message : "Failed to delete role";
 			toast.error(errorMessage);
 			throw error;
 		}
 	};
 
-	const handleEditUser = (user: IdentityUserDto) => {
-		openEditForm(user);
+	const handleEditRole = (role: IdentityRoleDto) => {
+		openEditForm(role);
 	};
 
-	const handleCreateNewUser = () => {
+	const handleCreateNewRole = () => {
 		openCreateForm();
 	};
 
-	const columns: ColumnDef<IdentityUserDto>[] = [
-		{
-			accessorKey: "userName",
-			header: "Username",
-			cell: ({ row }) => (
-				<div className="font-medium">{row.original.userName}</div>
-			),
-		},
+	const columns: ColumnDef<IdentityRoleDto>[] = [
 		{
 			accessorKey: "name",
-			header: "Name",
+			header: "Role Name",
+			cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
+		},
+		{
+			accessorKey: "isDefault",
+			header: "Default",
 			cell: ({ row }) => (
-				<div>
-					{row.original.name} {row.original.surname}
-				</div>
+				<Badge variant={row.original.isDefault ? "default" : "secondary"}>
+					{row.original.isDefault ? "Yes" : "No"}
+				</Badge>
 			),
 		},
 		{
-			accessorKey: "email",
-			header: "Email",
-			cell: ({ row }) => <div>{row.original.email}</div>,
-		},
-		{
-			accessorKey: "phoneNumber",
-			header: "Phone",
-			cell: ({ row }) => <div>{row.original.phoneNumber || "-"}</div>,
-		},
-		{
-			accessorKey: "isActive",
-			header: "Status",
+			accessorKey: "isPublic",
+			header: "Public",
 			cell: ({ row }) => (
-				<Badge variant={row.original.isActive ? "default" : "secondary"}>
-					{row.original.isActive ? "Active" : "Inactive"}
+				<Badge variant={row.original.isPublic ? "default" : "secondary"}>
+					{row.original.isPublic ? "Yes" : "No"}
+				</Badge>
+			),
+		},
+		{
+			accessorKey: "isStatic",
+			header: "Static",
+			cell: ({ row }) => (
+				<Badge variant={row.original.isStatic ? "default" : "secondary"}>
+					{row.original.isStatic ? "Yes" : "No"}
 				</Badge>
 			),
 		},
@@ -257,24 +248,24 @@ export function UsersList() {
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
-						<DropdownMenuItem onClick={() => handleEditUser(row.original)}>
+						<DropdownMenuItem onClick={() => handleEditRole(row.original)}>
 							<IconEdit className="mr-2 h-4 w-4" />
 							Edit
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem
 							className="text-destructive"
-							disabled={deleteUserMutation.isPending}
+							disabled={deleteRoleMutation.isPending || row.original.isStatic}
 							onClick={() => {
-								if (confirm("Are you sure you want to delete this user?")) {
+								if (confirm("Are you sure you want to delete this role?")) {
 									if (row.original.id) {
-										handleDeleteUser(row.original.id);
+										handleDeleteRole(row.original.id);
 									}
 								}
 							}}
 						>
 							<IconTrash className="mr-2 h-4 w-4" />
-							{deleteUserMutation.isPending ? "Deleting..." : "Delete"}
+							{deleteRoleMutation.isPending ? "Deleting..." : "Delete"}
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
@@ -283,7 +274,7 @@ export function UsersList() {
 	];
 
 	const table = useReactTable({
-		data: users,
+		data: roles,
 		columns,
 		state: {
 			sorting,
@@ -302,7 +293,7 @@ export function UsersList() {
 		return (
 			<Alert variant="destructive">
 				<AlertDescription>
-					Failed to load users: {error?.error?.message || "Unknown error"}
+					Failed to load roles: {error?.error?.message || "Unknown error"}
 				</AlertDescription>
 			</Alert>
 		);
@@ -312,17 +303,17 @@ export function UsersList() {
 		<div className="space-y-4">
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-2">
-					<IconUsers className="h-5 w-5" />
+					<IconShield className="h-5 w-5" />
 					<span className="text-sm text-muted-foreground">
-						{totalCount} users total
+						{totalCount} roles total
 					</span>
 				</div>
 				<Button
-					onClick={handleCreateNewUser}
-					disabled={createUserMutation.isPending}
+					onClick={handleCreateNewRole}
+					disabled={createRoleMutation.isPending}
 				>
 					<IconPlus className="mr-2 h-4 w-4" />
-					{createUserMutation.isPending ? "Creating..." : "Add User"}
+					{createRoleMutation.isPending ? "Creating..." : "Add Role"}
 				</Button>
 			</div>
 
@@ -352,19 +343,16 @@ export function UsersList() {
 							Array.from({ length: pagination.pageSize }).map(() => (
 								<TableRow key={crypto.randomUUID()}>
 									<TableCell>
-										<Skeleton className="h-4 w-24" />
-									</TableCell>
-									<TableCell>
 										<Skeleton className="h-4 w-32" />
 									</TableCell>
 									<TableCell>
-										<Skeleton className="h-4 w-48" />
+										<Skeleton className="h-6 w-12" />
 									</TableCell>
 									<TableCell>
-										<Skeleton className="h-4 w-32" />
+										<Skeleton className="h-6 w-12" />
 									</TableCell>
 									<TableCell>
-										<Skeleton className="h-6 w-16" />
+										<Skeleton className="h-6 w-12" />
 									</TableCell>
 									<TableCell>
 										<Skeleton className="h-4 w-20" />
@@ -398,7 +386,7 @@ export function UsersList() {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No users found.
+									No roles found.
 								</TableCell>
 							</TableRow>
 						)}
@@ -410,7 +398,7 @@ export function UsersList() {
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
 					<div className="text-sm text-muted-foreground">
-						Showing {users.length} of {totalCount} users
+						Showing {roles.length} of {totalCount} roles
 					</div>
 					<div className="flex items-center gap-2">
 						<span className="text-sm text-muted-foreground">
@@ -550,14 +538,14 @@ export function UsersList() {
 				</Pagination>
 			</div>
 
-			<UserForm
-				key={editingUser?.id || "create"}
-				user={editingUser}
+			<RoleForm
+				key={editingRole?.id || "create"}
+				role={editingRole}
 				open={formOpen}
 				onOpenChange={closeForm}
-				onSubmit={editingUser ? handleUpdateUser : handleCreateUser}
-				isLoading={createUserMutation.isPending || updateUserMutation.isPending}
-				mode={editingUser ? "edit" : "create"}
+				onSubmit={editingRole ? handleUpdateRole : handleCreateRole}
+				isLoading={createRoleMutation.isPending || updateRoleMutation.isPending}
+				mode={editingRole ? "edit" : "create"}
 			/>
 		</div>
 	);

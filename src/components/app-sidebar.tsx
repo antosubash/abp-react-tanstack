@@ -6,6 +6,7 @@ import {
 	IconInnerShadowTop,
 	IconNetwork,
 	IconNote,
+	IconShield,
 	IconUsers,
 } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
@@ -50,6 +51,11 @@ const data = {
 			title: "Users",
 			url: "/users",
 			icon: IconUsers,
+		},
+		{
+			title: "Roles",
+			url: "/roles",
+			icon: IconShield,
 		},
 	],
 	demos: [

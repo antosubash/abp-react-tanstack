@@ -6,6 +6,7 @@ import {
 	useEffect,
 	useState,
 } from "react";
+import { QUERY_KEYS } from "@/lib/constants";
 
 // Types
 export interface User {
@@ -50,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	// Query for user data
 	const { data: userData, isLoading } = useQuery({
-		queryKey: ["auth", "me"],
+		queryKey: QUERY_KEYS.AUTH_ME,
 		queryFn: async () => {
 			const response = await fetch("/auth/me");
 			if (!response.ok) {
@@ -194,7 +195,7 @@ export function useAuthCombined(): AuthState & {
 // Hook to get auth state
 export function useAuthState(): AuthState {
 	const { data: userData, isLoading } = useQuery({
-		queryKey: ["auth", "me"],
+		queryKey: QUERY_KEYS.AUTH_ME,
 		queryFn: async () => {
 			const response = await fetch("/auth/me");
 			if (!response.ok) {

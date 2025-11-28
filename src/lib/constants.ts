@@ -46,3 +46,9 @@ export const OIDC_CONSTANTS = {
 	RESPONSE_TYPE: "code",
 	GRANT_TYPE: "authorization_code",
 } as const;
+
+// React Query Key Constants (for non-generated endpoints only)
+export const QUERY_KEYS = {
+	// Authentication (custom endpoint)
+	AUTH_ME: ["auth", "me"] as const,
+} as const;
