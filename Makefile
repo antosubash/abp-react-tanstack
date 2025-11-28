@@ -1,9 +1,6 @@
 # Makefile for abp-react-tanstack project
 
-# Project directories
-SRC_DIR := src
-
-.PHONY: help install dev build serve test lint format check generate-api clean
+.PHONY: help install dev build serve test lint format check type-check generate-api clean kill
 
 # Default target
 help: ## Show this help message
@@ -12,45 +9,54 @@ help: ## Show this help message
 
 # Installation
 install: ## Install dependencies
-	cd $(SRC_DIR) && pnpm install
+	pnpm install
 
 # Development
 dev: ## Start development server
-	cd $(SRC_DIR) && pnpm dev
+	pnpm dev
 
 # Build
 build: ## Build for production
-	cd $(SRC_DIR) && pnpm build
+	pnpm build
 
 # Serve
 serve: ## Serve production build
-	cd $(SRC_DIR) && pnpm serve
+	pnpm serve
 
 # Testing
 test: ## Run tests
-	cd $(SRC_DIR) && pnpm test
+	pnpm test
 
 # Code quality
 lint: ## Run linter
-	cd $(SRC_DIR) && pnpm lint
+	pnpm lint
 
 lint-fix: ## Run linter and fix issues
-	cd $(SRC_DIR) && pnpm run lint:fix
+	pnpm run lint:fix
 
 format: ## Format code
-	cd $(SRC_DIR) && pnpm format
+	pnpm format
 
 check: ## Check code quality (lint + format)
-	cd $(SRC_DIR) && pnpm check
+	pnpm check
+
+type-check: ## Run TypeScript type checking
+	pnpm typecheck
 
 # API generation
 generate-api: ## Generate API client
-	cd $(SRC_DIR) && pnpm generate-api
+	pnpm generate-api
 
 # Clean
 clean: ## Clean build artifacts
-	rm -rf $(SRC_DIR)/dist
-	rm -rf $(SRC_DIR)/node_modules
+	rm -rf dist
+	rm -rf node_modules
+	rm -rf .output
+	rm -rf .tanstack
+
+# Kill processes
+kill: ## Kill Vite development server
+	pkill -f vite || true
 
 # Combined tasks
 setup: install ## Install dependencies and setup project
