@@ -69,7 +69,7 @@ function App() {
 	];
 
 	return (
-		<div className="min-h-screen bg-slate-900">
+		<div className="min-h-screen bg-background">
 			<section className="relative py-20 px-6 text-center overflow-hidden">
 				<div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10"></div>
 				<div className="relative max-w-5xl mx-auto">
@@ -204,7 +204,7 @@ function App() {
 			</section>
 
 			{/* Footer */}
-			<footer className="py-12 px-6 border-t border-slate-700/50 bg-slate-900/50 backdrop-blur-sm">
+			<footer className="py-12 px-6 border-t border-border/50 bg-background/50 backdrop-blur-sm">
 				<div className="max-w-7xl mx-auto">
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
 						<div>

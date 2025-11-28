@@ -28,7 +28,7 @@ function Home() {
 	}, []);
 
 	return (
-		<div className="w-full bg-slate-900">
+		<div className="w-full bg-background">
 			<div className="w-full px-6 py-8">
 				<div className="flex items-center justify-center min-h-screen">
 					<Card className="w-full max-w-2xl bg-slate-800/50 backdrop-blur-sm border-slate-700">
