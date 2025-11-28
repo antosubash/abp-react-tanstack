@@ -1,10 +1,9 @@
-import { getSession, updateSession, clearSession } from "@tanstack/react-start/server";
-import { OIDC_CONSTANTS } from "./constants";
 import { getUserInfo, refreshToken } from "./oidc";
 import type {
 	TokenEndpointResponse,
 	TokenEndpointResponseHelpers,
 } from "openid-client";
+import { useAppSession } from "./session";
 
 // Session types
 export interface User {
@@ -32,9 +31,7 @@ export interface SessionData {
  */
 export async function getUserSession(): Promise<SessionData | null> {
 	try {
-		const session = await getSession({
-			password: OIDC_CONSTANTS.SESSION_SECRET,
-		});
+		const session = await useAppSession();
 
 		if (!session || !session.data) {
 			return null;
@@ -55,9 +52,7 @@ export async function getUserSession(): Promise<SessionData | null> {
 					sessionData.refreshToken = newTokens.refresh_token;
 					sessionData.expiresAt =
 						Date.now() + (newTokens.expiresIn?.() || 3600) * 1000;
-
-					// Update session with new tokens
-					await updateUserSession(sessionData);
+					await session.update(sessionData);
 				} catch (error) {
 					console.error("Token refresh failed:", error);
 					// Token refresh failed, clear session
@@ -85,13 +80,35 @@ export async function createSession(
 	tokenResponse: TokenEndpointResponse & TokenEndpointResponseHelpers,
 ): Promise<SessionData> {
 	try {
-		// Get user info from OIDC provider
+		// Get user info from token claims instead of user info endpoint
 		const accessToken = tokenResponse.access_token;
 		if (!accessToken) {
 			throw new Error("No access token in response");
 		}
 
-		const userInfo = await getUserInfo(accessToken);
+		// Extract user claims from the ID token
+		let claims = tokenResponse.claims();
+		if (!claims) {
+			throw new Error("No claims found in token response");
+		}
+
+		const { sub } = claims;
+		if (!sub) {
+			throw new Error("No subject (sub) claim found in token");
+		}
+
+		// Use claims as user info, with fallback to getUserInfo if needed
+		let userInfo: Record<string, unknown> = claims;
+
+		// Try to get additional user info from user info endpoint if available
+		try {
+			const additionalUserInfo = await getUserInfo(accessToken, sub as string);
+			// Merge claims with additional user info, giving priority to claims for core fields
+			userInfo = { ...additionalUserInfo, ...claims };
+		} catch (userInfoError) {
+			console.warn("Could not fetch additional user info, using token claims only:", userInfoError);
+			// Continue with claims only
+		}
 
 		const sessionData: SessionData = {
 			user: userInfo as unknown as User,
@@ -100,10 +117,8 @@ export async function createSession(
 			expiresAt: Date.now() + (tokenResponse.expiresIn?.() || 3600) * 1000,
 		};
 
-		await updateSession({
-			password: OIDC_CONSTANTS.SESSION_SECRET,
-		}, sessionData);
-
+		const session = await useAppSession();
+		await session.update(sessionData);
 		return sessionData;
 	} catch (error) {
 		console.error("Session creation failed:", error);
@@ -118,10 +133,9 @@ export async function updateUserSession(
 	sessionData: SessionData,
 ): Promise<void> {
 	try {
-		await updateSession({
-			password: OIDC_CONSTANTS.SESSION_SECRET,
-		}, sessionData);
-	} catch (error) {
+		const session = await useAppSession();
+		await session.update(sessionData);
+	} catch (error) {	
 		console.error("Session update failed:", error);
 		throw new Error("Failed to update session");
 	}
@@ -132,23 +146,10 @@ export async function updateUserSession(
  */
 export async function clearUserSession(): Promise<void> {
 	try {
-		await clearSession({
-			password: OIDC_CONSTANTS.SESSION_SECRET,
-		});
+		const session = await useAppSession();
+		await session.clear();
 	} catch (error) {
 		console.error("Session clear failed:", error);
+		throw new Error("Failed to clear session");
 	}
-}
-
-/**
- * Check if user is authenticated
- */
-export async function requireAuth(): Promise<SessionData> {
-	const session = await getUserSession();
-
-	if (!session) {
-		throw new Response("Unauthorized", { status: 401 });
-	}
-
-	return session;
 }

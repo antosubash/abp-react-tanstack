@@ -52,7 +52,7 @@ export const Route = createFileRoute("/auth/callback")({
 					}
 
 					const tokenSet = await exchangeCodeForTokens(
-						code,
+						url,
 						(session.data as any).codeVerifier,
 						state,
 					)
@@ -72,9 +72,24 @@ export const Route = createFileRoute("/auth/callback")({
 					})
 				} catch (error) {
 					console.error("Callback processing failed:", error);
+
+					// Determine appropriate error redirect based on error type
+					let errorParam = "auth_failed";
+					if (error instanceof Error) {
+						if (error.message.includes("OIDC configuration not properly set")) {
+							errorParam = "config_error";
+						} else if (error.message.includes("Invalid client credentials")) {
+							errorParam = "invalid_client";
+						} else if (error.message.includes("Invalid authorization code")) {
+							errorParam = "invalid_code";
+						} else if (error.message.includes("Network error")) {
+							errorParam = "network_error";
+						}
+					}
+
 					return new Response(null, {
 						status: 302,
-						headers: { Location: "/?error=auth_failed" },
+						headers: { Location: `/?error=${errorParam}` },
 					})
 				}
 			},

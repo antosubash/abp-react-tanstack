@@ -9,6 +9,8 @@ export const Route = createFileRoute("/auth/me")({
 				try {
 					const session = await getUserSession();
 
+					console.log("session", session);
+
 					if (!session) {
 						return json({ user: null }, { status: 401 });
 					}

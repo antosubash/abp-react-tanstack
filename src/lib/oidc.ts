@@ -8,6 +8,7 @@ import {
 	refreshTokenGrant,
 	fetchUserInfo,
 	tokenRevocation,
+	skipSubjectCheck,
 	type Configuration,
 	type TokenEndpointResponse,
 	type TokenEndpointResponseHelpers,
@@ -17,6 +18,29 @@ import { OIDC_CONSTANTS } from "./constants";
 let oidcConfig: Configuration | null = null;
 
 /**
+ * Validate OIDC configuration constants
+ */
+function validateOIDCConfig(): void {
+	const requiredConfig = [
+		{ key: 'ISSUER', value: OIDC_CONSTANTS.ISSUER },
+		{ key: 'CLIENT_ID', value: OIDC_CONSTANTS.CLIENT_ID },
+	];
+
+	const placeholderValues = ['your-oidc-provider.com', 'your-client-id'];
+
+	for (const config of requiredConfig) {
+		if (!config.value || placeholderValues.some(placeholder => config.value.includes(placeholder))) {
+			throw new Error(`OIDC configuration not properly set. Please configure VITE_OIDC_${config.key} in your environment variables.`);
+		}
+	}
+
+	// For public clients, client_secret is optional
+	if (OIDC_CONSTANTS.CLIENT_SECRET && OIDC_CONSTANTS.CLIENT_SECRET.includes('your-client-secret')) {
+		console.warn('VITE_OIDC_CLIENT_SECRET contains placeholder value. For public clients, this can be omitted.');
+	}
+}
+
+/**
  * Get OpenID Connect configuration
  */
 export async function getOIDCConfig(): Promise<Configuration> {
@@ -24,13 +48,19 @@ export async function getOIDCConfig(): Promise<Configuration> {
 		return oidcConfig;
 	}
 
+	// Validate configuration before attempting discovery
+	validateOIDCConfig();
+
 	try {
+		// For public clients, don't pass client_secret
+		const discoveryOptions = OIDC_CONSTANTS.CLIENT_SECRET && !OIDC_CONSTANTS.CLIENT_SECRET.includes('your-client-secret')
+			? { client_secret: OIDC_CONSTANTS.CLIENT_SECRET }
+			: {};
+
 		oidcConfig = await discovery(
 			new URL(OIDC_CONSTANTS.ISSUER),
 			OIDC_CONSTANTS.CLIENT_ID,
-			{
-				client_secret: OIDC_CONSTANTS.CLIENT_SECRET,
-			},
+			discoveryOptions,
 		);
 		return oidcConfig;
 	} catch (error) {
@@ -68,27 +98,50 @@ export async function getAuthUrl(): Promise<{
  * Exchange authorization code for tokens
  */
 export async function exchangeCodeForTokens(
-	code: string,
+	callbackUrl: URL,
 	codeVerifier: string,
 	state: string,
 ): Promise<TokenEndpointResponse & TokenEndpointResponseHelpers> {
-	const config = await getOIDCConfig();
-
 	try {
-		// Construct the callback URL with the authorization code and state
-		const callbackUrl = new URL(OIDC_CONSTANTS.REDIRECT_URI);
-		callbackUrl.searchParams.set("code", code);
-		callbackUrl.searchParams.set("state", state);
+		const config = await getOIDCConfig();
+
+		console.log("Attempting token exchange with:", {
+			issuer: OIDC_CONSTANTS.ISSUER,
+			clientId: OIDC_CONSTANTS.CLIENT_ID,
+			redirectUri: OIDC_CONSTANTS.REDIRECT_URI,
+			callbackUrl: callbackUrl.toString(),
+			codeVerifier: codeVerifier.substring(0, 10) + "...", // Log partial verifier for debugging
+			state: state.substring(0, 10) + "...", // Log partial state for debugging
+		});
 
 		const tokenSet = await authorizationCodeGrant(config, callbackUrl, {
 			pkceCodeVerifier: codeVerifier,
 			expectedState: state,
 		});
 
+		console.log("Token exchange successful");
 		return tokenSet;
 	} catch (error) {
 		console.error("Token exchange failed:", error);
-		throw new Error("Failed to exchange authorization code for tokens");
+		console.log(error);
+
+		// Provide more specific error messages based on error type
+		if (error instanceof Error) {
+			if (error.message.includes('invalid_client')) {
+				throw new Error("Invalid client credentials. Please check your OIDC client ID and secret.");
+			}
+			if (error.message.includes('invalid_grant')) {
+				throw new Error("Invalid authorization code or PKCE verifier. The code may have expired or been used already.");
+			}
+			if (error.message.includes('redirect_uri_mismatch')) {
+				throw new Error("Redirect URI mismatch. Please check your OIDC redirect URI configuration.");
+			}
+			if (error.message.includes('network') || error.message.includes('fetch')) {
+				throw new Error("Network error connecting to OIDC provider. Please check your internet connection and OIDC issuer URL.");
+			}
+		}
+
+		throw new Error(`Failed to exchange authorization code for tokens: ${error instanceof Error ? error.message : 'Unknown error'}`);
 	}
 }
 
@@ -114,11 +167,12 @@ export async function refreshToken(
  */
 export async function getUserInfo(
 	accessToken: string,
+	expectedSubject: string,
 ): Promise<Record<string, unknown>> {
 	const config = await getOIDCConfig();
 
 	try {
-		const userinfo = await fetchUserInfo(config, accessToken, "Bearer");
+		const userinfo = await fetchUserInfo(config, accessToken, expectedSubject);
 		return userinfo;
 	} catch (error) {
 		console.error("Failed to get user info:", error);
