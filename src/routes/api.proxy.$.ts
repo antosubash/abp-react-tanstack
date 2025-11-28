@@ -58,7 +58,10 @@ async function handleProxyRequest(request: Request) {
 				headers.set("Authorization", `Bearer ${session.accessToken}`);
 			}
 		} catch (sessionError) {
-			console.warn("Failed to retrieve session for proxy request:", sessionError);
+			console.warn(
+				"Failed to retrieve session for proxy request:",
+				sessionError,
+			);
 			// Continue without authorization header
 		}
 		// Create the proxy request

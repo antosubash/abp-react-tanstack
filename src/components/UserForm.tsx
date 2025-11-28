@@ -28,10 +28,10 @@ const userFormSchema = z.object({
 	userName: z.string().min(1, "Username is required"),
 	name: z.string().optional(),
 	surname: z.string().optional(),
-	email: z.string().email("Invalid email address"),
+	email: z.email(),
 	phoneNumber: z.string().optional(),
-	isActive: z.boolean().default(true),
-	lockoutEnabled: z.boolean().default(true),
+	isActive: z.boolean(),
+	lockoutEnabled: z.boolean(),
 	password: z.string().optional(),
 	confirmPassword: z.string().optional(),
 });
@@ -73,8 +73,9 @@ export function UserForm({
 			surname: user?.surname || "",
 			email: user?.email || "",
 			phoneNumber: user?.phoneNumber || "",
-			isActive: user?.isActive ?? true,
-			lockoutEnabled: user?.lockoutEnabled ?? true,
+			isActive: user?.isActive !== undefined ? user.isActive : true,
+			lockoutEnabled:
+				user?.lockoutEnabled !== undefined ? user.lockoutEnabled : true,
 			password: "",
 			confirmPassword: "",
 		},
@@ -85,7 +86,7 @@ export function UserForm({
 			await onSubmit(data);
 			onOpenChange(false);
 			form.reset();
-		} catch (error) {
+		} catch (_error) {
 			toast.error("Failed to save user");
 		}
 	};
@@ -270,7 +271,11 @@ export function UserForm({
 								Cancel
 							</Button>
 							<Button type="submit" disabled={isLoading}>
-								{isLoading ? "Saving..." : mode === "create" ? "Create" : "Update"}
+								{isLoading
+									? "Saving..."
+									: mode === "create"
+										? "Create"
+										: "Update"}
 							</Button>
 						</DialogFooter>
 					</form>

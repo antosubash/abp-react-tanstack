@@ -1,11 +1,6 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-	IconEdit,
-	IconPlus,
-	IconTrash,
-	IconUsers,
-} from "@tabler/icons-react";
+import { IconEdit, IconPlus, IconTrash, IconUsers } from "@tabler/icons-react";
 import {
 	type ColumnDef,
 	flexRender,
@@ -34,6 +29,22 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+	Pagination,
+	PaginationContent,
+	PaginationEllipsis,
+	PaginationItem,
+	PaginationLink,
+	PaginationNext,
+	PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import {
 	Table,
 	TableBody,
 	TableCell,
@@ -43,8 +54,8 @@ import {
 } from "@/components/ui/table";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserForm } from "@/components/UserForm";
-
+import { UserForm, type UserFormData } from "@/components/UserForm";
+import { useUserFormStore } from "@/lib/user-form-store";
 
 export function UsersList() {
 	const [sorting, setSorting] = useState<SortingState>([]);
@@ -52,9 +63,18 @@ export function UsersList() {
 		pageIndex: 0,
 		pageSize: 10,
 	});
-	const [formOpen, setFormOpen] = useState(false);
-	const [editingUser, setEditingUser] = useState<IdentityUserDto | null>(null);
+
+	const pageSizeOptions = [10, 20, 50, 100];
 	const queryClient = useQueryClient();
+
+	const {
+		user: editingUser,
+		open: formOpen,
+		setLoading,
+		openCreateForm,
+		openEditForm,
+		closeForm,
+	} = useUserFormStore();
 
 	const {
 		data: usersResponse,
@@ -87,6 +107,7 @@ export function UsersList() {
 
 	const handleCreateUser = async (data: any) => {
 		try {
+			setLoading(true);
 			await createUserMutation.mutateAsync({
 				body: {
 					userName: data.userName,
@@ -101,15 +122,19 @@ export function UsersList() {
 			});
 			queryClient.invalidateQueries({ queryKey: ["userGetList"] });
 			toast.success("User created successfully");
+			closeForm();
 		} catch (error: any) {
 			toast.error(error?.message || "Failed to create user");
 			throw error;
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	const handleUpdateUser = async (data: any) => {
 		if (!editingUser?.id) return;
 		try {
+			setLoading(true);
 			await updateUserMutation.mutateAsync({
 				path: { id: editingUser.id },
 				body: {
@@ -126,9 +151,12 @@ export function UsersList() {
 			});
 			queryClient.invalidateQueries({ queryKey: ["userGetList"] });
 			toast.success("User updated successfully");
+			closeForm();
 		} catch (error: any) {
 			toast.error(error?.message || "Failed to update user");
 			throw error;
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -146,13 +174,11 @@ export function UsersList() {
 	};
 
 	const handleEditUser = (user: IdentityUserDto) => {
-		setEditingUser(user);
-		setFormOpen(true);
+		openEditForm(user);
 	};
 
 	const handleCreateNewUser = () => {
-		setEditingUser(null);
-		setFormOpen(true);
+		openCreateForm();
 	};
 
 	const columns: ColumnDef<IdentityUserDto>[] = [
@@ -256,7 +282,7 @@ export function UsersList() {
 		return (
 			<Alert variant="destructive">
 				<AlertDescription>
-					Failed to load users: {error?.message || "Unknown error"}
+					Failed to load users: {error?.error?.message || "Unknown error"}
 				</AlertDescription>
 			</Alert>
 		);
@@ -348,7 +374,10 @@ export function UsersList() {
 							))
 						) : (
 							<TableRow>
-								<TableCell colSpan={columns.length} className="h-24 text-center">
+								<TableCell
+									colSpan={columns.length}
+									className="h-24 text-center"
+								>
 									No users found.
 								</TableCell>
 							</TableRow>
@@ -357,35 +386,155 @@ export function UsersList() {
 				</Table>
 			</div>
 
-			{/* Pagination */}
-			<div className="flex items-center justify-between">
-				<div className="text-sm text-muted-foreground">
-					Showing {users.length} of {totalCount} users
+			{/* Enhanced Pagination */}
+			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+					<div className="text-sm text-muted-foreground">
+						Showing {users.length} of {totalCount} users
+					</div>
+					<div className="flex items-center gap-2">
+						<span className="text-sm text-muted-foreground">
+							Rows per page:
+						</span>
+						<Select
+							value={pagination.pageSize.toString()}
+							onValueChange={(value) => {
+								setPagination((prev) => ({
+									...prev,
+									pageSize: Number(value),
+									pageIndex: 0, // Reset to first page when changing page size
+								}));
+							}}
+						>
+							<SelectTrigger className="w-20">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{pageSizeOptions.map((size) => (
+									<SelectItem key={size} value={size.toString()}>
+										{size}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
 				</div>
-				<div className="flex items-center space-x-2">
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.previousPage()}
-						disabled={!table.getCanPreviousPage()}
-					>
-						Previous
-					</Button>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.nextPage()}
-						disabled={!table.getCanNextPage()}
-					>
-						Next
-					</Button>
-				</div>
+
+				<Pagination>
+					<PaginationContent>
+						<PaginationItem>
+							<PaginationPrevious
+								onClick={() => table.previousPage()}
+								className={
+									!table.getCanPreviousPage()
+										? "pointer-events-none opacity-50"
+										: "cursor-pointer"
+								}
+							/>
+						</PaginationItem>
+
+						{/* Page Numbers */}
+						{(() => {
+							const pageNumbers = [];
+							const totalPages = table.getPageCount();
+							const currentPage = pagination.pageIndex + 1;
+
+							// Always show first page
+							pageNumbers.push(
+								<PaginationItem key="page-1">
+									<PaginationLink
+										onClick={() =>
+											setPagination((prev) => ({ ...prev, pageIndex: 0 }))
+										}
+										isActive={currentPage === 1}
+										className="cursor-pointer"
+									>
+										1
+									</PaginationLink>
+								</PaginationItem>,
+							);
+
+							// Show ellipsis if there's a gap after first page
+							if (currentPage > 3) {
+								pageNumbers.push(
+									<PaginationItem key="ellipsis-start">
+										<PaginationEllipsis />
+									</PaginationItem>,
+								);
+							}
+
+							// Show pages around current page
+							const startPage = Math.max(2, currentPage - 1);
+							const endPage = Math.min(totalPages - 1, currentPage + 1);
+
+							for (let i = startPage; i <= endPage; i++) {
+								if (i === 1 || i === totalPages) continue; // Skip first and last as they're handled separately
+								pageNumbers.push(
+									<PaginationItem key={`page-${i}`}>
+										<PaginationLink
+											onClick={() =>
+												setPagination((prev) => ({ ...prev, pageIndex: i - 1 }))
+											}
+											isActive={currentPage === i}
+											className="cursor-pointer"
+										>
+											{i}
+										</PaginationLink>
+									</PaginationItem>,
+								);
+							}
+
+							// Show ellipsis if there's a gap before last page
+							if (currentPage < totalPages - 2) {
+								pageNumbers.push(
+									<PaginationItem key="ellipsis-end">
+										<PaginationEllipsis />
+									</PaginationItem>,
+								);
+							}
+
+							// Always show last page if there are more than 1 page
+							if (totalPages > 1) {
+								pageNumbers.push(
+									<PaginationItem key={`page-${totalPages}`}>
+										<PaginationLink
+											onClick={() =>
+												setPagination((prev) => ({
+													...prev,
+													pageIndex: totalPages - 1,
+												}))
+											}
+											isActive={currentPage === totalPages}
+											className="cursor-pointer"
+										>
+											{totalPages}
+										</PaginationLink>
+									</PaginationItem>,
+								);
+							}
+
+							return pageNumbers;
+						})()}
+
+						<PaginationItem>
+							<PaginationNext
+								onClick={() => table.nextPage()}
+								className={
+									!table.getCanNextPage()
+										? "pointer-events-none opacity-50"
+										: "cursor-pointer"
+								}
+							/>
+						</PaginationItem>
+					</PaginationContent>
+				</Pagination>
 			</div>
 
 			<UserForm
+				key={editingUser?.id || "create"}
 				user={editingUser}
 				open={formOpen}
-				onOpenChange={setFormOpen}
+				onOpenChange={closeForm}
 				onSubmit={editingUser ? handleUpdateUser : handleCreateUser}
 				isLoading={createUserMutation.isPending || updateUserMutation.isPending}
 				mode={editingUser ? "edit" : "create"}
