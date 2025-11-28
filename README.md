@@ -1,379 +1,220 @@
-Welcome to your new TanStack app! 
+# ABP React TanStack Application
 
-# Getting Started
+A modern full-stack web application built with React, TanStack Router, and integrated with ABP (ASP.NET Boilerplate Platform) backend.
 
-To run this application:
+## 🚀 Features
+
+- 🔐 **OIDC Authentication**: Secure authentication via OpenID Connect with PKCE
+- 🛠️ **API Client Generation**: Auto-generated TypeScript clients from OpenAPI specs
+- 🎨 **Modern UI**: Shadcn/ui components with Tailwind CSS
+- 🚀 **SSR Support**: Server-side rendering with TanStack Start
+- 🐳 **Docker Ready**: Containerized deployment
+- 👥 **User & Role Management**: Complete identity management system
+- 🔒 **Permission System**: Granular permission management
+
+## 📋 Prerequisites
+
+- Node.js 18+ and pnpm
+- Access to an ABP backend API (default: https://abp.antosubash.com)
+- OIDC provider (for authentication)
+
+## 🛠️ Installation
 
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd abp-react-tanstack
+
+# Install dependencies
 pnpm install
-pnpm start
+
+# Generate API client from OpenAPI spec
+pnpm generate-api
+
+# Start development server
+pnpm dev
 ```
 
-# Building For Production
+## ⚙️ Configuration
 
-To build this application for production:
+### Environment Variables
+
+Create a `.env` file in the root directory:
 
 ```bash
-pnpm build
+# API Configuration
+VITE_API_BASE_URL=https://abp.antosubash.com
+VITE_OPENAPI_SPEC_URL=https://abp.antosubash.com/swagger/v1/swagger.json
+VITE_API_PROXY_PATH=/api/proxy
+
+# OIDC Configuration
+VITE_OIDC_ISSUER=https://your-oidc-provider.com
+VITE_OIDC_CLIENT_ID=your-client-id
+VITE_OIDC_CLIENT_SECRET=your-client-secret
+VITE_BASE_URL=http://localhost:3000
+VITE_OIDC_REDIRECT_URI=http://localhost:3000/auth/callback
+
+# Session Configuration
+VITE_SESSION_SECRET=your-super-secret-key-change-this-in-production
+
+# Application Configuration
+VITE_APP_NAME=abp-react-tanstack
+VITE_APP_VERSION=v1
 ```
 
-## Testing
+## 🏗️ Architecture
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+### Tech Stack
 
-```bash
-pnpm test
+- **Frontend Framework**: React 19.2.0 with TanStack Router
+- **Full-stack Framework**: TanStack Start for SSR and server functions
+- **State Management**: TanStack Query for data fetching
+- **UI Framework**: Tailwind CSS with Shadcn/ui components
+- **Authentication**: OpenID Connect with PKCE
+- **API Integration**: Auto-generated TypeScript client from OpenAPI specs
+- **Build Tool**: Vite
+- **Testing**: Vitest
+- **Code Quality**: Biome for linting and formatting
+
+### Project Structure
+
+```
+src/
+├── client/                              # Generated API client
+│   ├── @tanstack/                       # TanStack Query hooks
+│   ├── client/                          # Fetch client utilities
+│   ├── core/                            # Core API utilities
+│   ├── index.ts                         # Main API exports
+│   ├── sdk.gen.ts                       # Generated SDK
+│   └── types.gen.ts                     # Generated TypeScript types
+├── components/
+│   ├── ui/                              # Shadcn/ui components
+│   ├── app-sidebar.tsx                  # Application sidebar
+│   ├── data-table.tsx                   # Data table component
+│   ├── Header.tsx                       # Application header
+│   ├── nav-*.tsx                        # Navigation components
+│   ├── ProtectedRoute.tsx               # Route protection wrapper
+│   ├── section-cards.tsx                # UI card components
+│   ├── SidebarLayout.tsx                # Sidebar layout wrapper
+│   ├── RolesList.tsx                    # Roles management component
+│   ├── UsersList.tsx                    # Users management component
+│   └── PermissionGroup.tsx              # Permission management component
+├── hooks/
+│   ├── use-auth.tsx                     # Authentication hooks
+│   └── use-mobile.ts                    # Mobile detection hook
+├── lib/
+│   ├── auth-server.ts                   # Server-side auth utilities
+│   ├── constants.ts                     # Application constants
+│   ├── oidc.ts                          # OIDC client utilities
+│   ├── session.ts                       # Session management
+│   ├── permission-store.ts              # Permission state management
+│   └── utils.ts                         # Utility functions
+├── routes/
+│   ├── __root.tsx                       # Root route with providers
+│   ├── index.tsx                        # Landing page
+│   ├── auth.*.ts                        # Authentication routes
+│   ├── api.*.ts                         # API routes
+│   ├── roles.tsx                        # Roles management page
+│   ├── users.tsx                        # Users management page
+│   └── demo/                            # Demo feature routes
+└── hey-api.ts                           # API client configuration
 ```
 
-## Styling
+## 🔐 Authentication
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+### OIDC Setup
 
+1. Configure your OIDC provider with the following settings:
+   - Client ID: Your application's client identifier
+   - Client Secret: Your application's client secret
+   - Redirect URI: `http://localhost:3000/auth/callback`
+   - Scopes: `openid profile email offline_access AbpTemplate`
+   - Grant Types: `authorization_code refresh_token`
 
-## Linting & Formatting
+2. Update the environment variables in your `.env` file
 
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
+3. The application will handle the OIDC flow automatically
 
+### Protecting Routes
 
-```bash
-pnpm lint
-pnpm format
-pnpm check
-```
-
-
-## Shadcn
-
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
-
-```bash
-pnpx shadcn@latest add button
-```
-
-
-
-## Routing
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add another a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+Use the `ProtectedRoute` component to protect routes that require authentication:
 
 ```tsx
-import { Link } from "@tanstack/react-router";
-```
+import { ProtectedRoute } from "../components/ProtectedRoute";
 
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-
-import { Link } from "@tanstack/react-router";
-
-export const Route = createRootRoute({
+export const Route = createFileRoute("/protected")({
   component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
-})
-```
-
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/people",
-  loader: async () => {
-    const response = await fetch("https://swapi.dev/api/people");
-    return response.json() as Promise<{
-      results: {
-        name: string;
-      }[];
-    }>;
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData();
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    );
-  },
-});
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
-
-```bash
-pnpm add @tanstack/react-query @tanstack/react-query-devtools
-```
-
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
-
-```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// ...
-
-const queryClient = new QueryClient();
-
-// ...
-
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
-}
-```
-
-You can also add TanStack Query Devtools to the root route (optional).
-
-```tsx
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools />
-    </>
+    <ProtectedRoute>
+      <div>Protected content here</div>
+    </ProtectedRoute>
   ),
 });
 ```
 
-Now you can use `useQuery` to fetch your data.
+### Using Authentication
 
 ```tsx
-import { useQuery } from "@tanstack/react-query";
+import { useAuth, useAuthState } from "../hooks/use-auth";
 
-import "./App.css";
+function MyComponent() {
+  const { login, logout } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuthState();
 
-function App() {
-  const { data } = useQuery({
-    queryKey: ["people"],
-    queryFn: () =>
-      fetch("https://swapi.dev/api/people")
-        .then((res) => res.json())
-        .then((data) => data.results as { name: string }[]),
-    initialData: [],
-  });
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div>
-      <ul>
-        {data.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
+      {isAuthenticated ? (
+        <div>
+          <p>Welcome, {user?.name}!</p>
+          <button onClick={logout}>Logout</button>
+        </div>
+      ) : (
+        <button onClick={login}>Login</button>
+      )}
     </div>
   );
 }
-
-export default App;
 ```
 
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
+## 👥 User & Role Management
 
-#### API Client Demo
+### Users Management
 
-Check out the live demo at `/demo/api-client` to see the generated API client with TanStack Query in action.
+- View, create, edit, and delete users
+- Assign roles to users
+- Manage user permissions
+- Filter and search users
 
-## State Management
+### Roles Management
 
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
+- View, create, edit, and delete roles
+- Assign permissions to roles
+- Manage role hierarchy
+- Filter and search roles
 
-First you need to add TanStack Store as a dependency:
+### Permission System
+
+- Granular permission management
+- Group permissions by category
+- Assign permissions to roles
+- Visual permission tree interface
+
+## 🔌 API Integration
+
+### Generated API Client
+
+The project uses Hey API to generate a TypeScript client from the ABP backend OpenAPI specification:
 
 ```bash
-pnpm add @tanstack/store
-```
-
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-function App() {
-  const count = useStore(countStore);
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-    </div>
-  );
-}
-
-export default App;
-```
-
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
-
-Let's check this out by doubling the count using derived state.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store, Derived } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-const doubledStore = new Derived({
-  fn: () => countStore.state * 2,
-  deps: [countStore],
-});
-doubledStore.mount();
-
-function App() {
-  const count = useStore(countStore);
-  const doubledCount = useStore(doubledStore);
-
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-      <div>Doubled - {doubledCount}</div>
-    </div>
-  );
-}
-
-export default App;
-```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-## API Client Generation
-
-This project uses [Hey API](https://heyapi.dev/) to generate a TypeScript SDK client from the ABP API OpenAPI specification.
-
-### Regenerating the API Client
-
-To regenerate the API client when the backend API changes:
-
-```bash
+# Regenerate API client
 pnpm generate-api
 ```
 
-This will:
-- Fetch the latest OpenAPI spec from `https://abp.antosubash.com/swagger/v1/swagger.json`
-- Generate TypeScript types and client functions in `src/lib/api/`
-- Clean the output directory before generating new files
-
-### Configuration
-
-The API generation is configured in `hey-api.config.ts`. You can modify this file to:
-- Change the input OpenAPI URL
-- Adjust output settings
-- Configure different client types
-- Enable/disable plugins
-
-### Generated Features
-
-The API client includes the following plugins:
-
-- **Zod Validation**: Type-safe validation schemas for all API requests and responses
-- **TanStack Query**: Ready-to-use React Query hooks for data fetching and mutations
-
-### Using the Generated API Client
-
-#### Direct API Calls
-
-Import and use the generated functions directly:
+### Using the API Client
 
 ```typescript
-import { loginLogin, userGetList } from '@/lib/api';
-
-// Login example
-const loginResult = await loginLogin({
-  body: {
-    userNameOrEmailAddress: 'user@example.com',
-    password: 'password123'
-  }
-});
-
-// Get users list
-const users = await userGetList({
-  query: {
-    skipCount: 0,
-    maxResultCount: 10
-  }
-});
-```
-
-#### With TanStack Query Hooks
-
-Use the generated React Query hooks for better data management:
-
-```typescript
-import { useQuery, useMutation } from '@tanstack/react-query';
-import {
-  userGetListOptions,
-  userCreateMutation,
-  loginLoginMutation
-} from '@/lib/api';
+import { userGetListOptions, roleCreateMutation } from '@/client/@tanstack/react-query.gen';
 
 // Query example
 const { data: users, isLoading } = useQuery(userGetListOptions({
@@ -384,44 +225,166 @@ const { data: users, isLoading } = useQuery(userGetListOptions({
 }));
 
 // Mutation example
-const loginMutation = useMutation(loginLoginMutation());
-const createUserMutation = useMutation(userCreateMutation());
+const createRoleMutation = useMutation(roleCreateMutation());
 
-const handleLogin = () => {
-  loginMutation.mutate({
+const handleCreateRole = () => {
+  createRoleMutation.mutate({
     body: {
-      userNameOrEmailAddress: 'user@example.com',
-      password: 'password123'
+      name: 'New Role',
+      displayName: 'New Role Display',
+      isActive: true
     }
   });
 };
 ```
 
-#### With Zod Validation
+## 🎨 UI Components
 
-Use the generated Zod schemas for runtime validation:
+The project uses Shadcn/ui components with Tailwind CSS for styling:
 
-```typescript
-import { zLoginLoginData, zUserCreateData } from '@/lib/api';
+- Modern, accessible components
+- Dark mode support
+- Responsive design
+- Consistent design system
 
-// Validate login data
-const loginData = zLoginLoginData.parse({
-  userNameOrEmailAddress: 'user@example.com',
-  password: 'password123'
-});
+### Adding New Components
 
-// Validate user creation data
-const userData = zUserCreateData.parse({
-  userName: 'newuser',
-  emailAddress: 'newuser@example.com',
-  password: 'securepassword'
-});
+```bash
+# Add a new Shadcn/ui component
+pnpx shadcn@latest add button
 ```
 
-# Demo files
+## 🚀 Deployment
 
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
+### Docker
 
-# Learn More
+```bash
+# Build Docker image
+pnpm docker:build
 
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+# Run Docker container
+pnpm docker:run
+
+# Build and run in one command
+pnpm docker:up
+
+# Use Docker Compose
+pnpm docker:compose:up
+```
+
+### Production Build
+
+```bash
+# Build for production
+pnpm build
+
+# Start production server
+pnpm start
+```
+
+## 🧪 Testing
+
+```bash
+# Run tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test --watch
+
+# Run tests with coverage
+pnpm test --coverage
+```
+
+## 🔧 Development
+
+### Code Quality
+
+```bash
+# Lint code
+pnpm lint
+
+# Format code
+pnpm format
+
+# Check code quality
+pnpm check
+
+# Type check
+pnpm typecheck
+```
+
+### Adding New Routes
+
+1. Create a new file in `src/routes/` following the file-based routing pattern
+2. TanStack Router will automatically generate the route configuration
+3. Use `createFileRoute()` for route definition
+4. Import and use `Link` component for navigation
+
+### API Client Updates
+
+When the backend API changes:
+
+1. Update the OpenAPI spec URL in `hey-api.config.ts` if needed
+2. Run `pnpm generate-api` to regenerate the client
+3. Update your code to use any new endpoints or types
+
+## 📚 Documentation
+
+- [TanStack Router Documentation](https://tanstack.com/router)
+- [TanStack Query Documentation](https://tanstack.com/query)
+- [TanStack Start Documentation](https://tanstack.com/start)
+- [Shadcn/ui Documentation](https://ui.shadcn.com/)
+- [Hey API Documentation](https://heyapi.dev/)
+- [ABP Framework Documentation](https://abp.io/)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🆘 Troubleshooting
+
+### Common Issues
+
+1. **API Client Generation Fails**
+   - Check backend OpenAPI spec URL availability
+   - Verify network connectivity
+   - Check Hey API configuration
+
+2. **Authentication Issues**
+   - Verify OIDC provider configuration
+   - Check environment variables
+   - Validate redirect URIs
+   - Check session secret strength
+
+3. **Build Issues**
+   - Clear node_modules and reinstall
+   - Check TypeScript errors
+   - Verify Vite configuration
+   - Check dependency versions
+
+4. **Runtime Errors**
+   - Check browser console for errors
+   - Verify environment variables loaded
+   - Check API endpoints accessibility
+   - Validate session storage
+
+### Debug Mode
+
+```bash
+# Enable debug logging
+DEBUG=oidc:* pnpm dev
+
+# Check build output
+pnpm build --debug
+
+# Run tests in watch mode
+pnpm test --watch
+```
