@@ -136,9 +136,15 @@ export async function revokeToken(
 	const config = await getOIDCConfig();
 
 	try {
-		await tokenRevocation(config, token, tokenTypeHint ? {
-			token_type_hint: tokenTypeHint,
-		} : {});
+		await tokenRevocation(
+			config,
+			token,
+			tokenTypeHint
+				? {
+						token_type_hint: tokenTypeHint,
+					}
+				: {},
+		);
 	} catch (error) {
 		console.error("Token revocation failed:", error);
 		throw new Error("Failed to revoke token");

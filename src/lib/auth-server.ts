@@ -1,7 +1,10 @@
 import { getServerSession } from "@tanstack/react-start/server";
 import { OIDC_CONSTANTS } from "./constants";
 import { getUserInfo, refreshToken } from "./oidc";
-import type { TokenEndpointResponse, TokenEndpointResponseHelpers } from "openid-client";
+import type {
+	TokenEndpointResponse,
+	TokenEndpointResponseHelpers,
+} from "openid-client";
 
 // Session types
 export interface User {
@@ -53,7 +56,8 @@ export async function getSession(
 					}
 					sessionData.accessToken = accessToken;
 					sessionData.refreshToken = newTokens.refresh_token;
-					sessionData.expiresAt = Date.now() + (newTokens.expiresIn?.() || 3600) * 1000;
+					sessionData.expiresAt =
+						Date.now() + (newTokens.expiresIn?.() || 3600) * 1000;
 
 					// Update session with new tokens
 					await updateSession(request, sessionData);

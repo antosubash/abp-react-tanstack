@@ -25,9 +25,6 @@ export const OIDC_CONSTANTS = {
 	// OIDC Provider Configuration
 	ISSUER: import.meta.env.VITE_OIDC_ISSUER || "https://your-oidc-provider.com",
 	CLIENT_ID: import.meta.env.VITE_OIDC_CLIENT_ID || "your-client-id",
-	CLIENT_SECRET:
-		import.meta.env.VITE_OIDC_CLIENT_SECRET || "your-client-secret",
-
 	// Application URLs
 	BASE_URL: import.meta.env.VITE_BASE_URL || "http://localhost:3000",
 	REDIRECT_URI:

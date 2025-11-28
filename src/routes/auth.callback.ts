@@ -39,7 +39,11 @@ export const APIRoute = createAPIFileRoute("/api/auth/callback")({
 				throw redirect("/?error=state_mismatch", 302);
 			}
 
-			const tokenSet = await exchangeCodeForTokens(code, session.codeVerifier, state);
+			const tokenSet = await exchangeCodeForTokens(
+				code,
+				session.codeVerifier,
+				state,
+			);
 
 			// Create user session
 			await createSession(request, tokenSet);
