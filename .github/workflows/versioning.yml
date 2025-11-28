@@ -53,7 +53,6 @@ jobs:
 
       - name: Update package.json version
         run: |
-          cd src
           # Update version in package.json
           jq ".version = \"${{ steps.increment-version.outputs.new_version }}\"" package.json > package.json.tmp
           mv package.json.tmp package.json
