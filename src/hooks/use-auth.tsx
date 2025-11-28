@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	const { data: userData, isLoading } = useQuery({
 		queryKey: ["auth", "me"],
 		queryFn: async () => {
-			const response = await fetch("/api/auth/me");
+			const response = await fetch("/auth/me");
 			if (!response.ok) {
 				throw new Error("Failed to fetch user data");
 			}
@@ -105,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	// Logout function
 	const logout = async () => {
 		try {
-			const response = await fetch("/api/auth/logout");
+			const response = await fetch("/auth/logout");
 			if (response.redirected) {
 				window.location.href = response.url;
 			} else {
