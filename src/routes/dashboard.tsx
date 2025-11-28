@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useId } from "react";
 import {
 	Bar,
 	BarChart,
@@ -21,7 +21,6 @@ import {
 	IconActivity,
 	IconBell,
 	IconUser,
-	IconChartPie as IconPieChart,
 } from "@tabler/icons-react";
 import dashboardData from "../app/dashboard/data.json";
 import { DataTable } from "../components/data-table";
@@ -62,6 +61,7 @@ const COLORS = {
 
 function DashboardComponent() {
 	const { user } = useAuthState();
+	const gradientId = useId();
 
 	const data = dashboardData as ProjectTask[];
 
@@ -140,14 +140,17 @@ function DashboardComponent() {
 						<div>
 							<h1 className="text-4xl font-bold text-white mb-2">Dashboard</h1>
 							<p className="text-slate-400">
-								Welcome back, {user?.name || user?.preferred_username || "User"}!
+								Welcome back, {user?.name || user?.preferred_username || "User"}
+								!
 							</p>
 						</div>
 						<div className="flex items-center gap-4">
 							<Button variant="outline" size="sm">
 								<IconBell className="w-4 h-4 mr-2" />
 								Notifications
-								<Badge variant="destructive" className="ml-2">3</Badge>
+								<Badge variant="destructive" className="ml-2">
+									3
+								</Badge>
 							</Button>
 							<Avatar>
 								<AvatarImage src="" alt={user?.name || "User"} />
@@ -163,7 +166,9 @@ function DashboardComponent() {
 						<Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors">
 							<CardHeader className="pb-3">
 								<div className="flex items-center justify-between">
-									<CardTitle className="text-lg text-white">Total Tasks</CardTitle>
+									<CardTitle className="text-lg text-white">
+										Total Tasks
+									</CardTitle>
 									<IconTarget className="w-5 h-5 text-cyan-400" />
 								</div>
 							</CardHeader>
@@ -181,7 +186,9 @@ function DashboardComponent() {
 						<Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors">
 							<CardHeader className="pb-3">
 								<div className="flex items-center justify-between">
-									<CardTitle className="text-lg text-white">Completed</CardTitle>
+									<CardTitle className="text-lg text-white">
+										Completed
+									</CardTitle>
 									<IconCircleCheckFilled className="w-5 h-5 text-green-400" />
 								</div>
 							</CardHeader>
@@ -191,7 +198,8 @@ function DashboardComponent() {
 								</div>
 								<div className="flex items-center justify-between text-sm">
 									<span className="text-slate-400">
-										{Math.round((metrics.doneTasks / metrics.totalTasks) * 100)}% of total
+										{Math.round((metrics.doneTasks / metrics.totalTasks) * 100)}
+										% of total
 									</span>
 									<Badge variant="secondary" className="text-green-400">
 										+12%
@@ -203,7 +211,9 @@ function DashboardComponent() {
 						<Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors">
 							<CardHeader className="pb-3">
 								<div className="flex items-center justify-between">
-									<CardTitle className="text-lg text-white">In Progress</CardTitle>
+									<CardTitle className="text-lg text-white">
+										In Progress
+									</CardTitle>
 									<IconClock className="w-5 h-5 text-amber-400" />
 								</div>
 							</CardHeader>
@@ -213,7 +223,10 @@ function DashboardComponent() {
 								</div>
 								<div className="flex items-center justify-between text-sm">
 									<span className="text-slate-400">
-										{Math.round((metrics.inProcessTasks / metrics.totalTasks) * 100)}% of total
+										{Math.round(
+											(metrics.inProcessTasks / metrics.totalTasks) * 100,
+										)}
+										% of total
 									</span>
 									<Badge variant="secondary" className="text-amber-400">
 										Active
@@ -225,7 +238,9 @@ function DashboardComponent() {
 						<Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors">
 							<CardHeader className="pb-3">
 								<div className="flex items-center justify-between">
-									<CardTitle className="text-lg text-white">Completion Rate</CardTitle>
+									<CardTitle className="text-lg text-white">
+										Completion Rate
+									</CardTitle>
 									<IconChartBar className="w-5 h-5 text-purple-400" />
 								</div>
 							</CardHeader>
@@ -273,7 +288,7 @@ function DashboardComponent() {
 											}
 											labelLine={false}
 										>
-											{statusChartData.map((entry, index) => (
+											{statusChartData.map((entry, _index) => (
 												<Cell
 													key={`cell-${entry.name}`}
 													fill={entry.color}
@@ -327,7 +342,10 @@ function DashboardComponent() {
 							</CardHeader>
 							<CardContent>
 								<ChartContainer config={chartConfig} className="h-[300px]">
-									<BarChart data={typeChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+									<BarChart
+										data={typeChartData}
+										margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+									>
 										<CartesianGrid strokeDasharray="3 3" stroke="#374151" />
 										<XAxis
 											dataKey="type"
@@ -347,19 +365,33 @@ function DashboardComponent() {
 												color: "#f1f5f9",
 											}}
 											labelStyle={{ color: "#f1f5f9" }}
-											formatter={(value, name) => [value, 'Count']}
+											formatter={(value, _name) => [value, "Count"]}
 										/>
 										<Bar
 											dataKey="count"
-											fill="url(#barGradient)"
+											fill={`url(#${gradientId})`}
 											radius={[4, 4, 0, 0]}
 											stroke="#06b6d4"
 											strokeWidth={1}
 										/>
 										<defs>
-											<linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-												<stop offset="5%" stopColor="#06b6d4" stopOpacity={0.8}/>
-												<stop offset="95%" stopColor="#06b6d4" stopOpacity={0.3}/>
+											<linearGradient
+												id={gradientId}
+												x1="0"
+												y1="0"
+												x2="0"
+												y2="1"
+											>
+												<stop
+													offset="5%"
+													stopColor="#06b6d4"
+													stopOpacity={0.8}
+												/>
+												<stop
+													offset="95%"
+													stopColor="#06b6d4"
+													stopOpacity={0.3}
+												/>
 											</linearGradient>
 										</defs>
 									</BarChart>
@@ -391,15 +423,26 @@ function DashboardComponent() {
 										<div className="flex-1">
 											<div className="flex items-center gap-2 mb-1">
 												<Avatar className="w-6 h-6">
-													<AvatarFallback className="text-xs">EL</AvatarFallback>
+													<AvatarFallback className="text-xs">
+														EL
+													</AvatarFallback>
 												</Avatar>
-												<span className="text-sm font-medium text-white">Eddie Lake</span>
-												<span className="text-xs text-slate-400">2 hours ago</span>
+												<span className="text-sm font-medium text-white">
+													Eddie Lake
+												</span>
+												<span className="text-xs text-slate-400">
+													2 hours ago
+												</span>
 											</div>
 											<p className="text-sm text-slate-300">
 												Completed task: "Executive summary" and moved to review
 											</p>
-											<Badge variant="secondary" className="text-green-400 mt-1">Completed</Badge>
+											<Badge
+												variant="secondary"
+												className="text-green-400 mt-1"
+											>
+												Completed
+											</Badge>
 										</div>
 									</div>
 
@@ -411,15 +454,26 @@ function DashboardComponent() {
 										<div className="flex-1">
 											<div className="flex items-center gap-2 mb-1">
 												<Avatar className="w-6 h-6">
-													<AvatarFallback className="text-xs">JT</AvatarFallback>
+													<AvatarFallback className="text-xs">
+														JT
+													</AvatarFallback>
 												</Avatar>
-												<span className="text-sm font-medium text-white">Jamik Tashpulatov</span>
-												<span className="text-xs text-slate-400">4 hours ago</span>
+												<span className="text-sm font-medium text-white">
+													Jamik Tashpulatov
+												</span>
+												<span className="text-xs text-slate-400">
+													4 hours ago
+												</span>
 											</div>
 											<p className="text-sm text-slate-300">
 												Updated progress on "Technical approach" - 85% complete
 											</p>
-											<Badge variant="secondary" className="text-amber-400 mt-1">In Progress</Badge>
+											<Badge
+												variant="secondary"
+												className="text-amber-400 mt-1"
+											>
+												In Progress
+											</Badge>
 										</div>
 									</div>
 
@@ -431,15 +485,23 @@ function DashboardComponent() {
 										<div className="flex-1">
 											<div className="flex items-center gap-2 mb-1">
 												<Avatar className="w-6 h-6">
-													<AvatarFallback className="text-xs">MC</AvatarFallback>
+													<AvatarFallback className="text-xs">
+														MC
+													</AvatarFallback>
 												</Avatar>
-												<span className="text-sm font-medium text-white">Maya Johnson</span>
-												<span className="text-xs text-slate-400">6 hours ago</span>
+												<span className="text-sm font-medium text-white">
+													Maya Johnson
+												</span>
+												<span className="text-xs text-slate-400">
+													6 hours ago
+												</span>
 											</div>
 											<p className="text-sm text-slate-300">
 												Assigned reviewer for "System Architecture Overview"
 											</p>
-											<Badge variant="secondary" className="text-blue-400 mt-1">Assigned</Badge>
+											<Badge variant="secondary" className="text-blue-400 mt-1">
+												Assigned
+											</Badge>
 										</div>
 									</div>
 
@@ -451,15 +513,26 @@ function DashboardComponent() {
 										<div className="flex-1">
 											<div className="flex items-center gap-2 mb-1">
 												<Avatar className="w-6 h-6">
-													<AvatarFallback className="text-xs">RC</AvatarFallback>
+													<AvatarFallback className="text-xs">
+														RC
+													</AvatarFallback>
 												</Avatar>
-												<span className="text-sm font-medium text-white">Carlos Rodriguez</span>
-												<span className="text-xs text-slate-400">8 hours ago</span>
+												<span className="text-sm font-medium text-white">
+													Carlos Rodriguez
+												</span>
+												<span className="text-xs text-slate-400">
+													8 hours ago
+												</span>
 											</div>
 											<p className="text-sm text-slate-300">
 												Created new task: "Risk Management Plan"
 											</p>
-											<Badge variant="secondary" className="text-purple-400 mt-1">Created</Badge>
+											<Badge
+												variant="secondary"
+												className="text-purple-400 mt-1"
+											>
+												Created
+											</Badge>
 										</div>
 									</div>
 								</div>
@@ -477,16 +550,26 @@ function DashboardComponent() {
 							<CardContent className="space-y-4">
 								<div className="space-y-3">
 									<div className="flex items-center justify-between">
-										<span className="text-sm text-slate-400">Tasks this week</span>
+										<span className="text-sm text-slate-400">
+											Tasks this week
+										</span>
 										<Badge variant="outline">+12</Badge>
 									</div>
 									<div className="flex items-center justify-between">
-										<span className="text-sm text-slate-400">Completed today</span>
-										<Badge variant="outline" className="text-green-400">3</Badge>
+										<span className="text-sm text-slate-400">
+											Completed today
+										</span>
+										<Badge variant="outline" className="text-green-400">
+											3
+										</Badge>
 									</div>
 									<div className="flex items-center justify-between">
-										<span className="text-sm text-slate-400">Overdue tasks</span>
-										<Badge variant="outline" className="text-red-400">2</Badge>
+										<span className="text-sm text-slate-400">
+											Overdue tasks
+										</span>
+										<Badge variant="outline" className="text-red-400">
+											2
+										</Badge>
 									</div>
 									<Separator className="my-3" />
 									<div className="flex items-center justify-between">
