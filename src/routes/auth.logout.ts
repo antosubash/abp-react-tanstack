@@ -1,18 +1,27 @@
-import { redirect } from "@tanstack/react-start";
-import { createAPIFileRoute } from "@tanstack/react-start/api";
-import { clearSession } from "../lib/auth-server";
+import { createFileRoute } from "@tanstack/react-router";
+import { clearUserSession } from "../lib/auth-server";
 
-export const APIRoute = createAPIFileRoute("/api/auth/logout")({
-	loader: async ({ request }) => {
-		try {
-			// Clear the user session
-			await clearSession(request);
+export const Route = createFileRoute("/auth/logout")({
+	server: {
+		handlers: {
+			GET: async () => {
+				try {
+					// Clear the user session
+					await clearUserSession();
 
-			// Redirect to home page
-			throw redirect("/", 302);
-		} catch (error) {
-			console.error("Logout failed:", error);
-			throw redirect("/?error=logout_failed", 302);
-		}
+					// Redirect to home page
+					return new Response(null, {
+						status: 302,
+						headers: { Location: "/" },
+					})
+				} catch (error) {
+					console.error("Logout failed:", error);
+					return new Response(null, {
+						status: 302,
+						headers: { Location: "/?error=logout_failed" },
+					})
+				}
+			},
+		},
 	},
 });

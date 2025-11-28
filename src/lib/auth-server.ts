@@ -1,4 +1,4 @@
-import { getServerSession } from "@tanstack/react-start/server";
+import { getSession, updateSession, clearSession } from "@tanstack/react-start/server";
 import { OIDC_CONSTANTS } from "./constants";
 import { getUserInfo, refreshToken } from "./oidc";
 import type {
@@ -30,20 +30,17 @@ export interface SessionData {
 /**
  * Get session from request
  */
-export async function getSession(
-	request: Request,
-): Promise<SessionData | null> {
+export async function getUserSession(): Promise<SessionData | null> {
 	try {
-		const session = await getServerSession({
-			request,
+		const session = await getSession({
 			password: OIDC_CONSTANTS.SESSION_SECRET,
 		});
 
-		if (!session) {
+		if (!session || !session.data) {
 			return null;
 		}
 
-		const sessionData = session as SessionData;
+		const sessionData = session.data as SessionData;
 
 		// Check if token is expired and try to refresh
 		if (Date.now() >= sessionData.expiresAt) {
@@ -60,16 +57,16 @@ export async function getSession(
 						Date.now() + (newTokens.expiresIn?.() || 3600) * 1000;
 
 					// Update session with new tokens
-					await updateSession(request, sessionData);
+					await updateUserSession(sessionData);
 				} catch (error) {
 					console.error("Token refresh failed:", error);
 					// Token refresh failed, clear session
-					await clearSession(request);
+					await clearUserSession();
 					return null;
 				}
 			} else {
 				// No refresh token available, clear session
-				await clearSession(request);
+				await clearUserSession();
 				return null;
 			}
 		}
@@ -85,7 +82,6 @@ export async function getSession(
  * Create/update session with user data
  */
 export async function createSession(
-	request: Request,
 	tokenResponse: TokenEndpointResponse & TokenEndpointResponseHelpers,
 ): Promise<SessionData> {
 	try {
@@ -98,17 +94,15 @@ export async function createSession(
 		const userInfo = await getUserInfo(accessToken);
 
 		const sessionData: SessionData = {
-			user: userInfo as User,
+			user: userInfo as unknown as User,
 			accessToken,
 			refreshToken: tokenResponse.refresh_token,
 			expiresAt: Date.now() + (tokenResponse.expiresIn?.() || 3600) * 1000,
 		};
 
-		await getServerSession({
-			request,
+		await updateSession({
 			password: OIDC_CONSTANTS.SESSION_SECRET,
-			data: sessionData,
-		});
+		}, sessionData);
 
 		return sessionData;
 	} catch (error) {
@@ -120,16 +114,13 @@ export async function createSession(
 /**
  * Update existing session
  */
-export async function updateSession(
-	request: Request,
+export async function updateUserSession(
 	sessionData: SessionData,
 ): Promise<void> {
 	try {
-		await getServerSession({
-			request,
+		await updateSession({
 			password: OIDC_CONSTANTS.SESSION_SECRET,
-			data: sessionData,
-		});
+		}, sessionData);
 	} catch (error) {
 		console.error("Session update failed:", error);
 		throw new Error("Failed to update session");
@@ -139,12 +130,10 @@ export async function updateSession(
 /**
  * Clear user session
  */
-export async function clearSession(request: Request): Promise<void> {
+export async function clearUserSession(): Promise<void> {
 	try {
-		await getServerSession({
-			request,
+		await clearSession({
 			password: OIDC_CONSTANTS.SESSION_SECRET,
-			data: null,
 		});
 	} catch (error) {
 		console.error("Session clear failed:", error);
@@ -154,8 +143,8 @@ export async function clearSession(request: Request): Promise<void> {
 /**
  * Check if user is authenticated
  */
-export async function requireAuth(request: Request): Promise<SessionData> {
-	const session = await getSession(request);
+export async function requireAuth(): Promise<SessionData> {
+	const session = await getUserSession();
 
 	if (!session) {
 		throw new Response("Unauthorized", { status: 401 });

@@ -9,8 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoClientRouteImport } from './routes/demo/client'
+import { Route as AuthMeRouteImport } from './routes/auth.me'
+import { Route as AuthLogoutRouteImport } from './routes/auth.logout'
+import { Route as AuthLoginRouteImport } from './routes/auth.login'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as ApiHealthRouteImport } from './routes/api.health'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
@@ -21,6 +26,11 @@ import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
 
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -29,6 +39,26 @@ const IndexRoute = IndexRouteImport.update({
 const DemoClientRoute = DemoClientRouteImport.update({
   id: '/demo/client',
   path: '/demo/client',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthMeRoute = AuthMeRouteImport.update({
+  id: '/auth/me',
+  path: '/auth/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLogoutRoute = AuthLogoutRouteImport.update({
+  id: '/auth/logout',
+  path: '/auth/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
@@ -79,7 +109,12 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/api/health': typeof ApiHealthRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/logout': typeof AuthLogoutRoute
+  '/auth/me': typeof AuthMeRoute
   '/demo/client': typeof DemoClientRoute
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -92,7 +127,12 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/api/health': typeof ApiHealthRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/logout': typeof AuthLogoutRoute
+  '/auth/me': typeof AuthMeRoute
   '/demo/client': typeof DemoClientRoute
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -106,7 +146,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/api/health': typeof ApiHealthRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/logout': typeof AuthLogoutRoute
+  '/auth/me': typeof AuthMeRoute
   '/demo/client': typeof DemoClientRoute
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -121,7 +166,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/dashboard'
     | '/api/health'
+    | '/auth/callback'
+    | '/auth/login'
+    | '/auth/logout'
+    | '/auth/me'
     | '/demo/client'
     | '/api/proxy/$'
     | '/demo/api/names'
@@ -134,7 +184,12 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dashboard'
     | '/api/health'
+    | '/auth/callback'
+    | '/auth/login'
+    | '/auth/logout'
+    | '/auth/me'
     | '/demo/client'
     | '/api/proxy/$'
     | '/demo/api/names'
@@ -147,7 +202,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/dashboard'
     | '/api/health'
+    | '/auth/callback'
+    | '/auth/login'
+    | '/auth/logout'
+    | '/auth/me'
     | '/demo/client'
     | '/api/proxy/$'
     | '/demo/api/names'
@@ -161,7 +221,12 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRoute: typeof DashboardRoute
   ApiHealthRoute: typeof ApiHealthRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthLogoutRoute: typeof AuthLogoutRoute
+  AuthMeRoute: typeof AuthMeRoute
   DemoClientRoute: typeof DemoClientRoute
   ApiProxySplatRoute: typeof ApiProxySplatRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
@@ -175,6 +240,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -187,6 +259,34 @@ declare module '@tanstack/react-router' {
       path: '/demo/client'
       fullPath: '/demo/client'
       preLoaderRoute: typeof DemoClientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/me': {
+      id: '/auth/me'
+      path: '/auth/me'
+      fullPath: '/auth/me'
+      preLoaderRoute: typeof AuthMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/logout': {
+      id: '/auth/logout'
+      path: '/auth/logout'
+      fullPath: '/auth/logout'
+      preLoaderRoute: typeof AuthLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/health': {
@@ -257,7 +357,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRoute: DashboardRoute,
   ApiHealthRoute: ApiHealthRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthLogoutRoute: AuthLogoutRoute,
+  AuthMeRoute: AuthMeRoute,
   DemoClientRoute: DemoClientRoute,
   ApiProxySplatRoute: ApiProxySplatRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,

@@ -25,6 +25,7 @@ export interface AuthState {
 	user: User | null;
 	isLoading: boolean;
 	isAuthenticated: boolean;
+	error?: string;
 }
 
 // Context
@@ -32,6 +33,8 @@ const AuthContext = createContext<{
 	login: () => Promise<void>;
 	logout: () => Promise<void>;
 	refresh: () => Promise<void>;
+	clearError: () => void;
+	authState: AuthState;
 } | null>(null);
 
 // Auth provider component
@@ -40,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		user: null,
 		isLoading: true,
 		isAuthenticated: false,
+		error: undefined,
 	});
 
 	const queryClient = useQueryClient();
@@ -70,22 +74,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	// Login function
 	const login = async () => {
 		try {
-			const response = await fetch("/api/auth/login");
+			setAuthState(prev => ({ ...prev, error: undefined }));
+			const response = await fetch("/auth/login");
+
 			if (!response.ok) {
-				throw new Error("Failed to initiate login");
+				const errorText = await response.text();
+				let errorMessage = "Failed to initiate login";
+
+				if (response.status === 500 && errorText.includes("OIDC configuration")) {
+					errorMessage = "Authentication is not configured. Please check your OIDC provider settings.";
+				} else if (response.status === 500) {
+					errorMessage = "Server error during login. Please try again later.";
+				}
+
+				setAuthState(prev => ({ ...prev, error: errorMessage }));
+				return;
 			}
 
-			const { authUrl, state, codeVerifier } = await response.json();
-
-			// Store state and codeVerifier for callback verification
-			sessionStorage.setItem("oidc_state", state);
-			sessionStorage.setItem("oidc_code_verifier", codeVerifier);
+			const { authUrl } = await response.json();
 
 			// Redirect to OIDC provider
 			window.location.href = authUrl;
 		} catch (error) {
 			console.error("Login failed:", error);
-			throw error;
+			const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred during login";
+			setAuthState(prev => ({ ...prev, error: errorMessage }));
 		}
 	};
 
@@ -123,10 +136,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
 	};
 
+	// Clear error function
+	const clearError = () => {
+		setAuthState(prev => ({ ...prev, error: undefined }));
+	};
+
 	const value = {
 		login,
 		logout,
 		refresh,
+		clearError,
+		authState: _authState,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -141,12 +161,35 @@ export function useAuth() {
 	return context;
 }
 
+// Combined hook for auth state and functions
+export function useAuthCombined(): AuthState & {
+	login: () => Promise<void>;
+	logout: () => Promise<void>;
+	refresh: () => Promise<void>;
+	clearError: () => void;
+} {
+	const context = useContext(AuthContext);
+	if (!context) {
+		throw new Error("useAuthCombined must be used within an AuthProvider");
+	}
+
+	const { login, logout, refresh, clearError, authState } = context;
+
+	return {
+		...authState,
+		login,
+		logout,
+		refresh,
+		clearError,
+	};
+}
+
 // Hook to get auth state
 export function useAuthState(): AuthState {
 	const { data: userData, isLoading } = useQuery({
 		queryKey: ["auth", "me"],
 		queryFn: async () => {
-			const response = await fetch("/api/auth/me");
+			const response = await fetch("/auth/me");
 			if (!response.ok) {
 				throw new Error("Failed to fetch user data");
 			}
@@ -160,5 +203,6 @@ export function useAuthState(): AuthState {
 		user: userData?.user || null,
 		isLoading,
 		isAuthenticated: !!userData?.user,
+		error: undefined, // This hook doesn't manage errors, only the AuthProvider does
 	};
 }

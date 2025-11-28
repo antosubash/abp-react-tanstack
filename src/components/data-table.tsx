@@ -645,6 +645,14 @@ const chartConfig = {
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
 	const isMobile = useIsMobile();
 
+	// Unique IDs for form inputs
+	const headerId = "header";
+	const typeId = "type";
+	const statusId = "status";
+	const targetId = "target";
+	const limitId = "limit";
+	const reviewerId = "reviewer";
+
 	return (
 		<Drawer direction={isMobile ? "bottom" : "right"}>
 			<DrawerTrigger asChild>

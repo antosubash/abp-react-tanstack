@@ -1,24 +1,28 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
-import { createAPIFileRoute } from "@tanstack/react-start/api";
-import { getSession } from "../lib/auth-server";
+import { getUserSession } from "../lib/auth-server";
 
-export const APIRoute = createAPIFileRoute("/api/auth/me")({
-	loader: async ({ request }) => {
-		try {
-			const session = await getSession(request);
+export const Route = createFileRoute("/auth/me")({
+	server: {
+		handlers: {
+			GET: async () => {
+				try {
+					const session = await getUserSession();
 
-			if (!session) {
-				return json({ user: null }, { status: 401 });
-			}
+					if (!session) {
+						return json({ user: null }, { status: 401 });
+					}
 
-			// Return user info without sensitive tokens
-			return json({
-				user: session.user,
-				expiresAt: session.expiresAt,
-			});
-		} catch (error) {
-			console.error("Session retrieval failed:", error);
-			return json({ user: null }, { status: 500 });
-		}
+					// Return user info without sensitive tokens
+					return json({
+						user: session.user,
+						expiresAt: session.expiresAt,
+					})
+				} catch (error) {
+					console.error("Session retrieval failed:", error);
+					return json({ user: null }, { status: 500 });
+				}
+			},
+		},
 	},
 });
