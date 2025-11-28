@@ -30,7 +30,7 @@ jobs:
         run: |
           # Get version from package.json
           PACKAGE_VERSION=$(jq -r '.version' package.json)
-          echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+          echo "package_version=$PACKAGE_VERSION" >> $GITHUB_ENV
           echo "Package version: $PACKAGE_VERSION"
 
       - name: Get latest git tag
@@ -40,21 +40,21 @@ jobs:
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           if [ -z "$LATEST_TAG" ]; then
             echo "No tags found"
-            echo "latest_tag=v0.0.0" >> $GITHUB_OUTPUT
-            echo "tag_version=0.0.0" >> $GITHUB_OUTPUT
+            echo "latest_tag=v0.0.0" >> $GITHUB_ENV
+            echo "tag_version=0.0.0" >> $GITHUB_ENV
           else
             # Remove 'v' prefix if present
             TAG_VERSION=${LATEST_TAG#v}
-            echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
-            echo "tag_version=$TAG_VERSION" >> $GITHUB_OUTPUT
+            echo "latest_tag=$LATEST_TAG" >> $GITHUB_ENV
+            echo "tag_version=$TAG_VERSION" >> $GITHUB_ENV
             echo "Latest tag: $LATEST_TAG, Version: $TAG_VERSION"
           fi
 
       - name: Determine next version
         id: determine-version
         run: |
-          PACKAGE_VERSION="${{ steps.get-package-version.outputs.package_version }}"
-          TAG_VERSION="${{ steps.get-latest-tag.outputs.tag_version }}"
+          PACKAGE_VERSION="${{ env.package_version }}"
+          TAG_VERSION="${{ env.tag_version }}"
           
           # Compare package version with tag version
           if [ "$PACKAGE_VERSION" = "$TAG_VERSION" ]; then
@@ -88,13 +88,13 @@ jobs:
             NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
           fi
 
-          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
           echo "Base version: $BASE_VERSION, New version: $NEW_VERSION"
 
       - name: Update package.json version
         run: |
           # Update version in package.json
-          jq ".version = \"${{ steps.determine-version.outputs.new_version }}\"" package.json > package.json.tmp
+          jq ".version = \"${{ env.new_version }}\"" package.json > package.json.tmp
           mv package.json.tmp package.json
 
       - name: Commit version update
@@ -102,20 +102,20 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add package.json
-          git commit -m "chore: bump version to ${{ steps.determine-version.outputs.new_version }}" || echo "No changes to commit"
+          git commit -m "chore: bump version to ${{ env.new_version }}" || echo "No changes to commit"
 
       - name: Create and push tag
         run: |
           # Create the tag
-          git tag "v${{ steps.determine-version.outputs.new_version }}"
+          git tag "v${{ env.new_version }}"
           # Push the tag to origin
-          git push origin "v${{ steps.determine-version.outputs.new_version }}"
+          git push origin "v${{ env.new_version }}"
 
       - name: Generate release notes
         id: generate-notes
         run: |
           # Get the previous tag (or use a default if none exists)
-          PREVIOUS_TAG="${{ steps.get-latest-tag.outputs.latest_tag }}"
+          PREVIOUS_TAG="${{ env.latest_tag }}"
           if [ "$PREVIOUS_TAG" = "v0.0.0" ] || [ -z "$PREVIOUS_TAG" ]; then
             # If no previous tag, get the first commit
             PREVIOUS_TAG=$(git rev-list --max-parents=0 HEAD)
@@ -124,8 +124,8 @@ jobs:
             NOTES_HEADER="## 🚀 Changes since $PREVIOUS_TAG"
           fi
           
-          # Generate commit logs between previous tag and current HEAD
-          COMMITS=$(git log --pretty=format:"- %s (%h)" $PREVIOUS_TAG..HEAD)
+          # Generate commit logs between previous tag and current HEAD with author info
+          COMMITS=$(git log --pretty=format:"- %s ([%h](https://github.com/${{ github.repository }}/commit/%H)) by %an" $PREVIOUS_TAG..HEAD)
           
           # Categorize commits by type
           FEATURES=$(echo "$COMMITS" | grep -E "^- feat" || echo "")
@@ -166,23 +166,34 @@ jobs:
           COMMIT_COUNT=$(echo "$COMMITS" | wc -l)
           RELEASE_NOTES="${RELEASE_NOTES}---\n\n**Statistics:** $COMMIT_COUNT commits since $PREVIOUS_TAG\n\n"
           
-          # Add contributors
-          CONTRIBUTORS=$(git shortlog -sn $PREVIOUS_TAG..HEAD | awk '{$1=""; print $0}' | sed 's/^[ \t]*//')
-          CONTRIBUTOR_COUNT=$(echo "$CONTRIBUTORS" | wc -l)
-          RELEASE_NOTES="${RELEASE_NOTES}**Contributors:** $CONTRIBUTOR_COUNT\n\n$CONTRIBUTORS"
+          # Get unique contributors with their GitHub usernames
+          CONTRIBUTORS=$(git log --pretty=format:"%an|%ae" $PREVIOUS_TAG..HEAD | sort | uniq | while IFS='|' read -r name email; do
+            # Extract username from email (assuming format username@domain.com)
+            USERNAME=$(echo "$email" | cut -d'@' -f1)
+            echo "- [$name](https://github.com/$USERNAME)"
+          done | tr '\n' '|' | sed 's/|$//')
+          
+          # Convert pipe-separated list to newline-separated list
+          CONTRIBUTORS_LIST=$(echo "$CONTRIBUTORS" | tr '|' '\n')
+          
+          # Add contributors count and list
+          CONTRIBUTOR_COUNT=$(echo "$CONTRIBUTORS_LIST" | wc -l)
+          RELEASE_NOTES="${RELEASE_NOTES}**Contributors ($CONTRIBUTOR_COUNT):**\n\n$CONTRIBUTORS_LIST"
           
           # Save notes to output
-          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
-          echo -e "$RELEASE_NOTES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          {
+            echo "release_notes<<EOF"
+            echo -e "$RELEASE_NOTES"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Create GitHub release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.determine-version.outputs.new_version }}
-          release_name: Release v${{ steps.determine-version.outputs.new_version }}
+          tag_name: v${{ env.new_version }}
+          release_name: Release v${{ env.new_version }}
           body: ${{ steps.generate-notes.outputs.release_notes }}
           draft: false
           prerelease: false
