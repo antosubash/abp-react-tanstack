@@ -102,6 +102,71 @@ jobs:
           git tag "v${{ steps.determine-version.outputs.new_version }}"
           git push origin "v${{ steps.determine-version.outputs.new_version }}"
 
+      - name: Generate release notes
+        id: generate-notes
+        run: |
+          # Get the previous tag (or use a default if none exists)
+          PREVIOUS_TAG="${{ steps.get-latest-tag.outputs.latest_tag }}"
+          if [ "$PREVIOUS_TAG" = "v0.0.0" ] || [ -z "$PREVIOUS_TAG" ]; then
+            # If no previous tag, get the first commit
+            PREVIOUS_TAG=$(git rev-list --max-parents=0 HEAD)
+            NOTES_HEADER="## 🎉 Initial Release\n\nThis is the first release of abp-react-tanstack!"
+          else
+            NOTES_HEADER="## 🚀 Changes since $PREVIOUS_TAG"
+          fi
+          
+          # Generate commit logs between previous tag and current HEAD
+          COMMITS=$(git log --pretty=format:"- %s (%h)" $PREVIOUS_TAG..HEAD)
+          
+          # Categorize commits by type
+          FEATURES=$(echo "$COMMITS" | grep -E "^- feat" || echo "")
+          FIXES=$(echo "$COMMITS" | grep -E "^- fix" || echo "")
+          CHORE=$(echo "$COMMITS" | grep -E "^- chore" || echo "")
+          DOCS=$(echo "$COMMITS" | grep -E "^- docs" || echo "")
+          REFACTOR=$(echo "$COMMITS" | grep -E "^- refactor" || echo "")
+          OTHER=$(echo "$COMMITS" | grep -vE "^- (feat|fix|chore|docs|refactor)" || echo "")
+          
+          # Build release notes
+          RELEASE_NOTES="$NOTES_HEADER\n\n"
+          
+          if [ -n "$FEATURES" ]; then
+            RELEASE_NOTES="${RELEASE_NOTES}### ✨ Features\n\n$FEATURES\n\n"
+          fi
+          
+          if [ -n "$FIXES" ]; then
+            RELEASE_NOTES="${RELEASE_NOTES}### 🐛 Bug Fixes\n\n$FIXES\n\n"
+          fi
+          
+          if [ -n "$REFACTOR" ]; then
+            RELEASE_NOTES="${RELEASE_NOTES}### 🔧 Refactoring\n\n$REFACTOR\n\n"
+          fi
+          
+          if [ -n "$DOCS" ]; then
+            RELEASE_NOTES="${RELEASE_NOTES}### 📚 Documentation\n\n$DOCS\n\n"
+          fi
+          
+          if [ -n "$CHORE" ]; then
+            RELEASE_NOTES="${RELEASE_NOTES}### 🧹 Maintenance\n\n$CHORE\n\n"
+          fi
+          
+          if [ -n "$OTHER" ]; then
+            RELEASE_NOTES="${RELEASE_NOTES}### 📦 Other Changes\n\n$OTHER\n\n"
+          fi
+          
+          # Add statistics
+          COMMIT_COUNT=$(echo "$COMMITS" | wc -l)
+          RELEASE_NOTES="${RELEASE_NOTES}---\n\n**Statistics:** $COMMIT_COUNT commits since $PREVIOUS_TAG\n\n"
+          
+          # Add contributors
+          CONTRIBUTORS=$(git shortlog -sn $PREVIOUS_TAG..HEAD | awk '{$1=""; print $0}' | sed 's/^[ \t]*//')
+          CONTRIBUTOR_COUNT=$(echo "$CONTRIBUTORS" | wc -l)
+          RELEASE_NOTES="${RELEASE_NOTES}**Contributors:** $CONTRIBUTOR_COUNT\n\n$CONTRIBUTORS"
+          
+          # Save notes to output
+          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Create GitHub release
         uses: actions/create-release@v1
         env:
@@ -109,9 +174,6 @@ jobs:
         with:
           tag_name: v${{ steps.determine-version.outputs.new_version }}
           release_name: Release v${{ steps.determine-version.outputs.new_version }}
-          body: |
-            Automatic patch version bump to ${{ steps.determine-version.outputs.new_version }}
-
-            This release was automatically created from the dev branch.
+          body: ${{ steps.generate-notes.outputs.release_notes }}
           draft: false
           prerelease: false
