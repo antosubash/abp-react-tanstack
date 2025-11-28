@@ -1,9 +1,10 @@
-import { getUserInfo, refreshToken } from "./oidc";
+import { getUserInfo, refreshToken, revokeToken, getEndSessionUrl } from "./oidc";
 import type {
 	TokenEndpointResponse,
 	TokenEndpointResponseHelpers,
 } from "openid-client";
 import { useAppSession } from "./session";
+import { OIDC_CONSTANTS } from "./constants";
 
 // Session types
 export interface User {
@@ -23,6 +24,7 @@ export interface SessionData {
 	user: User;
 	accessToken: string;
 	refreshToken?: string;
+	idToken?: string;
 	expiresAt: number;
 }
 
@@ -50,6 +52,7 @@ export async function getUserSession(): Promise<SessionData | null> {
 					}
 					sessionData.accessToken = accessToken;
 					sessionData.refreshToken = newTokens.refresh_token;
+					sessionData.idToken = newTokens.id_token;
 					sessionData.expiresAt =
 						Date.now() + (newTokens.expiresIn?.() || 3600) * 1000;
 					await session.update(sessionData);
@@ -114,6 +117,7 @@ export async function createSession(
 			user: userInfo as unknown as User,
 			accessToken,
 			refreshToken: tokenResponse.refresh_token,
+			idToken: tokenResponse.id_token,
 			expiresAt: Date.now() + (tokenResponse.expiresIn?.() || 3600) * 1000,
 		};
 
@@ -151,5 +155,50 @@ export async function clearUserSession(): Promise<void> {
 	} catch (error) {
 		console.error("Session clear failed:", error);
 		throw new Error("Failed to clear session");
+	}
+}
+
+/**
+ * Perform complete logout including token revocation and end session URL
+ */
+export async function performLogout(): Promise<{ endSessionUrl?: string }> {
+	try {
+		const session = await getUserSession();
+
+		let endSessionUrl: string | undefined;
+
+		if (session) {
+			// Revoke tokens if they exist
+			try {
+				if (session.accessToken) {
+					await revokeToken(session.accessToken, "access_token");
+				}
+				if (session.refreshToken) {
+					await revokeToken(session.refreshToken, "refresh_token");
+				}
+			} catch (revokeError) {
+				console.warn("Token revocation failed, continuing with logout:", revokeError);
+				// Continue with logout even if token revocation fails
+			}
+
+			// Build end session URL for RP-initiated logout
+			try {
+				const endSessionURL = await getEndSessionUrl(
+					session.accessToken || "", // idTokenHint - use stored ID token if available
+					OIDC_CONSTANTS.BASE_URL // postLogoutRedirectUri - absolute URI to home page after logout
+				);
+				endSessionUrl = endSessionURL.toString();
+			} catch (urlError) {
+				console.warn("Failed to build end session URL, proceeding without it:", urlError);
+			}
+		}
+
+		// Clear the local session
+		await clearUserSession();
+
+		return { endSessionUrl };
+	} catch (error) {
+		console.error("Logout failed:", error);
+		throw new Error("Failed to perform logout");
 	}
 }

@@ -4,11 +4,11 @@ import {
 	randomPKCECodeVerifier,
 	calculatePKCECodeChallenge,
 	buildAuthorizationUrl,
+	buildEndSessionUrl,
 	authorizationCodeGrant,
 	refreshTokenGrant,
 	fetchUserInfo,
 	tokenRevocation,
-	skipSubjectCheck,
 	type Configuration,
 	type TokenEndpointResponse,
 	type TokenEndpointResponseHelpers,
@@ -203,4 +203,31 @@ export async function revokeToken(
 		console.error("Token revocation failed:", error);
 		throw new Error("Failed to revoke token");
 	}
+}
+
+/**
+ * Build end session URL for RP-initiated logout
+ */
+export async function getEndSessionUrl(
+	idTokenHint: string,
+	postLogoutRedirectUri?: string,
+	state?: string,
+): Promise<URL> {
+	const config = await getOIDCConfig();
+
+	const params: Record<string, string> = {
+		id_token_hint: idTokenHint,
+	};
+
+	if (postLogoutRedirectUri) {
+		params.post_logout_redirect_uri = postLogoutRedirectUri;
+	}
+
+	if (state) {
+		params.state = state;
+	}
+
+	const url = buildEndSessionUrl(config, params);
+
+	return url;
 }
