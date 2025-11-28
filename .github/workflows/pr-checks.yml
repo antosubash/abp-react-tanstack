@@ -24,12 +24,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-        working-directory: ./src
 
       - name: Run lint
         run: pnpm run lint
-        working-directory: ./src
 
       - name: Check formatting
-        run: pnpm run format --check
-        working-directory: ./src
+        run: pnpm run format:check
