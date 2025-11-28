@@ -25,21 +25,54 @@ jobs:
         with:
           version: latest
 
-      - name: Get latest tag
+      - name: Get current version from package.json
+        id: get-package-version
+        run: |
+          # Get version from package.json
+          PACKAGE_VERSION=$(jq -r '.version' package.json)
+          echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+          echo "Package version: $PACKAGE_VERSION"
+
+      - name: Get latest git tag
         id: get-latest-tag
         run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-          # Remove 'v' prefix if present
-          VERSION=${LATEST_TAG#v}
-          echo "latest_version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Latest tag: $LATEST_TAG, Version: $VERSION"
+          # Get the latest tag
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No tags found"
+            echo "latest_tag=v0.0.0" >> $GITHUB_OUTPUT
+            echo "tag_version=0.0.0" >> $GITHUB_OUTPUT
+          else
+            # Remove 'v' prefix if present
+            TAG_VERSION=${LATEST_TAG#v}
+            echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+            echo "tag_version=$TAG_VERSION" >> $GITHUB_OUTPUT
+            echo "Latest tag: $LATEST_TAG, Version: $TAG_VERSION"
+          fi
 
-      - name: Increment patch version
-        id: increment-version
+      - name: Determine next version
+        id: determine-version
         run: |
-          VERSION="${{ steps.get-latest-tag.outputs.latest_version }}"
+          PACKAGE_VERSION="${{ steps.get-package-version.outputs.package_version }}"
+          TAG_VERSION="${{ steps.get-latest-tag.outputs.tag_version }}"
+          
+          # Compare package version with tag version
+          if [ "$PACKAGE_VERSION" = "$TAG_VERSION" ]; then
+            # Versions match, increment patch version
+            echo "Versions match, incrementing patch version"
+            BASE_VERSION="$PACKAGE_VERSION"
+          elif [ "$(printf '%s\n' "$PACKAGE_VERSION" "$TAG_VERSION" | sort -V | head -n1)" = "$TAG_VERSION" ]; then
+            # Package version is newer than tag version
+            echo "Package version is newer than tag version, using package version"
+            BASE_VERSION="$PACKAGE_VERSION"
+          else
+            # Tag version is newer than package version or no tags exist
+            echo "Using package version as base"
+            BASE_VERSION="$PACKAGE_VERSION"
+          fi
+          
           # Split version into major.minor.patch
-          IFS='.' read -ra VERSION_PARTS <<< "$VERSION"
+          IFS='.' read -ra VERSION_PARTS <<< "$BASE_VERSION"
           MAJOR=${VERSION_PARTS[0]}
           MINOR=${VERSION_PARTS[1]}
           PATCH=${VERSION_PARTS[2]}
@@ -49,12 +82,12 @@ jobs:
           NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
 
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "New version: $NEW_VERSION"
+          echo "Base version: $BASE_VERSION, New version: $NEW_VERSION"
 
       - name: Update package.json version
         run: |
           # Update version in package.json
-          jq ".version = \"${{ steps.increment-version.outputs.new_version }}\"" package.json > package.json.tmp
+          jq ".version = \"${{ steps.determine-version.outputs.new_version }}\"" package.json > package.json.tmp
           mv package.json.tmp package.json
 
       - name: Commit version update
@@ -62,22 +95,22 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add package.json
-          git commit -m "chore: bump version to ${{ steps.increment-version.outputs.new_version }}" || echo "No changes to commit"
+          git commit -m "chore: bump version to ${{ steps.determine-version.outputs.new_version }}" || echo "No changes to commit"
 
       - name: Create tag
         run: |
-          git tag "v${{ steps.increment-version.outputs.new_version }}"
-          git push origin "v${{ steps.increment-version.outputs.new_version }}"
+          git tag "v${{ steps.determine-version.outputs.new_version }}"
+          git push origin "v${{ steps.determine-version.outputs.new_version }}"
 
       - name: Create GitHub release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.increment-version.outputs.new_version }}
-          release_name: Release v${{ steps.increment-version.outputs.new_version }}
+          tag_name: v${{ steps.determine-version.outputs.new_version }}
+          release_name: Release v${{ steps.determine-version.outputs.new_version }}
           body: |
-            Automatic patch version bump to ${{ steps.increment-version.outputs.new_version }}
+            Automatic patch version bump to ${{ steps.determine-version.outputs.new_version }}
 
             This release was automatically created from the dev branch.
           draft: false
