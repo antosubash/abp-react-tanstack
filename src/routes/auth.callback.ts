@@ -3,6 +3,12 @@ import { getSession, clearSession } from "@tanstack/react-start/server";
 import { exchangeCodeForTokens } from "../lib/oidc";
 import { createSession } from "../lib/auth-server";
 import { OIDC_CONSTANTS } from "../lib/constants";
+import type { SessionData } from "../lib/session";
+
+type OIDCSessionData = SessionData & {
+	oidcState?: string;
+	codeVerifier?: string;
+};
 
 export const Route = createFileRoute("/auth/callback")({
 	server: {
@@ -35,10 +41,12 @@ export const Route = createFileRoute("/auth/callback")({
 						password: OIDC_CONSTANTS.SESSION_SECRET,
 					});
 
+					const sessionData = session?.data as OIDCSessionData;
+
 					if (
 						!session ||
-						!(session.data as any).oidcState ||
-						!(session.data as any).codeVerifier
+						!sessionData?.oidcState ||
+						!sessionData?.codeVerifier
 					) {
 						console.error("Missing session data");
 						return new Response(null, {
@@ -47,7 +55,7 @@ export const Route = createFileRoute("/auth/callback")({
 						});
 					}
 
-					if ((session.data as any).oidcState !== state) {
+					if (sessionData.oidcState !== state) {
 						console.error("State mismatch");
 						return new Response(null, {
 							status: 302,
@@ -57,7 +65,7 @@ export const Route = createFileRoute("/auth/callback")({
 
 					const tokenSet = await exchangeCodeForTokens(
 						url,
-						(session.data as any).codeVerifier,
+						sessionData.codeVerifier,
 						state,
 					);
 

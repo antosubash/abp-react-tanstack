@@ -8,43 +8,19 @@ import type {
 	TokenEndpointResponse,
 	TokenEndpointResponseHelpers,
 } from "openid-client";
-import { useAppSession } from "./session";
+import { sessionUtils, type User, type SessionData } from "./session";
 import { OIDC_CONSTANTS } from "./constants";
-
-// Session types
-export interface User {
-	sub: string;
-	name?: string;
-	email?: string;
-	email_verified?: boolean;
-	picture?: string;
-	profile?: string;
-	preferred_username?: string;
-	given_name?: string;
-	family_name?: string;
-	updated_at?: number;
-}
-
-export interface SessionData {
-	user: User;
-	accessToken: string;
-	refreshToken?: string;
-	idToken?: string;
-	expiresAt: number;
-}
 
 /**
  * Get session from request
  */
 export async function getUserSession(): Promise<SessionData | null> {
 	try {
-		const session = await useAppSession();
+		const sessionData = await sessionUtils.get();
 
-		if (!session || !session.data) {
+		if (!sessionData) {
 			return null;
 		}
-
-		const sessionData = session.data as SessionData;
 
 		// Check if token is expired and try to refresh
 		if (Date.now() >= sessionData.expiresAt) {
@@ -60,16 +36,16 @@ export async function getUserSession(): Promise<SessionData | null> {
 					sessionData.idToken = newTokens.id_token;
 					sessionData.expiresAt =
 						Date.now() + (newTokens.expiresIn?.() || 3600) * 1000;
-					await session.update(sessionData);
+					await sessionUtils.update(sessionData);
 				} catch (error) {
 					console.error("Token refresh failed:", error);
 					// Token refresh failed, clear session
-					await clearUserSession();
+					await sessionUtils.clear();
 					return null;
 				}
 			} else {
 				// No refresh token available, clear session
-				await clearUserSession();
+				await sessionUtils.clear();
 				return null;
 			}
 		}
@@ -129,40 +105,11 @@ export async function createSession(
 			expiresAt: Date.now() + (tokenResponse.expiresIn?.() || 3600) * 1000,
 		};
 
-		const session = await useAppSession();
-		await session.update(sessionData);
+		await sessionUtils.update(sessionData);
 		return sessionData;
 	} catch (error) {
 		console.error("Session creation failed:", error);
 		throw new Error("Failed to create user session");
-	}
-}
-
-/**
- * Update existing session
- */
-export async function updateUserSession(
-	sessionData: SessionData,
-): Promise<void> {
-	try {
-		const session = await useAppSession();
-		await session.update(sessionData);
-	} catch (error) {
-		console.error("Session update failed:", error);
-		throw new Error("Failed to update session");
-	}
-}
-
-/**
- * Clear user session
- */
-export async function clearUserSession(): Promise<void> {
-	try {
-		const session = await useAppSession();
-		await session.clear();
-	} catch (error) {
-		console.error("Session clear failed:", error);
-		throw new Error("Failed to clear session");
 	}
 }
 
@@ -208,7 +155,7 @@ export async function performLogout(): Promise<{ endSessionUrl?: string }> {
 		}
 
 		// Clear the local session
-		await clearUserSession();
+		await sessionUtils.clear();
 
 		return { endSessionUrl };
 	} catch (error) {

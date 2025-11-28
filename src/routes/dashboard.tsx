@@ -8,7 +8,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
 import { Progress } from "../components/ui/progress";
 import { ChartContainer, type ChartConfig } from "../components/ui/chart";
 import {
@@ -25,7 +24,6 @@ import {
 import { DataTable } from "../components/data-table";
 import dashboardData from "../app/dashboard/data.json";
 import { useMemo } from "react";
-import type { ColumnDef } from "@tanstack/react-table";
 
 export const Route = createFileRoute("/dashboard")({
 	component: DashboardComponent,
@@ -116,52 +114,6 @@ function DashboardComponent() {
 			color: COLORS.inProcess,
 		},
 	};
-
-	// Table columns
-	const columns: ColumnDef<ProjectTask>[] = [
-		{
-			accessorKey: "id",
-			header: "ID",
-			size: 80,
-		},
-		{
-			accessorKey: "header",
-			header: "Task",
-			size: 300,
-		},
-		{
-			accessorKey: "type",
-			header: "Type",
-			size: 150,
-		},
-		{
-			accessorKey: "status",
-			header: "Status",
-			size: 120,
-			cell: ({ row }) => (
-				<Badge
-					variant={row.original.status === "Done" ? "default" : "secondary"}
-				>
-					{row.original.status}
-				</Badge>
-			),
-		},
-		{
-			accessorKey: "target",
-			header: "Target",
-			size: 100,
-		},
-		{
-			accessorKey: "limit",
-			header: "Limit",
-			size: 100,
-		},
-		{
-			accessorKey: "reviewer",
-			header: "Reviewer",
-			size: 150,
-		},
-	];
 
 	return (
 		<ProtectedRoute>
@@ -264,8 +216,8 @@ function DashboardComponent() {
 												`${name}: ${(percent * 100).toFixed(0)}%`
 											}
 										>
-											{statusChartData.map((entry, index) => (
-												<Cell key={`cell-${index}`} fill={entry.color} />
+											{statusChartData.map((entry) => (
+												<Cell key={`cell-${entry.name}`} fill={entry.color} />
 											))}
 										</Pie>
 										<Tooltip />
@@ -320,12 +272,7 @@ function DashboardComponent() {
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<DataTable
-								data={data}
-								columns={columns}
-								filterColumn="header"
-								filterPlaceholder="Search tasks..."
-							/>
+							<DataTable data={data} />
 						</CardContent>
 					</Card>
 				</div>

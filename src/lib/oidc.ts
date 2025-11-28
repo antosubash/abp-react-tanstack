@@ -42,9 +42,7 @@ function validateOIDCConfig(): void {
 	}
 
 	// For public clients, client_secret is optional
-	if (
-		OIDC_CONSTANTS.CLIENT_SECRET?.includes("your-client-secret")
-	) {
+	if (OIDC_CONSTANTS.CLIENT_SECRET?.includes("your-client-secret")) {
 		console.warn(
 			"VITE_OIDC_CLIENT_SECRET contains placeholder value. For public clients, this can be omitted.",
 		);
