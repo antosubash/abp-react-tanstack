@@ -117,8 +117,8 @@ function DashboardComponent() {
 
 	return (
 		<ProtectedRoute>
-			<div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-				<div className="container mx-auto px-6 py-8">
+			<div className="w-full">
+				<div className="w-full px-6 py-8">
 					{/* Header */}
 					<div className="mb-8">
 						<h1 className="text-4xl font-bold text-white mb-2">Dashboard</h1>

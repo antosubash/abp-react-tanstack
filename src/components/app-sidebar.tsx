@@ -1,23 +1,17 @@
-import type * as React from "react";
+import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
 import {
-	IconCamera,
-	IconChartBar,
 	IconDashboard,
-	IconDatabase,
-	IconFileAi,
-	IconFileDescription,
-	IconFileWord,
-	IconFolder,
 	IconHelp,
+	IconHome,
 	IconInnerShadowTop,
-	IconListDetails,
-	IconReport,
+	IconNetwork,
+	IconNote,
 	IconSearch,
 	IconSettings,
-	IconUsers,
+	IconFunction,
 } from "@tabler/icons-react";
 
-import { NavDocuments } from "@/components/nav-documents";
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
@@ -25,89 +19,63 @@ import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarGroupLabel,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	SidebarMenuSub,
+	SidebarMenuSubButton,
+	SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const data = {
-	user: {
-		name: "shadcn",
-		email: "m@example.com",
-		avatar: "/avatars/shadcn.jpg",
-	},
 	navMain: [
 		{
+			title: "Home",
+			url: "/",
+			icon: IconHome,
+		},
+		{
 			title: "Dashboard",
-			url: "#",
+			url: "/dashboard",
 			icon: IconDashboard,
 		},
-		{
-			title: "Lifecycle",
-			url: "#",
-			icon: IconListDetails,
-		},
-		{
-			title: "Analytics",
-			url: "#",
-			icon: IconChartBar,
-		},
-		{
-			title: "Projects",
-			url: "#",
-			icon: IconFolder,
-		},
-		{
-			title: "Team",
-			url: "#",
-			icon: IconUsers,
-		},
 	],
-	navClouds: [
+	demos: [
 		{
-			title: "Capture",
-			icon: IconCamera,
-			isActive: true,
-			url: "#",
-			items: [
-				{
-					title: "Active Proposals",
-					url: "#",
-				},
-				{
-					title: "Archived",
-					url: "#",
-				},
-			],
+			title: "Server Functions",
+			url: "/demo/start/server-funcs",
+			icon: IconFunction,
 		},
 		{
-			title: "Proposal",
-			icon: IconFileDescription,
-			url: "#",
-			items: [
-				{
-					title: "Active Proposals",
-					url: "#",
-				},
-				{
-					title: "Archived",
-					url: "#",
-				},
-			],
+			title: "API Request",
+			url: "/demo/start/api-request",
+			icon: IconNetwork,
 		},
 		{
-			title: "Prompts",
-			icon: IconFileAi,
-			url: "#",
+			title: "SSR Demos",
+			url: "/demo/start/ssr",
+			icon: IconNote,
 			items: [
 				{
-					title: "Active Proposals",
-					url: "#",
+					title: "SPA Mode",
+					url: "/demo/start/ssr/spa-mode",
 				},
 				{
-					title: "Archived",
-					url: "#",
+					title: "Full SSR",
+					url: "/demo/start/ssr/full-ssr",
+				},
+				{
+					title: "Data Only",
+					url: "/demo/start/ssr/data-only",
 				},
 			],
 		},
@@ -129,23 +97,6 @@ const data = {
 			icon: IconSearch,
 		},
 	],
-	documents: [
-		{
-			name: "Data Library",
-			url: "#",
-			icon: IconDatabase,
-		},
-		{
-			name: "Reports",
-			url: "#",
-			icon: IconReport,
-		},
-		{
-			name: "Word Assistant",
-			url: "#",
-			icon: IconFileWord,
-		},
-	],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -160,7 +111,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						>
 							<div>
 								<IconInnerShadowTop className="!size-5" />
-								<span className="text-base font-semibold">Acme Inc.</span>
+								<span className="text-base font-semibold">TanStack Start</span>
 							</div>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
@@ -168,11 +119,56 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />
-				<NavDocuments items={data.documents} />
+
+				<SidebarGroup>
+					<SidebarGroupLabel>Demos</SidebarGroupLabel>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							{data.demos.map((item) => (
+								<Collapsible key={item.title} asChild defaultOpen={false}>
+									<SidebarMenuItem>
+										{item.items ? (
+											<>
+												<CollapsibleTrigger asChild>
+													<SidebarMenuButton tooltip={item.title}>
+														<item.icon />
+														<span>{item.title}</span>
+														<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+													</SidebarMenuButton>
+												</CollapsibleTrigger>
+												<CollapsibleContent>
+													<SidebarMenuSub>
+														{item.items.map((subItem) => (
+															<SidebarMenuSubItem key={subItem.title}>
+																<SidebarMenuSubButton asChild>
+																	<Link to={subItem.url}>
+																		<span>{subItem.title}</span>
+																	</Link>
+																</SidebarMenuSubButton>
+															</SidebarMenuSubItem>
+														))}
+													</SidebarMenuSub>
+												</CollapsibleContent>
+											</>
+										) : (
+											<SidebarMenuButton asChild tooltip={item.title}>
+												<Link to={item.url}>
+													<item.icon />
+													<span>{item.title}</span>
+												</Link>
+											</SidebarMenuButton>
+										)}
+									</SidebarMenuItem>
+								</Collapsible>
+							))}
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+
 				<NavSecondary items={data.navSecondary} className="mt-auto" />
 			</SidebarContent>
 			<SidebarFooter>
-				<NavUser user={data.user} />
+				<NavUser />
 			</SidebarFooter>
 		</Sidebar>
 	);

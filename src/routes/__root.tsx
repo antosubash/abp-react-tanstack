@@ -1,9 +1,14 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import {
+	HeadContent,
+	Scripts,
+	createRootRoute,
+	useLocation,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import Header from "../components/Header";
+import { SidebarLayout } from "../components/SidebarLayout";
 import { AuthProvider } from "../hooks/use-auth";
 
 // Configure API client to use proxy
@@ -53,6 +58,23 @@ export const Route = createRootRoute({
 	),
 });
 
+function ConditionalLayout({ children }: { children: React.ReactNode }) {
+	const location = useLocation();
+
+	// Routes that should use the sidebar layout
+	const sidebarRoutes = ["/dashboard", "/demo"];
+
+	const shouldUseSidebar = sidebarRoutes.some((route) =>
+		location.pathname.startsWith(route),
+	);
+
+	if (shouldUseSidebar) {
+		return <SidebarLayout>{children}</SidebarLayout>;
+	}
+
+	return <>{children}</>;
+}
+
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<QueryClientProvider client={queryClient}>
@@ -62,8 +84,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						<HeadContent />
 					</head>
 					<body>
-						<Header />
-						{children}
+						<ConditionalLayout>{children}</ConditionalLayout>
 						<TanStackDevtools
 							config={{
 								position: "bottom-right",
