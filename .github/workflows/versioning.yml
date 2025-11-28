@@ -13,7 +13,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch all tags
+        run: |
+          git fetch --tags --force
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,18 +41,20 @@ jobs:
       - name: Get latest git tag
         id: get-latest-tag
         run: |
-          # Get the latest tag
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [ -z "$LATEST_TAG" ]; then
-            echo "No tags found"
-            echo "latest_tag=v0.0.0" >> $GITHUB_ENV
-            echo "tag_version=0.0.0" >> $GITHUB_ENV
-          else
+          # List all tags and get the latest one
+          git tag -l "v*" --sort=-version:refname > /tmp/tags.txt
+          
+          if [ -s /tmp/tags.txt ]; then
+            LATEST_TAG=$(head -n 1 /tmp/tags.txt)
             # Remove 'v' prefix if present
             TAG_VERSION=${LATEST_TAG#v}
             echo "latest_tag=$LATEST_TAG" >> $GITHUB_ENV
             echo "tag_version=$TAG_VERSION" >> $GITHUB_ENV
             echo "Latest tag: $LATEST_TAG, Version: $TAG_VERSION"
+          else
+            echo "No tags found"
+            echo "latest_tag=v0.0.0" >> $GITHUB_ENV
+            echo "tag_version=0.0.0" >> $GITHUB_ENV
           fi
 
       - name: Determine next version
@@ -81,12 +88,12 @@ jobs:
           NEW_PATCH=$((PATCH + 1))
           NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
           
-          # Check if this version tag already exists
-          if git rev-parse "v$NEW_VERSION" >/dev/null 2>&1; then
+          # Keep incrementing until we find a version that doesn't exist
+          while git rev-parse "v$NEW_VERSION" >/dev/null 2>&1; do
             echo "Tag v$NEW_VERSION already exists, incrementing again"
             NEW_PATCH=$((NEW_PATCH + 1))
             NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-          fi
+          done
 
           echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
           echo "Base version: $BASE_VERSION, New version: $NEW_VERSION"
