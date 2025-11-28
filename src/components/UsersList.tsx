@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { IconEdit, IconPlus, IconTrash, IconUsers } from "@tabler/icons-react";
+import { IconDots, IconPencil, IconPlus, IconTrash, IconUsers } from "@tabler/icons-react";
 import {
 	type ColumnDef,
 	flexRender,
@@ -253,12 +253,12 @@ export function UsersList() {
 					<DropdownMenuTrigger asChild>
 						<Button variant="ghost" className="h-8 w-8 p-0">
 							<span className="sr-only">Open menu</span>
-							<IconEdit className="h-4 w-4" />
+							<IconDots className="h-4 w-4" />
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						<DropdownMenuItem onClick={() => handleEditUser(row.original)}>
-							<IconEdit className="mr-2 h-4 w-4" />
+							<IconPencil className="mr-2 h-4 w-4" />
 							Edit
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
@@ -371,7 +371,7 @@ export function UsersList() {
 									</TableCell>
 									<TableCell>
 										<Button variant="ghost" size="sm" disabled>
-											<IconEdit className="h-4 w-4" />
+											<IconDots className="h-4 w-4" />
 										</Button>
 									</TableCell>
 								</TableRow>

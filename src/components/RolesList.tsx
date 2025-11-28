@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-	IconEdit,
-	IconPlus,
-	IconTrash,
-	IconShield,
+	IconDots,
 	IconKey,
+	IconPencil,
+	IconPlus,
+	IconShield,
+	IconTrash,
 } from "@tabler/icons-react";
 import {
 	type ColumnDef,
@@ -258,12 +259,12 @@ export function RolesList() {
 					<DropdownMenuTrigger asChild>
 						<Button variant="ghost" className="h-8 w-8 p-0">
 							<span className="sr-only">Open menu</span>
-							<IconEdit className="h-4 w-4" />
+							<IconDots className="h-4 w-4" />
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						<DropdownMenuItem onClick={() => handleEditRole(row.original)}>
-							<IconEdit className="mr-2 h-4 w-4" />
+							<IconPencil className="mr-2 h-4 w-4" />
 							Edit
 						</DropdownMenuItem>
 						<DropdownMenuItem
@@ -379,7 +380,7 @@ export function RolesList() {
 									</TableCell>
 									<TableCell>
 										<Button variant="ghost" size="sm" disabled>
-											<IconEdit className="h-4 w-4" />
+											<IconDots className="h-4 w-4" />
 										</Button>
 									</TableCell>
 								</TableRow>
