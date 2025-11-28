@@ -111,6 +111,10 @@ jobs:
           git add package.json
           git commit -m "chore: bump version to ${{ env.new_version }}" || echo "No changes to commit"
 
+      - name: Push changes to repository
+        run: |
+          git push origin dev
+
       - name: Create and push tag
         run: |
           # Create the tag
