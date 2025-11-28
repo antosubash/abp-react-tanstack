@@ -22,21 +22,32 @@ let oidcConfig: Configuration | null = null;
  */
 function validateOIDCConfig(): void {
 	const requiredConfig = [
-		{ key: 'ISSUER', value: OIDC_CONSTANTS.ISSUER },
-		{ key: 'CLIENT_ID', value: OIDC_CONSTANTS.CLIENT_ID },
+		{ key: "ISSUER", value: OIDC_CONSTANTS.ISSUER },
+		{ key: "CLIENT_ID", value: OIDC_CONSTANTS.CLIENT_ID },
 	];
 
-	const placeholderValues = ['your-oidc-provider.com', 'your-client-id'];
+	const placeholderValues = ["your-oidc-provider.com", "your-client-id"];
 
 	for (const config of requiredConfig) {
-		if (!config.value || placeholderValues.some(placeholder => config.value.includes(placeholder))) {
-			throw new Error(`OIDC configuration not properly set. Please configure VITE_OIDC_${config.key} in your environment variables.`);
+		if (
+			!config.value ||
+			placeholderValues.some((placeholder) =>
+				config.value.includes(placeholder),
+			)
+		) {
+			throw new Error(
+				`OIDC configuration not properly set. Please configure VITE_OIDC_${config.key} in your environment variables.`,
+			);
 		}
 	}
 
 	// For public clients, client_secret is optional
-	if (OIDC_CONSTANTS.CLIENT_SECRET && OIDC_CONSTANTS.CLIENT_SECRET.includes('your-client-secret')) {
-		console.warn('VITE_OIDC_CLIENT_SECRET contains placeholder value. For public clients, this can be omitted.');
+	if (
+		OIDC_CONSTANTS.CLIENT_SECRET?.includes("your-client-secret")
+	) {
+		console.warn(
+			"VITE_OIDC_CLIENT_SECRET contains placeholder value. For public clients, this can be omitted.",
+		);
 	}
 }
 
@@ -53,9 +64,11 @@ export async function getOIDCConfig(): Promise<Configuration> {
 
 	try {
 		// For public clients, don't pass client_secret
-		const discoveryOptions = OIDC_CONSTANTS.CLIENT_SECRET && !OIDC_CONSTANTS.CLIENT_SECRET.includes('your-client-secret')
-			? { client_secret: OIDC_CONSTANTS.CLIENT_SECRET }
-			: {};
+		const discoveryOptions =
+			OIDC_CONSTANTS.CLIENT_SECRET &&
+			!OIDC_CONSTANTS.CLIENT_SECRET.includes("your-client-secret")
+				? { client_secret: OIDC_CONSTANTS.CLIENT_SECRET }
+				: {};
 
 		oidcConfig = await discovery(
 			new URL(OIDC_CONSTANTS.ISSUER),
@@ -110,8 +123,8 @@ export async function exchangeCodeForTokens(
 			clientId: OIDC_CONSTANTS.CLIENT_ID,
 			redirectUri: OIDC_CONSTANTS.REDIRECT_URI,
 			callbackUrl: callbackUrl.toString(),
-			codeVerifier: codeVerifier.substring(0, 10) + "...", // Log partial verifier for debugging
-			state: state.substring(0, 10) + "...", // Log partial state for debugging
+			codeVerifier: `${codeVerifier.substring(0, 10)}...`, // Log partial verifier for debugging
+			state: `${state.substring(0, 10)}...`, // Log partial state for debugging
 		});
 
 		const tokenSet = await authorizationCodeGrant(config, callbackUrl, {
@@ -127,21 +140,34 @@ export async function exchangeCodeForTokens(
 
 		// Provide more specific error messages based on error type
 		if (error instanceof Error) {
-			if (error.message.includes('invalid_client')) {
-				throw new Error("Invalid client credentials. Please check your OIDC client ID and secret.");
+			if (error.message.includes("invalid_client")) {
+				throw new Error(
+					"Invalid client credentials. Please check your OIDC client ID and secret.",
+				);
 			}
-			if (error.message.includes('invalid_grant')) {
-				throw new Error("Invalid authorization code or PKCE verifier. The code may have expired or been used already.");
+			if (error.message.includes("invalid_grant")) {
+				throw new Error(
+					"Invalid authorization code or PKCE verifier. The code may have expired or been used already.",
+				);
 			}
-			if (error.message.includes('redirect_uri_mismatch')) {
-				throw new Error("Redirect URI mismatch. Please check your OIDC redirect URI configuration.");
+			if (error.message.includes("redirect_uri_mismatch")) {
+				throw new Error(
+					"Redirect URI mismatch. Please check your OIDC redirect URI configuration.",
+				);
 			}
-			if (error.message.includes('network') || error.message.includes('fetch')) {
-				throw new Error("Network error connecting to OIDC provider. Please check your internet connection and OIDC issuer URL.");
+			if (
+				error.message.includes("network") ||
+				error.message.includes("fetch")
+			) {
+				throw new Error(
+					"Network error connecting to OIDC provider. Please check your internet connection and OIDC issuer URL.",
+				);
 			}
 		}
 
-		throw new Error(`Failed to exchange authorization code for tokens: ${error instanceof Error ? error.message : 'Unknown error'}`);
+		throw new Error(
+			`Failed to exchange authorization code for tokens: ${error instanceof Error ? error.message : "Unknown error"}`,
+		);
 	}
 }
 

@@ -18,7 +18,7 @@ export const Route = createFileRoute("/auth/callback")({
 					return new Response(null, {
 						status: 302,
 						headers: { Location: "/?error=auth_failed" },
-					})
+					});
 				}
 
 				if (!code || !state) {
@@ -26,21 +26,25 @@ export const Route = createFileRoute("/auth/callback")({
 					return new Response(null, {
 						status: 302,
 						headers: { Location: "/?error=missing_params" },
-					})
+					});
 				}
 
 				try {
 					// Retrieve stored state and codeVerifier from session
 					const session = await getSession({
 						password: OIDC_CONSTANTS.SESSION_SECRET,
-					})
+					});
 
-					if (!session || !(session.data as any).oidcState || !(session.data as any).codeVerifier) {
+					if (
+						!session ||
+						!(session.data as any).oidcState ||
+						!(session.data as any).codeVerifier
+					) {
 						console.error("Missing session data");
 						return new Response(null, {
 							status: 302,
 							headers: { Location: "/?error=invalid_session" },
-						})
+						});
 					}
 
 					if ((session.data as any).oidcState !== state) {
@@ -48,28 +52,28 @@ export const Route = createFileRoute("/auth/callback")({
 						return new Response(null, {
 							status: 302,
 							headers: { Location: "/?error=state_mismatch" },
-						})
+						});
 					}
 
 					const tokenSet = await exchangeCodeForTokens(
 						url,
 						(session.data as any).codeVerifier,
 						state,
-					)
+					);
 
 					// Create user session
 					await createSession(tokenSet);
 
-			// Clear the temporary OIDC session data
-			await clearSession({
-				password: OIDC_CONSTANTS.SESSION_SECRET,
-			})
+					// Clear the temporary OIDC session data
+					await clearSession({
+						password: OIDC_CONSTANTS.SESSION_SECRET,
+					});
 
 					// Redirect to dashboard or home page
 					return new Response(null, {
 						status: 302,
 						headers: { Location: "/dashboard" },
-					})
+					});
 				} catch (error) {
 					console.error("Callback processing failed:", error);
 
@@ -90,7 +94,7 @@ export const Route = createFileRoute("/auth/callback")({
 					return new Response(null, {
 						status: 302,
 						headers: { Location: `/?error=${errorParam}` },
-					})
+					});
 				}
 			},
 		},

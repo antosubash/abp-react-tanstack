@@ -1,4 +1,9 @@
-import { getUserInfo, refreshToken, revokeToken, getEndSessionUrl } from "./oidc";
+import {
+	getUserInfo,
+	refreshToken,
+	revokeToken,
+	getEndSessionUrl,
+} from "./oidc";
 import type {
 	TokenEndpointResponse,
 	TokenEndpointResponseHelpers,
@@ -90,7 +95,7 @@ export async function createSession(
 		}
 
 		// Extract user claims from the ID token
-		let claims = tokenResponse.claims();
+		const claims = tokenResponse.claims();
 		if (!claims) {
 			throw new Error("No claims found in token response");
 		}
@@ -109,7 +114,10 @@ export async function createSession(
 			// Merge claims with additional user info, giving priority to claims for core fields
 			userInfo = { ...additionalUserInfo, ...claims };
 		} catch (userInfoError) {
-			console.warn("Could not fetch additional user info, using token claims only:", userInfoError);
+			console.warn(
+				"Could not fetch additional user info, using token claims only:",
+				userInfoError,
+			);
 			// Continue with claims only
 		}
 
@@ -139,7 +147,7 @@ export async function updateUserSession(
 	try {
 		const session = await useAppSession();
 		await session.update(sessionData);
-	} catch (error) {	
+	} catch (error) {
 		console.error("Session update failed:", error);
 		throw new Error("Failed to update session");
 	}
@@ -177,7 +185,10 @@ export async function performLogout(): Promise<{ endSessionUrl?: string }> {
 					await revokeToken(session.refreshToken, "refresh_token");
 				}
 			} catch (revokeError) {
-				console.warn("Token revocation failed, continuing with logout:", revokeError);
+				console.warn(
+					"Token revocation failed, continuing with logout:",
+					revokeError,
+				);
 				// Continue with logout even if token revocation fails
 			}
 
@@ -185,11 +196,14 @@ export async function performLogout(): Promise<{ endSessionUrl?: string }> {
 			try {
 				const endSessionURL = await getEndSessionUrl(
 					session.accessToken || "", // idTokenHint - use stored ID token if available
-					OIDC_CONSTANTS.BASE_URL // postLogoutRedirectUri - absolute URI to home page after logout
+					OIDC_CONSTANTS.BASE_URL, // postLogoutRedirectUri - absolute URI to home page after logout
 				);
 				endSessionUrl = endSessionURL.toString();
 			} catch (urlError) {
-				console.warn("Failed to build end session URL, proceeding without it:", urlError);
+				console.warn(
+					"Failed to build end session URL, proceeding without it:",
+					urlError,
+				);
 			}
 		}
 

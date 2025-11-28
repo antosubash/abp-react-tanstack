@@ -60,7 +60,8 @@ function InputGroupAddon({
 	className,
 	align = "inline-start",
 	...props
-}: React.ComponentProps<"fieldset"> & VariantProps<typeof inputGroupAddonVariants>) {
+}: React.ComponentProps<"fieldset"> &
+	VariantProps<typeof inputGroupAddonVariants>) {
 	return (
 		<fieldset
 			data-slot="input-group-addon"

@@ -74,20 +74,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	// Login function
 	const login = async () => {
 		try {
-			setAuthState(prev => ({ ...prev, error: undefined }));
+			setAuthState((prev) => ({ ...prev, error: undefined }));
 			const response = await fetch("/auth/login");
 
 			if (!response.ok) {
 				const errorText = await response.text();
 				let errorMessage = "Failed to initiate login";
 
-				if (response.status === 500 && errorText.includes("OIDC configuration")) {
-					errorMessage = "Authentication is not configured. Please check your OIDC provider settings.";
+				if (
+					response.status === 500 &&
+					errorText.includes("OIDC configuration")
+				) {
+					errorMessage =
+						"Authentication is not configured. Please check your OIDC provider settings.";
 				} else if (response.status === 500) {
 					errorMessage = "Server error during login. Please try again later.";
 				}
 
-				setAuthState(prev => ({ ...prev, error: errorMessage }));
+				setAuthState((prev) => ({ ...prev, error: errorMessage }));
 				return;
 			}
 
@@ -97,8 +101,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			window.location.href = authUrl;
 		} catch (error) {
 			console.error("Login failed:", error);
-			const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred during login";
-			setAuthState(prev => ({ ...prev, error: errorMessage }));
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: "An unexpected error occurred during login";
+			setAuthState((prev) => ({ ...prev, error: errorMessage }));
 		}
 	};
 
@@ -138,7 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	// Clear error function
 	const clearError = () => {
-		setAuthState(prev => ({ ...prev, error: undefined }));
+		setAuthState((prev) => ({ ...prev, error: undefined }));
 	};
 
 	const value = {

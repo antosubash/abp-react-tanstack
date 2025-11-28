@@ -12,16 +12,19 @@ export const Route = createFileRoute("/auth/login")({
 					const { url, state, codeVerifier } = await getAuthUrl();
 
 					// Store state and codeVerifier in session for callback verification
-					await updateSession({
-						password: OIDC_CONSTANTS.SESSION_SECRET,
-					}, {
-						oidcState: state,
-						codeVerifier,
-					})
+					await updateSession(
+						{
+							password: OIDC_CONSTANTS.SESSION_SECRET,
+						},
+						{
+							oidcState: state,
+							codeVerifier,
+						},
+					);
 
 					return json({
 						authUrl: url.toString(),
-					})
+					});
 				} catch (error) {
 					console.error("Login URL generation failed:", error);
 					return new Response("Failed to generate login URL", { status: 500 });

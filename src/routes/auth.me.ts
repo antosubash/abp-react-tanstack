@@ -19,7 +19,7 @@ export const Route = createFileRoute("/auth/me")({
 					return json({
 						user: session.user,
 						expiresAt: session.expiresAt,
-					})
+					});
 				} catch (error) {
 					console.error("Session retrieval failed:", error);
 					return json({ user: null }, { status: 500 });
