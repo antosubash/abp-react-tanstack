@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
 import { API_CONSTANTS } from "../lib/constants";
+import { getUserSession } from "../lib/auth-server";
 
 export const Route = createFileRoute("/api/proxy/$")({
 	server: {
@@ -46,16 +47,20 @@ async function handleProxyRequest(request: Request) {
 			: targetUrl;
 
 		// Prepare headers
-		const headers = new Headers(request.headers);
+		const headers = new Headers();
+		headers.set("Content-Type", "application/json");
+		headers.set("__tenant", "");
 
-		// Remove host header to avoid conflicts
-		headers.delete("host");
-
-		// Add custom headers
-		Object.entries(API_CONSTANTS.CUSTOM_HEADERS).forEach(([key, value]) => {
-			headers.set(key, value);
-		});
-
+		// Add access token if available
+		try {
+			const session = await getUserSession();
+			if (session?.accessToken) {
+				headers.set("Authorization", `Bearer ${session.accessToken}`);
+			}
+		} catch (sessionError) {
+			console.warn("Failed to retrieve session for proxy request:", sessionError);
+			// Continue without authorization header
+		}
 		// Create the proxy request
 		const proxyRequest = new Request(finalTargetUrl, {
 			method: request.method,
