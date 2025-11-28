@@ -79,7 +79,6 @@ async function handleProxyRequest(request: Request) {
 		const response = await fetch(proxyRequest);
 
 		// Create a new response with the proxied data
-		const responseBody = await response.arrayBuffer();
 		const responseHeaders = new Headers(response.headers);
 
 		// Add CORS headers if needed
@@ -89,6 +88,18 @@ async function handleProxyRequest(request: Request) {
 			"GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD",
 		);
 		responseHeaders.set("Access-Control-Allow-Headers", "*");
+
+		// Handle 204 No Content responses which should not have a body
+		if (response.status === 204) {
+			return new Response(null, {
+				status: 204,
+				statusText: response.statusText,
+				headers: responseHeaders,
+			});
+		}
+
+		// For other responses, include the body
+		const responseBody = await response.arrayBuffer();
 
 		return new Response(responseBody, {
 			status: response.status,

@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { IconEdit, IconPlus, IconTrash, IconShield } from "@tabler/icons-react";
+import {
+	IconEdit,
+	IconPlus,
+	IconTrash,
+	IconShield,
+	IconKey,
+} from "@tabler/icons-react";
 import {
 	type ColumnDef,
 	flexRender,
@@ -56,7 +62,9 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RoleForm, type RoleFormData } from "@/components/RoleForm";
+import { RolePermissionsModal } from "@/components/RolePermissionsModal";
 import { useRoleFormStore } from "@/lib/role-form-store";
+import { usePermissionModalStore } from "@/lib/permission-store";
 
 export function RolesList() {
 	const [sorting, setSorting] = useState<SortingState>([]);
@@ -76,6 +84,8 @@ export function RolesList() {
 		openEditForm,
 		closeForm,
 	} = useRoleFormStore();
+
+	const { openModal: openPermissionsModal } = usePermissionModalStore();
 
 	const queryOptions = {
 		query: {
@@ -193,6 +203,10 @@ export function RolesList() {
 		openCreateForm();
 	};
 
+	const handleManagePermissions = (role: IdentityRoleDto) => {
+		openPermissionsModal(role);
+	};
+
 	const columns: ColumnDef<IdentityRoleDto>[] = [
 		{
 			accessorKey: "name",
@@ -251,6 +265,12 @@ export function RolesList() {
 						<DropdownMenuItem onClick={() => handleEditRole(row.original)}>
 							<IconEdit className="mr-2 h-4 w-4" />
 							Edit
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => handleManagePermissions(row.original)}
+						>
+							<IconKey className="mr-2 h-4 w-4" />
+							Permissions
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem
@@ -547,6 +567,8 @@ export function RolesList() {
 				isLoading={createRoleMutation.isPending || updateRoleMutation.isPending}
 				mode={editingRole ? "edit" : "create"}
 			/>
+
+			<RolePermissionsModal />
 		</div>
 	);
 }

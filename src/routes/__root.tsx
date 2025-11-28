@@ -10,6 +10,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { SidebarLayout } from "../components/SidebarLayout";
 import { AuthProvider } from "../hooks/use-auth";
+import { Toaster } from "../components/ui/sonner";
 
 // Configure API client to use proxy
 // import "@/lib/api-config";
@@ -85,6 +86,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					</head>
 					<body>
 						<ConditionalLayout>{children}</ConditionalLayout>
+						<Toaster />
 						<TanStackDevtools
 							config={{
 								position: "bottom-right",
