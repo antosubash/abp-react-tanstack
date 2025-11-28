@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type {
 	IdentityRoleDto,
 	PermissionGrantInfoDto,
+	PermissionGroupDto,
 } from "@/client/types.gen";
 import { filterPermissions } from "./permission-utils";
 
@@ -15,6 +16,8 @@ interface PermissionModalState {
 	rolePermissions: PermissionGrantInfoDto[];
 	filteredPermissions: PermissionGrantInfoDto[];
 	searchTerm: string;
+	apiGroups: PermissionGroupDto[];
+	groupNameToPermissionsMap: Record<string, string[]>;
 
 	// UI state
 	isLoading: boolean;
@@ -29,6 +32,7 @@ interface PermissionModalState {
 	setSearchTerm: (term: string) => void;
 	updatePermission: (permissionName: string, isGranted: boolean) => void;
 	updateGroupPermissions: (groupName: string, isGranted: boolean) => void;
+	setApiGroups: (groups: PermissionGroupDto[]) => void;
 	setLoading: (loading: boolean) => void;
 	setSaving: (saving: boolean) => void;
 	setError: (error: string | null) => void;
@@ -42,6 +46,8 @@ const initialState = {
 	rolePermissions: [],
 	filteredPermissions: [],
 	searchTerm: "",
+	apiGroups: [],
+	groupNameToPermissionsMap: {},
 	isLoading: false,
 	isSaving: false,
 	error: null,
@@ -71,6 +77,8 @@ export const usePermissionModalStore = create<PermissionModalState>(
 				allPermissions: [],
 				rolePermissions: [],
 				filteredPermissions: [],
+				apiGroups: [],
+				groupNameToPermissionsMap: {},
 			}),
 
 		setAllPermissions: (permissions: PermissionGrantInfoDto[]) => {
@@ -167,20 +175,47 @@ export const usePermissionModalStore = create<PermissionModalState>(
 			});
 		},
 
-		updateGroupPermissions: (groupName: string, isGranted: boolean) => {
-			const { allPermissions, searchTerm } = get();
+		setApiGroups: (groups: PermissionGroupDto[]) => {
+			// Create a mapping from group display name to permission names
+			const map: Record<string, string[]> = {};
+			
+			groups.forEach((group) => {
+				if (!group.name) return;
+				
+				const groupName = group.displayName || group.name;
+				map[groupName] = [];
+				
+				if (group.permissions) {
+					group.permissions.forEach((permission) => {
+						if (permission.name) {
+							map[groupName].push(permission.name);
+						}
+					});
+				}
+			});
+			
+			set({
+				apiGroups: groups,
+				groupNameToPermissionsMap: map,
+			});
+		},
 
+		updateGroupPermissions: (groupName: string, isGranted: boolean) => {
+			const { allPermissions, searchTerm, groupNameToPermissionsMap } = get();
+			
+			// Get the permission names that belong to this group
+			const groupPermissionNames = groupNameToPermissionsMap[groupName] || [];
+			
 			const updatePermissionList = (permissions: PermissionGrantInfoDto[]) =>
 				permissions.map((permission) => {
 					if (!permission.name) return permission;
-
-					// Extract group name from permission name
-					const parts = permission.name.split(".");
-					const permissionGroupName = parts.length > 1 ? parts[0] : "Other";
-
-					return permissionGroupName === groupName
-						? { ...permission, isGranted }
-						: permission;
+					
+					// Check if this permission belongs to the specified group
+					if (groupPermissionNames.includes(permission.name)) {
+						return { ...permission, isGranted };
+					}
+					
+					return permission;
 				});
 
 			const updatedAllPermissions = updatePermissionList(allPermissions);
