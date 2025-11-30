@@ -40,6 +40,9 @@ format: ## Format code
 check: ## Check code quality (lint + format)
 	pnpm check
 
+check-file-size: ## Check file sizes
+	pnpm check-file-size
+
 type-check: ## Run TypeScript type checking
 	pnpm typecheck
 
