@@ -40,11 +40,13 @@ export function useIsMobile() {
 
 // Table hook for managing table state
 export function useTable<T>(initialData: T[] = []) {
-	const [data, setData] = useState<T[]>(initialData);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [sorting, setSorting] = useState<{ id: string; desc: boolean }[]>([]);
-	const [pagination, setPagination] = useState({
+	const [data, setData] = React.useState<T[]>(initialData);
+	const [loading, setLoading] = React.useState(false);
+	const [error, setError] = React.useState<string | null>(null);
+	const [sorting, setSorting] = React.useState<{ id: string; desc: boolean }[]>(
+		[],
+	);
+	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
 		pageSize: 10,
 	});

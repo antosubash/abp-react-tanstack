@@ -147,7 +147,17 @@ export function UserForm({
 				roles: [],
 			});
 		}
-	}, [open, user?.id, mode, form]);
+	}, [
+		open,
+		form,
+		user?.userName,
+		user?.name,
+		user?.surname,
+		user?.email,
+		user?.phoneNumber,
+		user?.isActive,
+		user?.lockoutEnabled,
+	]);
 
 	// Update form values when selected roles change (after user roles are loaded)
 	useEffect(() => {

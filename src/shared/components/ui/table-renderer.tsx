@@ -60,7 +60,9 @@ export function TableRenderer<TData>({
 								<TableHead
 									key={
 										(column.id as string) ||
-										(column.accessorKey as string) ||
+										("accessorKey" in column
+											? (column.accessorKey as string)
+											: undefined) ||
 										`column-${index}`
 									}
 								>
@@ -109,7 +111,9 @@ export function TableRenderer<TData>({
 										<TableCell
 											key={
 												(column.id as string) ||
-												(column.accessorKey as string) ||
+												("accessorKey" in column
+													? (column.accessorKey as string)
+													: undefined) ||
 												`cell-${index}-${colIndex}`
 											}
 										>

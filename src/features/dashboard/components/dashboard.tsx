@@ -161,7 +161,7 @@ export default function Dashboard() {
 		if (!usersResponse?.items) return [];
 
 		return usersResponse.items.slice(0, 5).map((userItem, index) => ({
-			id: userItem.id || index.toString(),
+			id: index,
 			name: userItem.userName || "Unknown",
 			avatar: (userItem.userName || "U").substring(0, 2).toUpperCase(),
 			role: "User",
@@ -187,9 +187,9 @@ export default function Dashboard() {
 						</CardHeader>
 						<CardContent>
 							<p className="text-red-400">
-								{usersError?.message ||
-									rolesError?.message ||
-									tenantsError?.message ||
+								{usersError?.error?.message ||
+									rolesError?.error?.message ||
+									tenantsError?.error?.message ||
 									"Unknown error occurred"}
 							</p>
 						</CardContent>
@@ -215,7 +215,7 @@ export default function Dashboard() {
 					</div>
 					<div className="flex items-center gap-4">
 						<div className="text-sm text-slate-400">
-							Welcome, {user?.name || user?.userName || "User"}
+							Welcome, {user?.name || user?.preferred_username || "User"}
 						</div>
 					</div>
 				</div>
