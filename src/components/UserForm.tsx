@@ -92,7 +92,7 @@ export function UserForm({
 				.map((role) => role.name || "")
 				.filter(Boolean);
 			setSelectedRoles(roleNames);
-		} else {
+		} else if (mode === "create") {
 			setSelectedRoles([]);
 		}
 	}, [userRoles, mode]);
@@ -120,14 +120,19 @@ export function UserForm({
 				user?.lockoutEnabled !== undefined ? user.lockoutEnabled : true,
 			password: "",
 			confirmPassword: "",
-			roles: selectedRoles,
+			roles:
+				mode === "edit" && userRoles.length > 0
+					? userRoles.map((role) => role.name || "").filter(Boolean)
+					: [],
 		},
 	});
 
 	// Update form values when selected roles change
 	useEffect(() => {
-		form.setValue("roles", selectedRoles);
-	}, [selectedRoles, form]);
+		if (mode === "edit") {
+			form.setValue("roles", selectedRoles);
+		}
+	}, [selectedRoles, form, mode]);
 
 	const handleRoleChange = (roleName: string, checked: boolean) => {
 		if (checked) {
