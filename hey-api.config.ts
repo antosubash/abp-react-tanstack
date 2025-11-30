@@ -23,7 +23,7 @@ export default defineConfig({
   plugins: [
     {
       name: '@hey-api/client-fetch',
-      runtimeConfigPath: '../hey-api',
+      runtimeConfigPath: '../../hey-api',
     },
     // Zod validation schemas
     {
