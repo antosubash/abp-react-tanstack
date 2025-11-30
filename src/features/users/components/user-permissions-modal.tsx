@@ -172,7 +172,10 @@ export function UserPermissionsModal() {
 
 	return (
 		<Dialog open={open} onOpenChange={closeModal}>
-			<DialogContent className="max-w-4xl h-[85vh] flex flex-col overflow-hidden p-0">
+			<DialogContent
+				className="max-w-4xl h-[85vh] flex flex-col overflow-hidden p-0"
+				data-testid="user-permissions-modal"
+			>
 				<DialogHeader className="p-6 pb-2 flex-shrink-0">
 					<DialogTitle className="flex items-center gap-2">
 						<IconShield className="h-5 w-5" />

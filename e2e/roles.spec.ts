@@ -44,8 +44,11 @@ test.describe("Role Management", () => {
 		// Wait for the page to load
 		await loggedInPage.waitForLoading();
 
-		// Click permissions button on first role
-		await loggedInPage.locator('[data-testid="role-row"]').first().locator('[data-testid="edit-permissions-btn"]').click();
+		// Click actions trigger on first role to open dropdown
+		await loggedInPage.locator('[data-testid="role-row"]').first().locator('[data-testid="role-actions-trigger"]').click();
+
+		// Click permissions button (dropdown content is not scoped to row)
+		await loggedInPage.locator('[data-testid="edit-permissions-btn"]').click();
 
 		// Wait for modal to open
 		await expect(loggedInPage.locator('[data-testid="permissions-modal"]')).toBeVisible();
@@ -68,9 +71,12 @@ test.describe("Role Management", () => {
 		// Wait for the page to load
 		await loggedInPage.waitForLoading();
 
-		// Click delete button on first role (avoiding the test role that might not exist)
+		// Click actions trigger on first role to open dropdown
 		const firstRoleRow = loggedInPage.locator('[data-testid="role-row"]').first();
-		await firstRoleRow.locator('[data-testid="delete-role-btn"]').click();
+		await firstRoleRow.locator('[data-testid="role-actions-trigger"]').click();
+
+		// Click delete button (dropdown content is not scoped to row)
+		await loggedInPage.locator('[data-testid="delete-role-btn"]').click();
 
 		// Wait for confirmation dialog and click confirm
 		await expect(loggedInPage.locator('[data-testid="confirm-delete-btn"]')).toBeVisible();

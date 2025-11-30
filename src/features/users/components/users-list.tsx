@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -12,6 +12,7 @@ import {
 } from "@/infrastructure/api/@tanstack/react-query.gen";
 import type { IdentityUserDto } from "@/infrastructure/api/types.gen";
 import { Alert, AlertDescription } from "@/shared/components/ui/alert";
+import { Button } from "@/shared/components/ui/button";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -38,6 +39,7 @@ export function UsersList() {
 	const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
 	const [searchValue, setSearchValue] = useState("");
 	const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+	const userFormRef = useRef<{ openModal: () => void }>(null);
 
 	const queryOptions = {
 		query: {
@@ -50,9 +52,7 @@ export function UsersList() {
 
 	const {
 		user: editingUser,
-		open: formOpen,
 		setLoading,
-		openCreateForm,
 		openEditForm,
 		closeForm,
 	} = useUserFormStore();
@@ -178,15 +178,34 @@ export function UsersList() {
 				error instanceof Error ? error.message : "Failed to delete user";
 			toast.error(errorMessage);
 			throw error;
-		} finally {
-			setDeleteUserId(null);
 		}
 	};
 
-	const handleConfirmDelete = () => {
-		if (deleteUserId) {
-			handleDeleteUser(deleteUserId);
+	const handleConfirmDelete = async () => {
+		if (deleteUserId === "bulk") {
+			// Handle bulk delete
+			try {
+				await Promise.all(
+					selectedUsers.map((userId) =>
+						deleteUserMutation.mutateAsync({
+							path: { id: userId },
+						}),
+					),
+				);
+				queryClient.invalidateQueries({
+					queryKey: userGetListQueryKey(queryOptions),
+				});
+				toast.success("Users deleted successfully");
+				setSelectedUsers([]);
+			} catch (error: unknown) {
+				const errorMessage =
+					error instanceof Error ? error.message : "Failed to delete users";
+				toast.error(errorMessage);
+			}
+		} else if (deleteUserId) {
+			await handleDeleteUser(deleteUserId);
 		}
+		setDeleteUserId(null);
 	};
 
 	const handleEditUser = (user: IdentityUserDto) => {
@@ -194,7 +213,7 @@ export function UsersList() {
 	};
 
 	const handleCreateNewUser = () => {
-		openCreateForm();
+		userFormRef.current?.openModal();
 	};
 
 	const handleOpenPermissions = (user: IdentityUserDto) => {
@@ -221,9 +240,30 @@ export function UsersList() {
 				totalCount={totalCount}
 				onCreateUser={handleCreateNewUser}
 				isCreating={createUserMutation.isPending}
+				onSearchChange={(value: string) => setSearchValue(value)}
 				searchValue={searchValue}
-				onSearchChange={(value) => setSearchValue(value)}
 			/>
+
+			{/* Bulk Actions */}
+			{selectedUsers.length > 0 && (
+				<div
+					className="flex items-center gap-2 p-4 bg-muted rounded-lg"
+					data-testid="bulk-actions"
+				>
+					<span className="text-sm text-muted-foreground">
+						{selectedUsers.length} user(s) selected
+					</span>
+					<Button
+						variant="destructive"
+						size="sm"
+						data-testid="bulk-delete-btn"
+						onClick={() => setDeleteUserId("bulk")}
+						disabled={deleteUserMutation.isPending}
+					>
+						{deleteUserMutation.isPending ? "Deleting..." : "Delete Selected"}
+					</Button>
+				</div>
+			)}
 
 			<UsersTable
 				users={users}
@@ -242,10 +282,9 @@ export function UsersList() {
 			/>
 
 			<UserForm
+				ref={userFormRef}
 				key={editingUser?.id || "create"}
 				user={editingUser}
-				open={formOpen}
-				onOpenChange={closeForm}
 				onSubmit={editingUser ? handleUpdateUser : handleCreateUser}
 				isLoading={createUserMutation.isPending || updateUserMutation.isPending}
 				mode={editingUser ? "edit" : "create"}
@@ -258,16 +297,23 @@ export function UsersList() {
 			>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Delete User</AlertDialogTitle>
+						<AlertDialogTitle>
+							{deleteUserId === "bulk" ? "Delete Users" : "Delete User"}
+						</AlertDialogTitle>
 						<AlertDialogDescription>
-							Are you sure you want to delete this user? This action cannot be
-							undone.
+							{deleteUserId === "bulk"
+								? `Are you sure you want to delete ${selectedUsers.length} selected user(s)? This action cannot be undone.`
+								: "Are you sure you want to delete this user? This action cannot be undone."}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
 						<AlertDialogAction
-							data-testid="confirm-delete-btn"
+							data-testid={
+								deleteUserId === "bulk"
+									? "confirm-bulk-delete-btn"
+									: "confirm-delete-btn"
+							}
 							onClick={handleConfirmDelete}
 							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 						>

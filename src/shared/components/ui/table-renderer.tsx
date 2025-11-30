@@ -105,7 +105,10 @@ export function TableRenderer<TData>({
 			</div>
 
 			{/* Pagination */}
-			<div className="flex items-center justify-between px-2">
+			<div
+				className="flex items-center justify-between px-2"
+				data-testid="users-pagination"
+			>
 				<div className="flex-1 text-sm text-muted-foreground">
 					Showing {pagination.pageIndex * pagination.pageSize + 1} to{" "}
 					{Math.min(
@@ -139,7 +142,10 @@ export function TableRenderer<TData>({
 						</Select>
 					</div>
 
-					<div className="flex w-[100px] items-center justify-center text-sm font-medium">
+					<div
+						className="flex w-[100px] items-center justify-center text-sm font-medium"
+						data-testid="current-page"
+					>
 						Page {pagination.pageIndex + 1} of {totalPages}
 					</div>
 
@@ -176,6 +182,7 @@ export function TableRenderer<TData>({
 						<Button
 							variant="outline"
 							className="h-8 w-8 p-0"
+							data-testid="next-page-btn"
 							onClick={() =>
 								onPaginationChange({
 									...pagination,

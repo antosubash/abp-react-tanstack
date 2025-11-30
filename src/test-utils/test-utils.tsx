@@ -35,6 +35,42 @@ export function renderWithProviders(ui: ReactElement) {
 	};
 }
 
+// Global mocks for testing environment
+export function setupTestEnvironment() {
+	// Mock URL
+	const urlMock = {
+		createObjectURL: () => "mocked-url",
+		revokeObjectURL: () => {},
+	};
+
+	Object.defineProperty(global, "URL", {
+		value: urlMock,
+		writable: true,
+		configurable: true,
+	});
+
+	// Mock ResizeObserver
+	class ResizeObserverMock {
+		observe() {}
+		unobserve() {}
+		disconnect() {}
+	}
+
+	Object.defineProperty(global, "ResizeObserver", {
+		value: ResizeObserverMock,
+		writable: true,
+		configurable: true,
+	});
+
+	// Mock structuredClone if not defined
+	if (typeof global.structuredClone === "undefined") {
+		global.structuredClone = (obj) => JSON.parse(JSON.stringify(obj));
+	}
+}
+
+// Call setup on import
+setupTestEnvironment();
+
 // Re-export everything from React Testing Library
 export * from "@testing-library/react";
 export * from "@testing-library/dom";

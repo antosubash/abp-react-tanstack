@@ -169,7 +169,11 @@ export function UsersTable({
 			cell: ({ row }) => (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" className="h-8 w-8 p-0">
+						<Button
+							variant="ghost"
+							className="h-8 w-8 p-0"
+							data-testid="user-actions-trigger"
+						>
 							<span className="sr-only">Open menu</span>
 							<IconDots className="h-4 w-4" />
 						</Button>

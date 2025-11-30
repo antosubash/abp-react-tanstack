@@ -37,6 +37,8 @@ export default defineConfig({
 				'src/logo.svg',
 			],
 		},
+		globals: true,
+		globalSetup: './src/test-utils/global-setup.ts',
 	},
 	plugins: [
 		viteTsConfigPaths({
