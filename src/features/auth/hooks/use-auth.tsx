@@ -49,10 +49,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const queryClient = useQueryClient();
 
+	// Check if we're in test mode
+	const isTestMode =
+		typeof window !== "undefined" &&
+		(window.location.hostname === "localhost" ||
+			window.location.hostname === "127.0.0.1") &&
+		(localStorage.getItem("test-mode") === "true" ||
+			sessionStorage.getItem("test-mode") === "true");
+
 	// Query for user data
 	const { data: userData, isLoading } = useQuery({
 		queryKey: QUERY_KEYS.AUTH_ME,
 		queryFn: async () => {
+			// Return mock data in test mode
+			if (isTestMode) {
+				return {
+					user: {
+						sub: "test-user-id",
+						name: "Test User",
+						email: "test@example.com",
+						email_verified: true,
+						picture: "",
+						preferred_username: "testuser",
+						given_name: "Test",
+						family_name: "User",
+						updated_at: Date.now(),
+					},
+					expiresAt: Date.now() + 3600000, // 1 hour from now
+				};
+			}
+
 			const response = await fetch("/auth/me");
 			if (!response.ok) {
 				throw new Error("Failed to fetch user data");

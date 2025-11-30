@@ -143,3 +143,18 @@ vite.config.ts.timestamp-*
 
 # tanstack
 .tanstack
+
+# test coverage
+coverage
+playwright-report
+
+# test reports
+test-reports
+test-results
+test-results.xml
+test-results.json
+test-results.html
+test-results.lcov
+test-results.json
+test-results.html
+test-results.lcov

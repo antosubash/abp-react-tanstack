@@ -46,7 +46,7 @@ export default function Header() {
 				</div>
 
 				{/* User Menu */}
-				<div className="flex items-center">
+				<div className="flex items-center" data-testid="user-menu">
 					{isLoading ? (
 						<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-cyan-400"></div>
 					) : isAuthenticated ? (

@@ -12,6 +12,16 @@ import {
 } from "@/infrastructure/api/@tanstack/react-query.gen";
 import type { IdentityUserDto } from "@/infrastructure/api/types.gen";
 import { Alert, AlertDescription } from "@/shared/components/ui/alert";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/shared/components/ui/alert-dialog";
 import { UserForm, type UserFormData } from "./user-form";
 import { UserPermissionsModal } from "./user-permissions-modal";
 import { useUserFormStore } from "../stores/user-form-store";
@@ -25,11 +35,15 @@ export function UsersList() {
 		pageIndex: 0,
 		pageSize: 10,
 	});
+	const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
+	const [searchValue, setSearchValue] = useState("");
+	const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
 	const queryOptions = {
 		query: {
 			MaxResultCount: pagination.pageSize,
 			SkipCount: pagination.pageIndex * pagination.pageSize,
+			...(searchValue && { Filter: searchValue }),
 		},
 	};
 	const queryClient = useQueryClient();
@@ -164,6 +178,14 @@ export function UsersList() {
 				error instanceof Error ? error.message : "Failed to delete user";
 			toast.error(errorMessage);
 			throw error;
+		} finally {
+			setDeleteUserId(null);
+		}
+	};
+
+	const handleConfirmDelete = () => {
+		if (deleteUserId) {
+			handleDeleteUser(deleteUserId);
 		}
 	};
 
@@ -177,6 +199,10 @@ export function UsersList() {
 
 	const handleOpenPermissions = (user: IdentityUserDto) => {
 		openPermissionsModal(user);
+	};
+
+	const handleOpenDeleteDialog = (userId: string) => {
+		setDeleteUserId(userId);
 	};
 
 	if (isError) {
@@ -195,6 +221,8 @@ export function UsersList() {
 				totalCount={totalCount}
 				onCreateUser={handleCreateNewUser}
 				isCreating={createUserMutation.isPending}
+				searchValue={searchValue}
+				onSearchChange={(value) => setSearchValue(value)}
 			/>
 
 			<UsersTable
@@ -203,12 +231,14 @@ export function UsersList() {
 				sorting={sorting}
 				pagination={pagination}
 				totalCount={totalCount}
-				onSortingChange={setSorting}
-				onPaginationChange={setPagination}
+				onSortingChange={(sorting) => setSorting(sorting)}
+				onPaginationChange={(pagination) => setPagination(pagination)}
 				onEditUser={handleEditUser}
 				onOpenPermissions={handleOpenPermissions}
-				onDeleteUser={handleDeleteUser}
+				onDeleteUser={handleOpenDeleteDialog}
 				isDeleting={deleteUserMutation.isPending}
+				selectedUsers={selectedUsers}
+				onSelectedUsersChange={(userIds: string[]) => setSelectedUsers(userIds)}
 			/>
 
 			<UserForm
@@ -221,6 +251,31 @@ export function UsersList() {
 				mode={editingUser ? "edit" : "create"}
 			/>
 			<UserPermissionsModal />
+
+			<AlertDialog
+				open={!!deleteUserId}
+				onOpenChange={() => setDeleteUserId(null)}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Delete User</AlertDialogTitle>
+						<AlertDialogDescription>
+							Are you sure you want to delete this user? This action cannot be
+							undone.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							data-testid="confirm-delete-btn"
+							onClick={handleConfirmDelete}
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+						>
+							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

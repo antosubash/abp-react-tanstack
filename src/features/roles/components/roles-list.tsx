@@ -11,6 +11,16 @@ import {
 } from "@/infrastructure/api/@tanstack/react-query.gen";
 import type { IdentityRoleDto } from "@/infrastructure/api/types.gen";
 import { Alert, AlertDescription } from "@/shared/components/ui/alert";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/shared/components/ui/alert-dialog";
 import { RoleForm, type RoleFormData } from "./role-form";
 import { RolePermissionsModal } from "./role-permissions-modal";
 import { useRoleFormStore } from "../stores/role-form-store";
@@ -24,6 +34,7 @@ export function RolesList() {
 		pageIndex: 0,
 		pageSize: 10,
 	});
+	const [deleteRoleId, setDeleteRoleId] = useState<string | null>(null);
 
 	const queryOptions = {
 		query: {
@@ -148,6 +159,16 @@ export function RolesList() {
 		openPermissionsModal(role);
 	};
 
+	const handleOpenDeleteDialog = (roleId: string) => {
+		setDeleteRoleId(roleId);
+	};
+
+	const handleConfirmDelete = () => {
+		if (deleteRoleId) {
+			handleDeleteRole(deleteRoleId);
+		}
+	};
+
 	if (isError) {
 		return (
 			<Alert variant="destructive">
@@ -176,7 +197,7 @@ export function RolesList() {
 				onPaginationChange={setPagination}
 				onEditRole={handleEditRole}
 				onOpenPermissions={handleOpenPermissions}
-				onDeleteRole={handleDeleteRole}
+				onDeleteRole={handleOpenDeleteDialog}
 				isDeleting={deleteRoleMutation.isPending}
 			/>
 
@@ -190,6 +211,31 @@ export function RolesList() {
 				mode={editingRole ? "edit" : "create"}
 			/>
 			<RolePermissionsModal />
+
+			<AlertDialog
+				open={!!deleteRoleId}
+				onOpenChange={() => setDeleteRoleId(null)}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Delete Role</AlertDialogTitle>
+						<AlertDialogDescription>
+							Are you sure you want to delete this role? This action cannot be
+							undone.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							data-testid="confirm-delete-btn"
+							onClick={handleConfirmDelete}
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+						>
+							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

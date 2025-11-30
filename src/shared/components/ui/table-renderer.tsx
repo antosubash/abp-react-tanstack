@@ -33,6 +33,8 @@ interface TableRendererProps<TData> {
 		pageIndex: number;
 		pageSize: number;
 	}) => void;
+	tableTestId?: string;
+	rowTestId?: string;
 }
 
 export function TableRenderer<TData>({
@@ -41,6 +43,8 @@ export function TableRenderer<TData>({
 	pagination,
 	totalCount,
 	onPaginationChange,
+	tableTestId,
+	rowTestId,
 }: TableRendererProps<TData>) {
 	const totalPages = Math.ceil(totalCount / pagination.pageSize);
 	const canPreviousPage = pagination.pageIndex > 0;
@@ -49,7 +53,7 @@ export function TableRenderer<TData>({
 	return (
 		<div className="space-y-4">
 			<div className="rounded-md border">
-				<Table>
+				<Table data-testid={tableTestId}>
 					<TableHeader>
 						{columns.map((column) => (
 							<TableHead key={column.id as string}>
@@ -59,7 +63,10 @@ export function TableRenderer<TData>({
 					</TableHeader>
 					<TableBody>
 						{data.map((row, index) => (
-							<TableRow key={`row-${index}-${JSON.stringify(row)}`}>
+							<TableRow
+								key={`row-${index}-${JSON.stringify(row)}`}
+								data-testid={rowTestId}
+							>
 								{columns.map((column) => {
 									let cellContent: React.ReactNode = "";
 									if (typeof column.cell === "function") {

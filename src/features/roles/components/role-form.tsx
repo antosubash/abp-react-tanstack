@@ -72,7 +72,7 @@ export function RoleForm({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="sm:max-w-[425px]">
+			<DialogContent className="sm:max-w-[425px]" data-testid="role-form-modal">
 				<DialogHeader>
 					<DialogTitle>
 						{mode === "create" ? "Create Role" : "Edit Role"}
@@ -95,7 +95,11 @@ export function RoleForm({
 								<FormItem>
 									<FormLabel>Role Name *</FormLabel>
 									<FormControl>
-										<Input placeholder="Enter role name" {...field} />
+										<Input
+											placeholder="Enter role name"
+											data-testid="field-role-name"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -167,7 +171,11 @@ export function RoleForm({
 							>
 								Cancel
 							</Button>
-							<Button type="submit" disabled={isLoading}>
+							<Button
+								type="submit"
+								disabled={isLoading}
+								data-testid="btn-save-role"
+							>
 								{isLoading
 									? "Saving..."
 									: mode === "create"

@@ -1,6 +1,6 @@
 # Makefile for abp-react-tanstack project
 
-.PHONY: help install dev build serve test lint format check type-check generate-api clean kill
+.PHONY: help install dev build serve test test-unit test-watch test-coverage test-e2e lint format check type-check generate-api clean kill
 
 # Default target
 help: ## Show this help message
@@ -24,8 +24,20 @@ serve: ## Serve production build
 	pnpm serve
 
 # Testing
-test: ## Run tests
+test: ## Run all tests (unit + E2E)
+	pnpm test:all
+
+test-unit: ## Run unit tests
 	pnpm test
+
+test-watch: ## Run tests in watch mode
+	pnpm test:watch
+
+test-coverage: ## Run tests with coverage
+	pnpm test:coverage
+
+test-e2e: ## Run E2E tests
+	pnpm test:e2e
 
 # Code quality
 lint: ## Run linter

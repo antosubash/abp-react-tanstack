@@ -8,6 +8,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { IdentityUserDto } from "@/infrastructure/api/types.gen";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
+import { Checkbox } from "@/shared/components/ui/checkbox";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -35,6 +36,8 @@ interface UsersTableProps {
 	onOpenPermissions: (user: IdentityUserDto) => void;
 	onDeleteUser: (userId: string) => void;
 	isDeleting: boolean;
+	selectedUsers: string[];
+	onSelectedUsersChange: (userIds: string[]) => void;
 }
 
 export function UsersTable({
@@ -49,6 +52,8 @@ export function UsersTable({
 	onOpenPermissions,
 	onDeleteUser,
 	isDeleting,
+	selectedUsers,
+	onSelectedUsersChange,
 }: UsersTableProps) {
 	const handleEditUser = (user: IdentityUserDto) => {
 		onEditUser(user);
@@ -63,6 +68,56 @@ export function UsersTable({
 	};
 
 	const columns: ColumnDef<IdentityUserDto>[] = [
+		{
+			id: "select",
+			header: ({ table: _table }) => (
+				<Checkbox
+					checked={
+						selectedUsers.length === users.length && users.length > 0
+							? true
+							: selectedUsers.length === 0
+								? false
+								: "indeterminate"
+					}
+					onCheckedChange={(checked) => {
+						if (onSelectedUsersChange) {
+							if (checked === true) {
+								const allUserIds = users
+									.map((user) => user.id || "")
+									.filter(Boolean);
+								onSelectedUsersChange(allUserIds);
+							} else {
+								onSelectedUsersChange([]);
+							}
+						}
+					}}
+					aria-label="Select all"
+				/>
+			),
+			cell: ({ row }) => (
+				<Checkbox
+					checked={selectedUsers.includes(row.original.id || "")}
+					onCheckedChange={(checked) => {
+						if (onSelectedUsersChange) {
+							if (checked) {
+								onSelectedUsersChange([
+									...selectedUsers,
+									row.original.id || "",
+								]);
+							} else {
+								onSelectedUsersChange(
+									selectedUsers.filter((id) => id !== row.original.id),
+								);
+							}
+						}
+					}}
+					data-testid="user-checkbox"
+					aria-label="Select row"
+				/>
+			),
+			enableSorting: false,
+			enableHiding: false,
+		},
 		{
 			accessorKey: "userName",
 			header: "Username",
@@ -120,7 +175,10 @@ export function UsersTable({
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
-						<DropdownMenuItem onClick={() => handleEditUser(row.original)}>
+						<DropdownMenuItem
+							onClick={() => handleEditUser(row.original)}
+							data-testid="edit-user-btn"
+						>
 							<IconPencil className="mr-2 h-4 w-4" />
 							Edit
 						</DropdownMenuItem>
@@ -134,11 +192,10 @@ export function UsersTable({
 						<DropdownMenuItem
 							className="text-destructive"
 							disabled={isDeleting}
+							data-testid="delete-user-btn"
 							onClick={() => {
-								if (confirm("Are you sure you want to delete this user?")) {
-									if (row.original.id) {
-										handleDeleteUser(row.original.id);
-									}
+								if (row.original.id) {
+									handleDeleteUser(row.original.id);
 								}
 							}}
 						>
@@ -174,6 +231,8 @@ export function UsersTable({
 			pagination={pagination}
 			totalCount={totalCount}
 			onPaginationChange={onPaginationChange}
+			tableTestId="users-table"
+			rowTestId="user-row"
 		/>
 	);
 }

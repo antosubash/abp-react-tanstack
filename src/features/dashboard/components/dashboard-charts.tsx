@@ -52,7 +52,10 @@ export function DashboardCharts({
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
 			{/* Status Distribution Pie Chart */}
-			<Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors">
+			<Card
+				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
+				data-testid="status-chart"
+			>
 				<CardHeader>
 					<div className="flex items-center justify-between">
 						<div>
@@ -116,7 +119,10 @@ export function DashboardCharts({
 			</Card>
 
 			{/* Type Distribution Bar Chart */}
-			<Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors">
+			<Card
+				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
+				data-testid="type-chart"
+			>
 				<CardHeader>
 					<div className="flex items-center justify-between">
 						<div>

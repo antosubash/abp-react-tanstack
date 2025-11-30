@@ -1,16 +1,21 @@
 import { IconPlus, IconUsers } from "@tabler/icons-react";
 import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/shared/components/ui/input";
 
 interface UsersHeaderProps {
 	totalCount: number;
 	onCreateUser: () => void;
 	isCreating: boolean;
+	searchValue?: string;
+	onSearchChange?: (value: string) => void;
 }
 
 export function UsersHeader({
 	totalCount,
 	onCreateUser,
 	isCreating,
+	searchValue = "",
+	onSearchChange,
 }: UsersHeaderProps) {
 	return (
 		<div className="flex items-center justify-between">
@@ -20,10 +25,25 @@ export function UsersHeader({
 					{totalCount} users total
 				</span>
 			</div>
-			<Button onClick={onCreateUser} disabled={isCreating}>
-				<IconPlus className="mr-2 h-4 w-4" />
-				{isCreating ? "Creating..." : "Add User"}
-			</Button>
+			<div className="flex items-center gap-4">
+				{onSearchChange && (
+					<Input
+						placeholder="Search users..."
+						value={searchValue}
+						onChange={(e) => onSearchChange(e.target.value)}
+						className="w-64"
+						data-testid="field-user-search"
+					/>
+				)}
+				<Button
+					onClick={onCreateUser}
+					disabled={isCreating}
+					data-testid="btn-create-user"
+				>
+					<IconPlus className="mr-2 h-4 w-4" />
+					{isCreating ? "Creating..." : "Add User"}
+				</Button>
+			</div>
 		</div>
 	);
 }

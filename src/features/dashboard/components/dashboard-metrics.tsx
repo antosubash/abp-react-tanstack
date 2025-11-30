@@ -27,7 +27,10 @@ export function DashboardMetrics({
 }: DashboardMetricsProps) {
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-			<Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors">
+			<Card
+				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
+				data-testid="metric-total-tasks"
+			>
 				<CardHeader className="pb-3">
 					<div className="flex items-center justify-between">
 						<CardTitle className="text-lg text-white">Total Tasks</CardTitle>
@@ -45,7 +48,10 @@ export function DashboardMetrics({
 				</CardContent>
 			</Card>
 
-			<Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors">
+			<Card
+				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
+				data-testid="metric-completed-tasks"
+			>
 				<CardHeader className="pb-3">
 					<div className="flex items-center justify-between">
 						<CardTitle className="text-lg text-white">Completed</CardTitle>
@@ -66,7 +72,10 @@ export function DashboardMetrics({
 				</CardContent>
 			</Card>
 
-			<Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors">
+			<Card
+				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
+				data-testid="metric-in-progress-tasks"
+			>
 				<CardHeader className="pb-3">
 					<div className="flex items-center justify-between">
 						<CardTitle className="text-lg text-white">In Progress</CardTitle>
@@ -90,7 +99,10 @@ export function DashboardMetrics({
 				</CardContent>
 			</Card>
 
-			<Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors">
+			<Card
+				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
+				data-testid="metric-completion-rate"
+			>
 				<CardHeader className="pb-3">
 					<div className="flex items-center justify-between">
 						<CardTitle className="text-lg text-white">

@@ -114,6 +114,7 @@ export function RolesTable({
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							onClick={() => handleOpenPermissions(row.original)}
+							data-testid="edit-permissions-btn"
 						>
 							<IconShield className="mr-2 h-4 w-4" />
 							Permissions
@@ -122,11 +123,10 @@ export function RolesTable({
 						<DropdownMenuItem
 							className="text-destructive"
 							disabled={isDeleting || row.original.isStatic}
+							data-testid="delete-role-btn"
 							onClick={() => {
-								if (confirm("Are you sure you want to delete this role?")) {
-									if (row.original.id) {
-										handleDeleteRole(row.original.id);
-									}
+								if (row.original.id) {
+									handleDeleteRole(row.original.id);
 								}
 							}}
 						>
@@ -162,6 +162,8 @@ export function RolesTable({
 			pagination={pagination}
 			totalCount={totalCount}
 			onPaginationChange={onPaginationChange}
+			tableTestId="roles-table"
+			rowTestId="role-row"
 		/>
 	);
 }

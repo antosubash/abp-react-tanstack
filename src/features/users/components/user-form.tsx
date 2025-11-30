@@ -160,7 +160,7 @@ export function UserForm({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="sm:max-w-[500px]">
+			<DialogContent className="sm:max-w-[500px]" data-testid="user-form-modal">
 				<DialogHeader>
 					<DialogTitle>
 						{mode === "create" ? "Create User" : "Edit User"}
@@ -184,7 +184,11 @@ export function UserForm({
 									<FormItem>
 										<FormLabel>Username *</FormLabel>
 										<FormControl>
-											<Input placeholder="Enter username" {...field} />
+											<Input
+												placeholder="Enter username"
+												data-testid="field-username"
+												{...field}
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -200,6 +204,7 @@ export function UserForm({
 											<Input
 												type="email"
 												placeholder="Enter email"
+												data-testid="field-email"
 												{...field}
 											/>
 										</FormControl>
@@ -217,7 +222,11 @@ export function UserForm({
 									<FormItem>
 										<FormLabel>First Name</FormLabel>
 										<FormControl>
-											<Input placeholder="Enter first name" {...field} />
+											<Input
+												placeholder="Enter first name"
+												data-testid="field-name"
+												{...field}
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -230,7 +239,11 @@ export function UserForm({
 									<FormItem>
 										<FormLabel>Last Name</FormLabel>
 										<FormControl>
-											<Input placeholder="Enter last name" {...field} />
+											<Input
+												placeholder="Enter last name"
+												data-testid="field-surname"
+												{...field}
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -264,6 +277,7 @@ export function UserForm({
 												<Input
 													type="password"
 													placeholder="Enter password"
+													data-testid="field-password"
 													{...field}
 												/>
 											</FormControl>
@@ -281,6 +295,7 @@ export function UserForm({
 												<Input
 													type="password"
 													placeholder="Confirm password"
+													data-testid="field-confirmPassword"
 													{...field}
 												/>
 											</FormControl>
@@ -385,7 +400,11 @@ export function UserForm({
 							>
 								Cancel
 							</Button>
-							<Button type="submit" disabled={isLoading}>
+							<Button
+								type="submit"
+								disabled={isLoading}
+								data-testid="btn-save-user"
+							>
 								{isLoading
 									? "Saving..."
 									: mode === "create"

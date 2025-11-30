@@ -103,7 +103,13 @@ function isPascalCase(fileName) {
  */
 function getNamingRules(filePath, fileName) {
 	const relativePath = path.relative(path.join(__dirname, '..'), filePath);
-	const baseName = path.basename(fileName, path.extname(fileName));
+	let baseName = path.basename(fileName, path.extname(fileName));
+
+	// Strip .test suffix for test files
+	if (baseName.endsWith('.test')) {
+		baseName = baseName.slice(0, -5); // Remove '.test'
+	}
+
 	const ext = path.extname(fileName);
 	
 	// Route files have special rules

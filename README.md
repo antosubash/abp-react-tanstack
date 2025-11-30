@@ -284,16 +284,59 @@ pnpm start
 
 ## 🧪 Testing
 
+The project includes comprehensive testing infrastructure with unit tests, integration tests, and end-to-end tests.
+
+### Test Scripts
+
 ```bash
-# Run tests
-pnpm test
+# Unit & Integration Tests
+pnpm test              # Run all tests once
+pnpm test:watch        # Run tests in watch mode
+pnpm test:ui           # Run tests with UI
+pnpm test:coverage     # Run tests with coverage report
 
-# Run tests in watch mode
-pnpm test --watch
+# E2E Tests
+pnpm test:e2e          # Run E2E tests
+pnpm test:e2e:ui       # Run E2E tests with UI
+pnpm test:e2e:debug    # Run E2E tests in debug mode
 
-# Run tests with coverage
-pnpm test --coverage
+# All Tests
+pnpm test:all          # Run unit + E2E tests
 ```
+
+### Testing Stack
+
+- **Vitest**: Fast unit and integration testing
+- **React Testing Library**: Component testing utilities
+- **Playwright**: End-to-end testing across browsers
+- **MSW**: API mocking for reliable tests
+- **Coverage**: Enforced minimum thresholds (70% statements, 65% branches)
+
+### Coverage Requirements
+
+- **Statements**: 70%
+- **Branches**: 65%
+- **Functions**: 70%
+- **Lines**: 70%
+
+Coverage reports are generated in `coverage/` directory and uploaded to CI.
+
+### Writing Tests
+
+- **Unit Tests**: Test individual functions and utilities
+- **Component Tests**: Test React components with Testing Library
+- **Integration Tests**: Test component interactions and API calls
+- **E2E Tests**: Test complete user workflows in real browsers
+
+See [`docs/TESTING.md`](docs/TESTING.md) for detailed testing guidelines.
+
+### CI/CD Integration
+
+Tests run automatically on pull requests:
+- Lint and format checks
+- Unit tests with coverage reporting
+- E2E tests across multiple browsers
+- TypeScript type checking
 
 ## 🔧 Development
 

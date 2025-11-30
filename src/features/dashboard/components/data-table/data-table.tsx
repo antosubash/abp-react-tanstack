@@ -243,7 +243,12 @@ export function DataTable({ data: initialData }: { data: DataTableSchema[] }) {
 								{table.getHeaderGroups().map((headerGroup) => (
 									<TableRow key={headerGroup.id}>
 										{headerGroup.headers.map((header) => (
-											<TableHead key={header.id}>
+											<TableHead
+												key={header.id}
+												data-testid={
+													header.id === "header" ? "table-header-id" : undefined
+												}
+											>
 												{header.isPlaceholder
 													? null
 													: flexRender(

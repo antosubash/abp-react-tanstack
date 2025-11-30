@@ -195,7 +195,10 @@ export function RolePermissionsModal() {
 
 	return (
 		<Dialog open={open} onOpenChange={closeModal}>
-			<DialogContent className="max-w-5xl h-[85vh] flex flex-col">
+			<DialogContent
+				className="max-w-5xl h-[85vh] flex flex-col"
+				data-testid="permissions-modal"
+			>
 				<DialogHeader className="flex-shrink-0">
 					<div className="flex items-center gap-2">
 						<IconShield className="h-5 w-5" />
@@ -289,6 +292,7 @@ export function RolePermissionsModal() {
 					<Button
 						onClick={handleSavePermissions}
 						disabled={isLoading || isSaving}
+						data-testid="btn-save-permissions"
 					>
 						{isSaving ? "Saving..." : "Save Changes"}
 					</Button>

@@ -64,8 +64,23 @@ export const columns: ColumnDef<DataTableSchema>[] = [
 		enableHiding: false,
 	},
 	{
+		accessorKey: "id",
+		header: () => <div data-testid="table-header-id">ID</div>,
+		cell: ({ row }) => <div>{row.original.id}</div>,
+		enableSorting: true,
+		enableHiding: false,
+	},
+	{
 		accessorKey: "header",
-		header: "Header",
+		header: ({ column }) => (
+			<Button
+				variant="ghost"
+				onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				data-testid="table-header-header"
+			>
+				Header
+			</Button>
+		),
 		cell: ({ row }) => {
 			return <TableCellViewer item={row.original} />;
 		},
@@ -73,7 +88,7 @@ export const columns: ColumnDef<DataTableSchema>[] = [
 	},
 	{
 		accessorKey: "type",
-		header: "Section Type",
+		header: () => <div data-testid="table-header-type">Section Type</div>,
 		cell: ({ row }) => (
 			<div className="w-32">
 				<Badge variant="outline" className="text-muted-foreground px-1.5">
@@ -84,7 +99,7 @@ export const columns: ColumnDef<DataTableSchema>[] = [
 	},
 	{
 		accessorKey: "status",
-		header: "Status",
+		header: () => <div data-testid="table-header-status">Status</div>,
 		cell: ({ row }) => (
 			<Badge variant="outline" className="text-muted-foreground px-1.5">
 				{row.original.status === "Done" ? (
@@ -216,6 +231,7 @@ export function DraggableRow({ row }: { row: Row<DataTableSchema> }) {
 			data-state={row.getIsSelected() && "selected"}
 			data-dragging={isDragging}
 			ref={setNodeRef}
+			data-testid="task-row"
 			className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
 			style={{
 				transform: CSS.Transform.toString(transform),

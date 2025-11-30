@@ -41,7 +41,10 @@ export function DashboardActivity({
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
 			{/* Activity Timeline */}
-			<Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors lg:col-span-2">
+			<Card
+				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors lg:col-span-2"
+				data-testid="recent-activity"
+			>
 				<CardHeader>
 					<CardTitle className="text-white flex items-center gap-2">
 						<IconActivity className="w-5 h-5 text-green-400" />
@@ -54,7 +57,11 @@ export function DashboardActivity({
 				<CardContent>
 					<div className="space-y-4">
 						{recentActivity.map((activity, index) => (
-							<div key={activity.id} className="flex gap-4">
+							<div
+								key={activity.id}
+								className="flex gap-4"
+								data-testid="activity-item"
+							>
 								<div className="flex flex-col items-center">
 									<div className="w-2 h-2 bg-green-400 rounded-full mt-2" />
 									{index < recentActivity.length - 1 && (

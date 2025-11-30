@@ -20,7 +20,11 @@ export function RolesHeader({
 					{totalCount} roles total
 				</span>
 			</div>
-			<Button onClick={onCreateRole} disabled={isCreating}>
+			<Button
+				onClick={onCreateRole}
+				disabled={isCreating}
+				data-testid="btn-create-role"
+			>
 				<IconPlus className="mr-2 h-4 w-4" />
 				{isCreating ? "Creating..." : "Add Role"}
 			</Button>
