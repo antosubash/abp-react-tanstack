@@ -2,10 +2,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { useEffect, useState, useImperativeHandle, forwardRef } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import type { IdentityUserDto } from "@/infrastructure/api/types.gen";
+import { useUserFormStore } from "../stores/user-form-store";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Dialog,
@@ -52,14 +53,14 @@ interface UserFormProps {
 	mode: "create" | "edit";
 }
 
-export const UserForm = forwardRef<{ openModal: () => void }, UserFormProps>(
-	function UserForm({ user, onSubmit, isLoading = false, mode }, ref) {
-		const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
-		const [open, setOpen] = useState(false);
-
-		useImperativeHandle(ref, () => ({
-			openModal: () => setOpen(true),
-		}));
+export function UserForm({
+	user,
+	onSubmit,
+	isLoading = false,
+	mode,
+}: UserFormProps) {
+	const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+	const { open, closeForm } = useUserFormStore();
 
 		// Fetch available roles
 		const { data: assignableRolesData, isLoading: rolesLoading } = useQuery(
@@ -80,19 +81,26 @@ export const UserForm = forwardRef<{ openModal: () => void }, UserFormProps>(
 		});
 
 		const assignableRoles = assignableRolesData?.items || [];
-		const userRoles = userRolesData?.items || [];
+		const userRoles = userRolesData?.items;
+
+		// Memoize role names to create stable dependency
+		const userRoleNames = useMemo(() => {
+			if (mode === "edit" && userRoles && userRoles.length > 0) {
+				return userRoles
+					.map((role) => role.name || "")
+					.filter(Boolean);
+			}
+			return [];
+		}, [userRoles, mode]);
 
 		// Update selected roles when user roles data changes
 		useEffect(() => {
-			if (mode === "edit" && userRoles.length > 0) {
-				const roleNames = userRoles
-					.map((role) => role.name || "")
-					.filter(Boolean);
-				setSelectedRoles(roleNames);
+			if (mode === "edit" && userRoleNames.length > 0) {
+				setSelectedRoles(userRoleNames);
 			} else if (mode === "create") {
 				setSelectedRoles([]);
 			}
-		}, [userRoles, mode]);
+		}, [userRoleNames, mode]);
 
 		const form = useForm<UserFormData>({
 			resolver: zodResolver(
@@ -118,18 +126,37 @@ export const UserForm = forwardRef<{ openModal: () => void }, UserFormProps>(
 				password: "",
 				confirmPassword: "",
 				roles:
-					mode === "edit" && userRoles.length > 0
+					mode === "edit" && userRoles && userRoles.length > 0
 						? userRoles.map((role) => role.name || "").filter(Boolean)
 						: [],
 			},
 		});
 
-		// Update form values when selected roles change
+		// Reset form when dialog opens or user/mode changes
 		useEffect(() => {
-			if (mode === "edit") {
+			if (open) {
+				form.reset({
+					userName: user?.userName || "",
+					name: user?.name || "",
+					surname: user?.surname || "",
+					email: user?.email || "",
+					phoneNumber: user?.phoneNumber || "",
+					isActive: user?.isActive !== undefined ? user.isActive : true,
+					lockoutEnabled:
+						user?.lockoutEnabled !== undefined ? user.lockoutEnabled : true,
+					password: "",
+					confirmPassword: "",
+					roles: [],
+				});
+			}
+		}, [open, user?.id, mode, form]);
+
+		// Update form values when selected roles change (after user roles are loaded)
+		useEffect(() => {
+			if (mode === "edit" && selectedRoles.length > 0) {
 				form.setValue("roles", selectedRoles);
 			}
-		}, [selectedRoles, form, mode]);
+		}, [selectedRoles, mode, form]);
 
 		const handleRoleChange = (roleName: string, checked: boolean) => {
 			if (checked) {
@@ -147,7 +174,6 @@ export const UserForm = forwardRef<{ openModal: () => void }, UserFormProps>(
 					roles: selectedRoles,
 				};
 				await onSubmit(formDataWithRoles);
-				setOpen(false);
 				form.reset();
 				setSelectedRoles([]);
 			} catch (_error) {
@@ -155,8 +181,16 @@ export const UserForm = forwardRef<{ openModal: () => void }, UserFormProps>(
 			}
 		};
 
+		const handleOpenChange = (isOpen: boolean) => {
+			if (!isOpen) {
+				closeForm();
+				form.reset();
+				setSelectedRoles([]);
+			}
+		};
+
 		return (
-			<Dialog open={open} onOpenChange={setOpen}>
+			<Dialog open={open} onOpenChange={handleOpenChange}>
 				<DialogContent
 					className="sm:max-w-[500px]"
 					data-testid="user-form-modal"
@@ -175,6 +209,7 @@ export const UserForm = forwardRef<{ openModal: () => void }, UserFormProps>(
 						<form
 							onSubmit={form.handleSubmit(handleSubmit)}
 							className="space-y-4"
+							suppressHydrationWarning
 						>
 							<div className="grid grid-cols-2 gap-4">
 								<FormField
@@ -395,7 +430,7 @@ export const UserForm = forwardRef<{ openModal: () => void }, UserFormProps>(
 								<Button
 									type="button"
 									variant="outline"
-									onClick={() => setOpen(false)}
+									onClick={() => closeForm()}
 									disabled={isLoading}
 								>
 									Cancel
@@ -417,5 +452,4 @@ export const UserForm = forwardRef<{ openModal: () => void }, UserFormProps>(
 				</DialogContent>
 			</Dialog>
 		);
-	},
-);
+}

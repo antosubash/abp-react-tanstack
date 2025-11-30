@@ -55,11 +55,24 @@ export function TableRenderer<TData>({
 			<div className="rounded-md border">
 				<Table data-testid={tableTestId}>
 					<TableHeader>
-						{columns.map((column) => (
-							<TableHead key={column.id as string}>
-								{column.header as string}
-							</TableHead>
-						))}
+						<TableRow>
+							{columns.map((column, index) => (
+								<TableHead
+									key={
+										(column.id as string) ||
+										(column.accessorKey as string) ||
+										`column-${index}`
+									}
+								>
+									{typeof column.header === "function"
+										? column.header({
+												column,
+												header: column,
+											} as HeaderContext<TData, unknown>)
+										: (column.header as string)}
+								</TableHead>
+							))}
+						</TableRow>
 					</TableHeader>
 					<TableBody>
 						{data.map((row, index) => (
@@ -67,7 +80,7 @@ export function TableRenderer<TData>({
 								key={`row-${index}-${JSON.stringify(row)}`}
 								data-testid={rowTestId}
 							>
-								{columns.map((column) => {
+								{columns.map((column, colIndex) => {
 									let cellContent: React.ReactNode = "";
 									if (typeof column.cell === "function") {
 										try {
@@ -93,7 +106,13 @@ export function TableRenderer<TData>({
 												: column.header;
 									}
 									return (
-										<TableCell key={column.id as string}>
+										<TableCell
+											key={
+												(column.id as string) ||
+												(column.accessorKey as string) ||
+												`cell-${index}-${colIndex}`
+											}
+										>
 											{cellContent}
 										</TableCell>
 									);

@@ -1,24 +1,41 @@
 import * as React from "react";
-import { useState } from "react";
 
 const MOBILE_BREAKPOINT = 768;
 
 export function useIsMobile() {
-	const [isMobile, setIsMobile] = React.useState<boolean | undefined>(
-		undefined,
-	);
+	// Always start with false to ensure server and client match during hydration
+	const [isMobile, setIsMobile] = React.useState<boolean>(false);
 
 	React.useEffect(() => {
+		// Only check window size after component mounts (client-side only)
+		// Use matchMedia for efficient change detection
 		const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
-		const onChange = () => {
-			setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+
+		// Set initial value based on matchMedia
+		const updateIsMobile = () => {
+			const newValue = mql.matches;
+			// Use functional update to ensure we're comparing with latest state
+			// Only update if value actually changed to prevent unnecessary re-renders
+			setIsMobile((prev) => {
+				if (prev !== newValue) {
+					return newValue;
+				}
+				return prev;
+			});
 		};
-		mql.addEventListener("change", onChange);
-		setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
-		return () => mql.removeEventListener("change", onChange);
+
+		// Set initial value after mount
+		updateIsMobile();
+
+		// Listen for changes using matchMedia (more efficient than resize)
+		mql.addEventListener("change", updateIsMobile);
+
+		return () => {
+			mql.removeEventListener("change", updateIsMobile);
+		};
 	}, []);
 
-	return !!isMobile;
+	return isMobile;
 }
 
 // Table hook for managing table state

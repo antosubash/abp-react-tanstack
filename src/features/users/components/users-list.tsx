@@ -39,7 +39,6 @@ export function UsersList() {
 	const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
 	const [searchValue, setSearchValue] = useState("");
 	const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-	const userFormRef = useRef<{ openModal: () => void }>(null);
 
 	const queryOptions = {
 		query: {
@@ -54,6 +53,7 @@ export function UsersList() {
 		user: editingUser,
 		setLoading,
 		openEditForm,
+		openCreateForm,
 		closeForm,
 	} = useUserFormStore();
 
@@ -213,7 +213,7 @@ export function UsersList() {
 	};
 
 	const handleCreateNewUser = () => {
-		userFormRef.current?.openModal();
+		openCreateForm();
 	};
 
 	const handleOpenPermissions = (user: IdentityUserDto) => {
@@ -282,7 +282,6 @@ export function UsersList() {
 			/>
 
 			<UserForm
-				ref={userFormRef}
 				key={editingUser?.id || "create"}
 				user={editingUser}
 				onSubmit={editingUser ? handleUpdateUser : handleCreateUser}

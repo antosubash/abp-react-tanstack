@@ -25,7 +25,7 @@ export function UsersHeader({
 					{totalCount} users total
 				</span>
 			</div>
-			<div className="flex items-center gap-4">
+			<div className="flex items-center gap-4" suppressHydrationWarning>
 				{onSearchChange && (
 					<Input
 						placeholder="Search users..."
@@ -33,6 +33,7 @@ export function UsersHeader({
 						onChange={(e) => onSearchChange(e.target.value)}
 						className="w-64"
 						data-testid="field-user-search"
+						suppressHydrationWarning
 					/>
 				)}
 				<Button

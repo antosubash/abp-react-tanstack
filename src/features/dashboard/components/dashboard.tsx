@@ -77,23 +77,29 @@ export default function Dashboard() {
 	// Prepare data for activity timeline
 	const recentActivity = useMemo(() => {
 		// Get 5 most recently updated tasks (Done tasks get fake completion dates)
+		// Use a fixed reference date to ensure consistent formatting between server and client
+		const referenceDate = new Date("2024-01-01T00:00:00Z");
 		return typedDashboardData
 			.filter((task) => task.status === "Done")
 			.slice(0, 5)
-			.map((task, index) => ({
-				id: index,
-				user: task.reviewer || "Unknown",
-				action: "Completed task",
-				target: task.header,
-				time: new Date(
-					Date.now() - index * 24 * 60 * 60 * 1000,
-				).toLocaleDateString(), // Fake recent dates
-				avatar: (task.reviewer || "Unknown")
-					.split(" ")
-					.map((n: string) => n[0])
-					.join("")
-					.toUpperCase(),
-			}));
+			.map((task, index) => {
+				const date = new Date(referenceDate);
+				date.setDate(date.getDate() - index);
+				// Use ISO date format to ensure consistency between server and client
+				const formattedDate = date.toISOString().split("T")[0];
+				return {
+					id: index,
+					user: task.reviewer || "Unknown",
+					action: "Completed task",
+					target: task.header,
+					time: formattedDate,
+					avatar: (task.reviewer || "Unknown")
+						.split(" ")
+						.map((n: string) => n[0])
+						.join("")
+						.toUpperCase(),
+				};
+			});
 	}, []);
 
 	// Prepare data for team members

@@ -1,3 +1,4 @@
+import { memo, useMemo } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { IconTrendingUp } from "@tabler/icons-react";
 import { Button } from "@/shared/components/ui/button";
@@ -50,7 +51,7 @@ const chartConfig = {
 	},
 } satisfies ChartConfig;
 
-export function TableCellViewer({ item }: { item: DataTableSchema }) {
+function TableCellViewerComponent({ item }: { item: DataTableSchema }) {
 	const isMobile = useIsMobile();
 
 	// Unique IDs for form inputs
@@ -61,8 +62,13 @@ export function TableCellViewer({ item }: { item: DataTableSchema }) {
 	const limitId = "limit";
 	const reviewerId = "reviewer";
 
+	const drawerDirection = useMemo(
+		() => (isMobile ? "bottom" : "right"),
+		[isMobile],
+	);
+
 	return (
-		<Drawer direction={isMobile ? "bottom" : "right"}>
+		<Drawer direction={drawerDirection}>
 			<DrawerTrigger asChild>
 				<Button variant="link" className="text-foreground w-fit px-0 text-left">
 					{item.header}
@@ -203,3 +209,5 @@ export function TableCellViewer({ item }: { item: DataTableSchema }) {
 		</Drawer>
 	);
 }
+
+export const TableCellViewer = memo(TableCellViewerComponent);
