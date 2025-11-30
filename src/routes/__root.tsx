@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
-import { SidebarLayout } from "@/shared/components/SidebarLayout";
+import { SidebarLayout } from "@/shared/components/sidebar-layout";
 import { AuthProvider } from "@/features/auth/hooks/use-auth";
 import { Toaster } from "@/shared/components/ui/sonner";
 

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { UsersList } from "@/features/users/components/UsersList";
-import { SidebarLayout } from "@/shared/components/SidebarLayout";
+import { UsersList } from "@/features/users/components/users-list";
+import { SidebarLayout } from "@/shared/components/sidebar-layout";
 
 export const Route = createFileRoute("/users")({
 	component: UsersPage,

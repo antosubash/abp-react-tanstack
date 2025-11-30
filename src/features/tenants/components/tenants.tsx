@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { TenantsList } from "@/features/tenants/components/TenantsList";
-import { SidebarLayout } from "@/shared/components/SidebarLayout";
+import { TenantsList } from "@/features/tenants/components/tenants-list";
+import { SidebarLayout } from "@/shared/components/sidebar-layout";
 
 export const Route = createFileRoute("/tenants")({
 	component: TenantsPage,

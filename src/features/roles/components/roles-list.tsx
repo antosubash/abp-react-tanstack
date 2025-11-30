@@ -11,12 +11,12 @@ import {
 } from "@/infrastructure/api/@tanstack/react-query.gen";
 import type { IdentityRoleDto } from "@/infrastructure/api/types.gen";
 import { Alert, AlertDescription } from "@/shared/components/ui/alert";
-import { RoleForm, type RoleFormData } from "./RoleForm";
-import { RolePermissionsModal } from "./RolePermissionsModal";
+import { RoleForm, type RoleFormData } from "./role-form";
+import { RolePermissionsModal } from "./role-permissions-modal";
 import { useRoleFormStore } from "../stores/role-form-store";
 import { usePermissionModalStore } from "../stores/permission-store";
-import { RolesTable } from "./RolesTable";
-import { RolesHeader } from "./RolesHeader";
+import { RolesTable } from "./roles-table";
+import { RolesHeader } from "./roles-header";
 
 export function RolesList() {
 	const [sorting, setSorting] = useState([]);

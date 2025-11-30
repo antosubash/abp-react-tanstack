@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import dashboardData from "../data/data.json";
 import { DataTable, type DataTableSchema } from "./data-table";
-import { ProtectedRoute } from "../../auth/components/ProtectedRoute";
+import { ProtectedRoute } from "../../auth/components/protected-route";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Avatar,
@@ -10,9 +10,9 @@ import {
 	AvatarImage,
 } from "@/shared/components/ui/avatar";
 import { useAuth } from "../../auth/hooks/use-auth";
-import { DashboardMetrics } from "./DashboardMetrics";
-import { DashboardCharts } from "./DashboardCharts";
-import { DashboardActivity } from "./DashboardActivity";
+import { DashboardMetrics } from "./dashboard-metrics";
+import { DashboardCharts } from "./dashboard-charts";
+import { DashboardActivity } from "./dashboard-activity";
 import { Badge } from "@/shared/components/ui/badge";
 
 // Type assertion for dashboardData

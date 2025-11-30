@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { IconSearch, IconShield } from "@tabler/icons-react";
+import { IconSearch, IconShield, IconX } from "@tabler/icons-react";
 import { toast } from "sonner";
 
 import {
@@ -20,18 +20,18 @@ import {
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/shared/components/ui/alert";
-import { useUserPermissionModalStore } from "../stores/user-permission-store";
+import { usePermissionModalStore } from "../stores/permission-store";
 import {
 	groupPermissionsFromApi,
 	convertToUpdatePermissionsDto,
-} from "../../roles/hooks/permission-utils";
-import { PermissionGroup } from "../../../shared/components/PermissionGroup";
+} from "../hooks/permission-utils";
+import { PermissionGroup } from "../../../shared/components/permission-group";
 import type { PermissionGrantInfoDto } from "@/infrastructure/api/types.gen";
 
-export function UserPermissionsModal() {
+export function RolePermissionsModal() {
 	const {
 		open,
-		user,
+		role,
 		allPermissions,
 		filteredPermissions,
 		searchTerm,
@@ -39,7 +39,7 @@ export function UserPermissionsModal() {
 		isSaving,
 		error,
 		setAllPermissions,
-		setUserPermissions,
+		setRolePermissions,
 		setSearchTerm,
 		setApiGroups,
 		updatePermission,
@@ -48,9 +48,9 @@ export function UserPermissionsModal() {
 		setSaving,
 		setError,
 		closeModal,
-	} = useUserPermissionModalStore();
+	} = usePermissionModalStore();
 
-	// Fetch all available permissions and user-specific permissions in one call
+	// Fetch all available permissions and role-specific permissions in one call
 	const {
 		data: permissionsResponse,
 		isLoading: isPermissionsLoading,
@@ -59,11 +59,11 @@ export function UserPermissionsModal() {
 	} = useQuery({
 		...permissionsGetOptions({
 			query: {
-				providerName: "U",
-				providerKey: user?.id || "",
+				providerName: "R",
+				providerKey: role?.id || "",
 			},
 		}),
-		enabled: !!user?.id, // Only run the query if we have a user ID
+		enabled: !!role?.id, // Only run the query if we have a role ID
 	});
 
 	// Update permissions mutation
@@ -73,10 +73,10 @@ export function UserPermissionsModal() {
 
 	// Process permissions response when it loads
 	useEffect(() => {
-		if (permissionsResponse && user?.id) {
+		if (permissionsResponse && role?.id) {
 			// Extract all permissions from groups in response
 			const allPermissions: PermissionGrantInfoDto[] = [];
-			const userPermissions: PermissionGrantInfoDto[] = [];
+			const rolePermissions: PermissionGrantInfoDto[] = [];
 
 			if (permissionsResponse.groups) {
 				// Set the API groups for mapping
@@ -87,10 +87,10 @@ export function UserPermissionsModal() {
 						// Add all permissions to the allPermissions list
 						allPermissions.push(...group.permissions);
 
-						// Add granted permissions to the userPermissions list
+						// Add granted permissions to the rolePermissions list
 						group.permissions.forEach((permission) => {
 							if (permission.isGranted) {
-								userPermissions.push(permission);
+								rolePermissions.push(permission);
 							}
 						});
 					}
@@ -98,65 +98,87 @@ export function UserPermissionsModal() {
 			}
 
 			setAllPermissions(allPermissions);
-			setUserPermissions(userPermissions);
+			setRolePermissions(rolePermissions);
 		}
 	}, [
 		permissionsResponse,
-		user?.id,
+		role?.id,
 		setAllPermissions,
-		setUserPermissions,
+		setRolePermissions,
 		setApiGroups,
 	]);
 
-	// Update loading state based on query state
+	// Update loading state
 	useEffect(() => {
 		setLoading(isPermissionsLoading);
 	}, [isPermissionsLoading, setLoading]);
 
-	// Handle errors
+	// Update error state
 	useEffect(() => {
 		if (permissionsError) {
-			setError(permissionsError.error?.message || "Failed to load permissions");
+			setError("Failed to load permissions");
+		} else {
+			setError(null);
 		}
 	}, [permissionsError, setError]);
 
-	// Handle save permissions
+	// Handle search term change
+	const handleSearchChange = (term: string) => {
+		setSearchTerm(term);
+	};
+
+	// Handle permission change
+	const handlePermissionChange = (
+		permissionName: string,
+		isGranted: boolean,
+	) => {
+		updatePermission(permissionName, isGranted);
+	};
+
+	// Handle group permission change
+	const handleGroupPermissionChange = (
+		groupName: string,
+		isGranted: boolean,
+	) => {
+		updateGroupPermissions(groupName, isGranted);
+	};
+
+	// Save permissions
 	const handleSavePermissions = async () => {
-		if (!user?.id) return;
+		if (!role?.id) return;
 
 		try {
 			setSaving(true);
-			setError(null);
-
-			// Convert permissions to the format expected by the API
-			const updateData = convertToUpdatePermissionsDto(allPermissions);
-
 			await updatePermissionsMutation.mutateAsync({
 				query: {
-					providerName: "U",
-					providerKey: user.id,
+					providerName: "R",
+					providerKey: role.id,
 				},
-				body: updateData,
+				body: convertToUpdatePermissionsDto(allPermissions),
 			});
 
-			// Refetch permissions to get the updated state
+			// Refetch permissions to get the latest state
 			await refetchPermissions();
 
-			toast.success("User permissions updated successfully");
+			toast.success("Permissions updated successfully");
 			closeModal();
 		} catch (error: unknown) {
 			const errorMessage =
 				error instanceof Error ? error.message : "Failed to update permissions";
-			setError(errorMessage);
 			toast.error(errorMessage);
 		} finally {
 			setSaving(false);
 		}
 	};
 
-	// Group permissions for display
-	const apiGroups = useUserPermissionModalStore.getState().apiGroups;
-	const validGroups = apiGroups
+	// Handle modal close
+	const handleClose = () => {
+		if (isSaving) return;
+		closeModal();
+	};
+
+	// Group filtered permissions using API groups, filtering out groups without names
+	const validGroups = (permissionsResponse?.groups || [])
 		.filter(
 			(group): group is typeof group & { name: string } =>
 				group.name !== null && group.name !== undefined,
@@ -166,76 +188,89 @@ export function UserPermissionsModal() {
 			displayName: group.displayName || undefined,
 			permissions: group.permissions || undefined,
 		}));
-	const groupedPermissions = filteredPermissions.length
-		? groupPermissionsFromApi(filteredPermissions, validGroups)
-		: {};
+	const groupedPermissions = groupPermissionsFromApi(
+		filteredPermissions,
+		validGroups,
+	);
 
 	return (
 		<Dialog open={open} onOpenChange={closeModal}>
-			<DialogContent className="max-w-4xl h-[85vh] flex flex-col overflow-hidden p-0">
-				<DialogHeader className="p-6 pb-2 flex-shrink-0">
-					<DialogTitle className="flex items-center gap-2">
+			<DialogContent className="max-w-5xl h-[85vh] flex flex-col">
+				<DialogHeader className="flex-shrink-0">
+					<div className="flex items-center gap-2">
 						<IconShield className="h-5 w-5" />
-						User Permissions
-					</DialogTitle>
+						<DialogTitle>Manage Permissions</DialogTitle>
+					</div>
 					<DialogDescription>
-						Manage permissions for user: <strong>{user?.userName}</strong>
+						{role ? (
+							<>
+								Configure permissions for role: <strong>{role.name}</strong>
+							</>
+						) : (
+							"Configure permissions for the selected role"
+						)}
 					</DialogDescription>
 				</DialogHeader>
 
 				{error && (
-					<div className="px-6 pb-2 flex-shrink-0">
-						<Alert variant="destructive">
-							<AlertDescription>{error}</AlertDescription>
-						</Alert>
-					</div>
+					<Alert variant="destructive" className="flex-shrink-0">
+						<AlertDescription>{error}</AlertDescription>
+					</Alert>
 				)}
 
-				<div className="flex items-center space-x-2 px-6 pb-4 flex-shrink-0">
+				<div className="flex items-center space-x-2 py-2 flex-shrink-0">
 					<div className="relative flex-1">
-						<IconSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+						<IconSearch className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
 						<Input
 							placeholder="Search permissions..."
 							value={searchTerm}
-							onChange={(e) => setSearchTerm(e.target.value)}
+							onChange={(e) => handleSearchChange(e.target.value)}
 							className="pl-8"
 						/>
 					</div>
+					{searchTerm && (
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={() => handleSearchChange("")}
+						>
+							<IconX className="h-4 w-4" />
+						</Button>
+					)}
 				</div>
 
-				<div className="flex-1 overflow-hidden px-6">
-					<ScrollArea className="h-full">
-						<div className="pb-6">
+				<div className="flex-1 min-h-0 overflow-hidden">
+					<ScrollArea className="h-full pr-4">
+						<div className="space-y-4">
 							{isLoading ? (
 								<div className="space-y-4">
-									{Array.from({ length: 5 }).map(() => (
+									{Array.from({ length: 3 }).map(() => (
 										<div key={crypto.randomUUID()} className="space-y-2">
-											<Skeleton className="h-6 w-48" />
-											<div className="space-y-2 pl-4">
-												{Array.from({ length: 3 }).map(() => (
-													<Skeleton
-														key={crypto.randomUUID()}
-														className="h-8 w-full"
-													/>
-												))}
-											</div>
+											<Skeleton className="h-6 w-1/3" />
+											{Array.from({ length: 5 }).map(() => (
+												<div
+													key={crypto.randomUUID()}
+													className="flex items-center space-x-2"
+												>
+													<Skeleton className="h-4 w-4" />
+													<Skeleton className="h-4 w-1/2" />
+												</div>
+											))}
 										</div>
 									))}
 								</div>
 							) : Object.keys(groupedPermissions).length > 0 ? (
-								<div className="space-y-4">
-									{Object.entries(groupedPermissions).map(
-										([groupName, permissions]) => (
-											<PermissionGroup
-												key={groupName}
-												groupName={groupName}
-												permissions={permissions}
-												onPermissionChange={updatePermission}
-												onGroupChange={updateGroupPermissions}
-											/>
-										),
-									)}
-								</div>
+								Object.entries(groupedPermissions).map(
+									([groupName, permissions]) => (
+										<PermissionGroup
+											key={groupName}
+											groupName={groupName}
+											permissions={permissions}
+											onPermissionChange={handlePermissionChange}
+											onGroupChange={handleGroupPermissionChange}
+										/>
+									),
+								)
 							) : (
 								<div className="text-center py-8 text-muted-foreground">
 									{searchTerm
@@ -247,19 +282,13 @@ export function UserPermissionsModal() {
 					</ScrollArea>
 				</div>
 
-				<DialogFooter className="p-6 pt-2 flex-shrink-0">
-					<Button
-						type="button"
-						variant="outline"
-						onClick={closeModal}
-						disabled={isSaving}
-					>
+				<DialogFooter className="flex-shrink-0">
+					<Button variant="outline" onClick={handleClose} disabled={isSaving}>
 						Cancel
 					</Button>
 					<Button
-						type="button"
 						onClick={handleSavePermissions}
-						disabled={isSaving || isLoading}
+						disabled={isLoading || isSaving}
 					>
 						{isSaving ? "Saving..." : "Save Changes"}
 					</Button>

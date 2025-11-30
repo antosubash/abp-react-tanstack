@@ -4,8 +4,8 @@ import { toast } from "sonner";
 
 import type { TenantDto } from "@/infrastructure/api/types.gen";
 import { Alert, AlertDescription } from "@/shared/components/ui/alert";
-import { TenantForm, type TenantFormData } from "./TenantForm";
-import { TenantConnectionStringModal } from "./TenantConnectionStringModal";
+import { TenantForm, type TenantFormData } from "./tenant-form";
+import { TenantConnectionStringModal } from "./tenant-connection-string-modal";
 import { useTenantFormStore } from "../stores/tenant-form-store";
 import { useTenantConnectionStore } from "../stores/tenant-connection-store";
 import {
@@ -15,8 +15,8 @@ import {
 	tenantGetListQueryKey,
 	tenantUpdateMutation,
 } from "@/infrastructure/api/@tanstack/react-query.gen";
-import { TenantsTable } from "./TenantsTable";
-import { TenantsHeader } from "./TenantsHeader";
+import { TenantsTable } from "./tenants-table";
+import { TenantsHeader } from "./tenants-header";
 
 export function TenantsList() {
 	const [sorting, setSorting] = useState([]);

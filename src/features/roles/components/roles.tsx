@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { RolesList } from "@/features/roles/components/RolesList";
-import { SidebarLayout } from "@/shared/components/SidebarLayout";
+import { RolesList } from "@/features/roles/components/roles-list";
+import { SidebarLayout } from "@/shared/components/sidebar-layout";
 
 export const Route = createFileRoute("/roles")({
 	component: RolesPage,

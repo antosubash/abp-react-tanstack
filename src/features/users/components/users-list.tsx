@@ -12,12 +12,12 @@ import {
 } from "@/infrastructure/api/@tanstack/react-query.gen";
 import type { IdentityUserDto } from "@/infrastructure/api/types.gen";
 import { Alert, AlertDescription } from "@/shared/components/ui/alert";
-import { UserForm, type UserFormData } from "./UserForm";
-import { UserPermissionsModal } from "./UserPermissionsModal";
+import { UserForm, type UserFormData } from "./user-form";
+import { UserPermissionsModal } from "./user-permissions-modal";
 import { useUserFormStore } from "../stores/user-form-store";
 import { useUserPermissionModalStore } from "../stores/user-permission-store";
-import { UsersTable } from "./UsersTable";
-import { UsersHeader } from "./UsersHeader";
+import { UsersTable } from "./users-table";
+import { UsersHeader } from "./users-header";
 
 export function UsersList() {
 	const [sorting, setSorting] = useState([]);
