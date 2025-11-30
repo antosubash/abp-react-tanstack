@@ -5,8 +5,8 @@ import {
 	IconPencil,
 	IconPlus,
 	IconTrash,
-	IconUsers,
-	IconShield,
+	IconBuilding,
+	IconDatabase,
 } from "@tabler/icons-react";
 import {
 	type ColumnDef,
@@ -19,16 +19,7 @@ import {
 } from "@tanstack/react-table";
 import { toast } from "sonner";
 
-import {
-	userCreateMutation,
-	userDeleteMutation,
-	userGetListOptions,
-	userGetListQueryKey,
-	userUpdateMutation,
-	userUpdateRolesMutation,
-} from "@/client/@tanstack/react-query.gen";
-import type { IdentityUserDto } from "@/client/types.gen";
-import { Badge } from "@/components/ui/badge";
+import type { TenantDto } from "@/client/types.gen";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -63,12 +54,19 @@ import {
 } from "@/components/ui/table";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserForm, type UserFormData } from "@/components/UserForm";
-import { UserPermissionsModal } from "@/components/UserPermissionsModal";
-import { useUserFormStore } from "@/lib/user-form-store";
-import { useUserPermissionModalStore } from "@/lib/user-permission-store";
+import { TenantForm, type TenantFormData } from "@/components/TenantForm";
+import { TenantConnectionStringModal } from "@/components/TenantConnectionStringModal";
+import { useTenantFormStore } from "@/lib/tenant-form-store";
+import { useTenantConnectionStore } from "@/lib/tenant-connection-store";
+import {
+	tenantCreateMutation,
+	tenantDeleteMutation,
+	tenantGetListOptions,
+	tenantGetListQueryKey,
+	tenantUpdateMutation,
+} from "@/client/@tanstack/react-query.gen";
 
-export function UsersList() {
+export function TenantsList() {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
@@ -79,15 +77,15 @@ export function UsersList() {
 	const queryClient = useQueryClient();
 
 	const {
-		user: editingUser,
+		tenant: editingTenant,
 		open: formOpen,
 		setLoading,
 		openCreateForm,
 		openEditForm,
 		closeForm,
-	} = useUserFormStore();
+	} = useTenantFormStore();
 
-	const { openModal: openPermissionsModal } = useUserPermissionModalStore();
+	const { openModal: openConnectionStringModal } = useTenantConnectionStore();
 
 	const queryOptions = {
 		query: {
@@ -97,54 +95,45 @@ export function UsersList() {
 	};
 
 	const {
-		data: usersResponse,
+		data: tenantsResponse,
 		isLoading,
 		error,
 		isError,
-	} = useQuery(userGetListOptions(queryOptions));
+	} = useQuery(tenantGetListOptions(queryOptions));
 
-	const createUserMutation = useMutation({
-		...userCreateMutation(),
+	const createTenantMutation = useMutation({
+		...tenantCreateMutation(),
 	});
 
-	const updateUserMutation = useMutation({
-		...userUpdateMutation(),
+	const updateTenantMutation = useMutation({
+		...tenantUpdateMutation(),
 	});
 
-	const _updateUserRolesMutation = useMutation({
-		...userUpdateRolesMutation(),
+	const deleteTenantMutation = useMutation({
+		...tenantDeleteMutation(),
 	});
 
-	const deleteUserMutation = useMutation({
-		...userDeleteMutation(),
-	});
+	const tenants = tenantsResponse?.items || [];
+	const totalCount = tenantsResponse?.totalCount || 0;
 
-	const users = usersResponse?.items || [];
-	const totalCount = usersResponse?.totalCount || 0;
-
-	const handleCreateUser = async (data: UserFormData) => {
+	const handleCreateTenant = async (data: TenantFormData) => {
 		try {
 			setLoading(true);
-			await createUserMutation.mutateAsync({
+			await createTenantMutation.mutateAsync({
 				body: {
-					userName: data.userName,
-					name: data.name || null,
-					surname: data.surname || null,
-					email: data.email,
-					phoneNumber: data.phoneNumber || null,
-					isActive: data.isActive,
-					lockoutEnabled: data.lockoutEnabled,
-					password: data.password || "",
+					name: data.name,
+					adminEmailAddress: data.adminEmailAddress || "",
+					adminPassword: data.adminPassword || "",
 				},
 			});
 			queryClient.invalidateQueries({
-				queryKey: userGetListQueryKey(queryOptions),
+				queryKey: tenantGetListQueryKey(queryOptions),
 			});
-			toast.success("User created successfully");
+			toast.success("Tenant created successfully");
 			closeForm();
 		} catch (error: unknown) {
 			const errorMessage =
-				error instanceof Error ? error.message : "Failed to create user";
+				error instanceof Error ? error.message : "Failed to create tenant";
 			toast.error(errorMessage);
 			throw error;
 		} finally {
@@ -152,48 +141,25 @@ export function UsersList() {
 		}
 	};
 
-	const handleUpdateUser = async (data: UserFormData) => {
-		if (!editingUser?.id) return;
+	const handleUpdateTenant = async (data: TenantFormData) => {
+		if (!editingTenant?.id) return;
 		try {
 			setLoading(true);
-			await updateUserMutation.mutateAsync({
-				path: { id: editingUser.id },
+			await updateTenantMutation.mutateAsync({
+				path: { id: editingTenant.id },
 				body: {
-					userName: data.userName,
-					name: data.name || null,
-					surname: data.surname || null,
-					email: data.email,
-					phoneNumber: data.phoneNumber || null,
-					isActive: data.isActive,
-					lockoutEnabled: data.lockoutEnabled,
-					password: data.password || null,
-					concurrencyStamp: editingUser.concurrencyStamp || null,
+					name: data.name,
+					concurrencyStamp: editingTenant.concurrencyStamp || null,
 				},
 			});
-
-			// Update user roles if they are provided
-			if (data.roles && Array.isArray(data.roles)) {
-				await _updateUserRolesMutation.mutateAsync({
-					path: { id: editingUser.id },
-					body: {
-						roleNames: data.roles,
-					},
-				});
-			}
-
-			// Invalidate and refetch the user list to update the table
-			await queryClient.invalidateQueries({
-				queryKey: userGetListQueryKey(queryOptions),
+			queryClient.invalidateQueries({
+				queryKey: tenantGetListQueryKey(queryOptions),
 			});
-			// Also force a refetch to ensure immediate UI update
-			await queryClient.refetchQueries({
-				queryKey: userGetListQueryKey(queryOptions),
-			});
-			toast.success("User updated successfully");
+			toast.success("Tenant updated successfully");
 			closeForm();
 		} catch (error: unknown) {
 			const errorMessage =
-				error instanceof Error ? error.message : "Failed to update user";
+				error instanceof Error ? error.message : "Failed to update tenant";
 			toast.error(errorMessage);
 			throw error;
 		} finally {
@@ -201,84 +167,57 @@ export function UsersList() {
 		}
 	};
 
-	const handleDeleteUser = async (userId: string) => {
+	const handleDeleteTenant = async (tenantId: string) => {
 		try {
-			await deleteUserMutation.mutateAsync({
-				path: { id: userId },
+			await deleteTenantMutation.mutateAsync({
+				path: { id: tenantId },
 			});
 			queryClient.invalidateQueries({
-				queryKey: userGetListQueryKey(queryOptions),
+				queryKey: tenantGetListQueryKey(queryOptions),
 			});
-			toast.success("User deleted successfully");
+			toast.success("Tenant deleted successfully");
 		} catch (error: unknown) {
 			const errorMessage =
-				error instanceof Error ? error.message : "Failed to delete user";
+				error instanceof Error ? error.message : "Failed to delete tenant";
 			toast.error(errorMessage);
 			throw error;
 		}
 	};
 
-	const handleEditUser = (user: IdentityUserDto) => {
-		openEditForm(user);
+	const handleEditTenant = (tenant: TenantDto) => {
+		openEditForm(tenant);
 	};
 
-	const handleCreateNewUser = () => {
+	const handleCreateNewTenant = () => {
 		openCreateForm();
 	};
 
-	const handleOpenPermissions = (user: IdentityUserDto) => {
-		openPermissionsModal(user);
+	const handleManageConnectionString = async (tenant: TenantDto) => {
+		// Open the connection string modal
+		// The modal will handle fetching the connection string itself
+		openConnectionStringModal(tenant);
 	};
 
-	const columns: ColumnDef<IdentityUserDto>[] = [
-		{
-			accessorKey: "userName",
-			header: "Username",
-			cell: ({ row }) => (
-				<div className="font-medium">{row.original.userName}</div>
-			),
-		},
+	const columns: ColumnDef<TenantDto>[] = [
 		{
 			accessorKey: "name",
 			header: "Name",
-			cell: ({ row }) => (
-				<div>
-					{row.original.name} {row.original.surname}
-				</div>
-			),
+			cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
 		},
 		{
-			accessorKey: "email",
-			header: "Email",
-			cell: ({ row }) => <div>{row.original.email}</div>,
-		},
-		{
-			accessorKey: "phoneNumber",
-			header: "Phone",
-			cell: ({ row }) => <div>{row.original.phoneNumber || "-"}</div>,
-		},
-		{
-			accessorKey: "isActive",
-			header: "Status",
-			cell: ({ row }) => (
-				<Badge variant={row.original.isActive ? "default" : "secondary"}>
-					{row.original.isActive ? "Active" : "Inactive"}
-				</Badge>
-			),
-		},
-		{
-			accessorKey: "creationTime",
-			header: "Created",
-			cell: ({ row }) => (
-				<div className="text-sm text-muted-foreground">
-					{row.original.creationTime
-						? new Date(row.original.creationTime).toLocaleDateString()
-						: "-"}
-				</div>
-			),
+			id: "connectionString",
+			header: "Connection String",
+			cell: () => {
+				// We'll need to fetch this for each tenant
+				// For now, just show a placeholder
+				return (
+					<div className="text-sm text-muted-foreground">Not configured</div>
+				);
+			},
 		},
 		{
 			id: "actions",
+			header: "Actions",
 			cell: ({ row }) => (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
@@ -288,30 +227,30 @@ export function UsersList() {
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
-						<DropdownMenuItem onClick={() => handleEditUser(row.original)}>
+						<DropdownMenuItem onClick={() => handleEditTenant(row.original)}>
 							<IconPencil className="mr-2 h-4 w-4" />
 							Edit
 						</DropdownMenuItem>
 						<DropdownMenuItem
-							onClick={() => handleOpenPermissions(row.original)}
+							onClick={() => handleManageConnectionString(row.original)}
 						>
-							<IconShield className="mr-2 h-4 w-4" />
-							Permissions
+							<IconDatabase className="mr-2 h-4 w-4" />
+							Connection String
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem
 							className="text-destructive"
-							disabled={deleteUserMutation.isPending}
+							disabled={deleteTenantMutation.isPending}
 							onClick={() => {
-								if (confirm("Are you sure you want to delete this user?")) {
+								if (confirm("Are you sure you want to delete this tenant?")) {
 									if (row.original.id) {
-										handleDeleteUser(row.original.id);
+										handleDeleteTenant(row.original.id);
 									}
 								}
 							}}
 						>
 							<IconTrash className="mr-2 h-4 w-4" />
-							{deleteUserMutation.isPending ? "Deleting..." : "Delete"}
+							{deleteTenantMutation.isPending ? "Deleting..." : "Delete"}
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
@@ -320,7 +259,7 @@ export function UsersList() {
 	];
 
 	const table = useReactTable({
-		data: users,
+		data: tenants,
 		columns,
 		state: {
 			sorting,
@@ -339,7 +278,7 @@ export function UsersList() {
 		return (
 			<Alert variant="destructive">
 				<AlertDescription>
-					Failed to load users: {error?.error?.message || "Unknown error"}
+					Failed to load tenants: {error?.error?.message || "Unknown error"}
 				</AlertDescription>
 			</Alert>
 		);
@@ -349,17 +288,17 @@ export function UsersList() {
 		<div className="space-y-4">
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-2">
-					<IconUsers className="h-5 w-5" />
+					<IconBuilding className="h-5 w-5" />
 					<span className="text-sm text-muted-foreground">
-						{totalCount} users total
+						{totalCount} tenants total
 					</span>
 				</div>
 				<Button
-					onClick={handleCreateNewUser}
-					disabled={createUserMutation.isPending}
+					onClick={handleCreateNewTenant}
+					disabled={createTenantMutation.isPending}
 				>
 					<IconPlus className="mr-2 h-4 w-4" />
-					{createUserMutation.isPending ? "Creating..." : "Add User"}
+					{createTenantMutation.isPending ? "Creating..." : "Add Tenant"}
 				</Button>
 			</div>
 
@@ -389,22 +328,10 @@ export function UsersList() {
 							Array.from({ length: pagination.pageSize }).map(() => (
 								<TableRow key={crypto.randomUUID()}>
 									<TableCell>
-										<Skeleton className="h-4 w-24" />
-									</TableCell>
-									<TableCell>
-										<Skeleton className="h-4 w-32" />
-									</TableCell>
-									<TableCell>
 										<Skeleton className="h-4 w-48" />
 									</TableCell>
 									<TableCell>
-										<Skeleton className="h-4 w-32" />
-									</TableCell>
-									<TableCell>
-										<Skeleton className="h-6 w-16" />
-									</TableCell>
-									<TableCell>
-										<Skeleton className="h-4 w-20" />
+										<Skeleton className="h-4 w-64" />
 									</TableCell>
 									<TableCell>
 										<Button variant="ghost" size="sm" disabled>
@@ -435,7 +362,7 @@ export function UsersList() {
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No users found.
+									No tenants found.
 								</TableCell>
 							</TableRow>
 						)}
@@ -447,7 +374,7 @@ export function UsersList() {
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
 					<div className="text-sm text-muted-foreground">
-						Showing {users.length} of {totalCount} users
+						Showing {tenants.length} of {totalCount} tenants
 					</div>
 					<div className="flex items-center gap-2">
 						<span className="text-sm text-muted-foreground">
@@ -587,16 +514,17 @@ export function UsersList() {
 				</Pagination>
 			</div>
 
-			<UserForm
-				key={editingUser?.id || "create"}
-				user={editingUser}
+			<TenantForm
+				key={editingTenant?.id || "create"}
 				open={formOpen}
 				onOpenChange={closeForm}
-				onSubmit={editingUser ? handleUpdateUser : handleCreateUser}
-				isLoading={createUserMutation.isPending || updateUserMutation.isPending}
-				mode={editingUser ? "edit" : "create"}
+				onSubmit={editingTenant ? handleUpdateTenant : handleCreateTenant}
+				isLoading={
+					createTenantMutation.isPending || updateTenantMutation.isPending
+				}
+				mode={editingTenant ? "edit" : "create"}
 			/>
-			<UserPermissionsModal />
+			<TenantConnectionStringModal />
 		</div>
 	);
 }

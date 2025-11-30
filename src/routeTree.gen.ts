@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UsersRouteImport } from './routes/users'
+import { Route as TenantsRouteImport } from './routes/tenants'
 import { Route as RolesRouteImport } from './routes/roles'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -31,6 +32,11 @@ import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ss
 const UsersRoute = UsersRouteImport.update({
   id: '/users',
   path: '/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TenantsRoute = TenantsRouteImport.update({
+  id: '/tenants',
+  path: '/tenants',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RolesRoute = RolesRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/roles': typeof RolesRoute
+  '/tenants': typeof TenantsRoute
   '/users': typeof UsersRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/roles': typeof RolesRoute
+  '/tenants': typeof TenantsRoute
   '/users': typeof UsersRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/roles': typeof RolesRoute
+  '/tenants': typeof TenantsRoute
   '/users': typeof UsersRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -186,6 +195,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/roles'
+    | '/tenants'
     | '/users'
     | '/api/health'
     | '/auth/callback'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/roles'
+    | '/tenants'
     | '/users'
     | '/api/health'
     | '/auth/callback'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/roles'
+    | '/tenants'
     | '/users'
     | '/api/health'
     | '/auth/callback'
@@ -247,6 +259,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   RolesRoute: typeof RolesRoute
+  TenantsRoute: typeof TenantsRoute
   UsersRoute: typeof UsersRoute
   ApiHealthRoute: typeof ApiHealthRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
@@ -271,6 +284,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/users'
       preLoaderRoute: typeof UsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tenants': {
+      id: '/tenants'
+      path: '/tenants'
+      fullPath: '/tenants'
+      preLoaderRoute: typeof TenantsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/roles': {
@@ -399,6 +419,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   RolesRoute: RolesRoute,
+  TenantsRoute: TenantsRoute,
   UsersRoute: UsersRoute,
   ApiHealthRoute: ApiHealthRoute,
   AuthCallbackRoute: AuthCallbackRoute,
