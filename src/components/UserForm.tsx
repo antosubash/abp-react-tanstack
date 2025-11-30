@@ -2,6 +2,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import type { IdentityUserDto } from "@/client/types.gen";
 import { Button } from "@/components/ui/button";
@@ -23,6 +25,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { userGetAssignableRolesOptions } from "@/client/@tanstack/react-query.gen";
+import { userGetRoles } from "@/client/sdk.gen";
 
 const userFormSchema = z.object({
 	userName: z.string().min(1, "Username is required"),
@@ -34,6 +40,7 @@ const userFormSchema = z.object({
 	lockoutEnabled: z.boolean(),
 	password: z.string().optional(),
 	confirmPassword: z.string().optional(),
+	roles: z.array(z.string()).optional(),
 });
 
 export type UserFormData = z.infer<typeof userFormSchema>;
@@ -55,6 +62,41 @@ export function UserForm({
 	isLoading = false,
 	mode,
 }: UserFormProps) {
+	const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+
+	// Fetch available roles
+	const { data: assignableRolesData, isLoading: rolesLoading } = useQuery(
+		userGetAssignableRolesOptions({}),
+	);
+
+	// Fetch current user roles when editing
+	const { data: userRolesData } = useQuery({
+		queryKey: ["userRoles", user?.id],
+		queryFn: async () => {
+			if (!user?.id) return { items: [] };
+			const { data } = await userGetRoles({
+				path: { id: user.id },
+			});
+			return data;
+		},
+		enabled: !!user?.id && mode === "edit",
+	});
+
+	const assignableRoles = assignableRolesData?.items || [];
+	const userRoles = userRolesData?.items || [];
+
+	// Update selected roles when user roles data changes
+	useEffect(() => {
+		if (mode === "edit" && userRoles.length > 0) {
+			const roleNames = userRoles
+				.map((role) => role.name || "")
+				.filter(Boolean);
+			setSelectedRoles(roleNames);
+		} else {
+			setSelectedRoles([]);
+		}
+	}, [userRoles, mode]);
+
 	const form = useForm<UserFormData>({
 		resolver: zodResolver(
 			mode === "create"
@@ -78,14 +120,34 @@ export function UserForm({
 				user?.lockoutEnabled !== undefined ? user.lockoutEnabled : true,
 			password: "",
 			confirmPassword: "",
+			roles: selectedRoles,
 		},
 	});
 
+	// Update form values when selected roles change
+	useEffect(() => {
+		form.setValue("roles", selectedRoles);
+	}, [selectedRoles, form]);
+
+	const handleRoleChange = (roleName: string, checked: boolean) => {
+		if (checked) {
+			setSelectedRoles((prev) => [...prev, roleName]);
+		} else {
+			setSelectedRoles((prev) => prev.filter((name) => name !== roleName));
+		}
+	};
+
 	const handleSubmit = async (data: UserFormData) => {
 		try {
-			await onSubmit(data);
+			// Include selected roles in the form data
+			const formDataWithRoles = {
+				...data,
+				roles: selectedRoles,
+			};
+			await onSubmit(formDataWithRoles);
 			onOpenChange(false);
 			form.reset();
+			setSelectedRoles([]);
 		} catch (_error) {
 			toast.error("Failed to save user");
 		}
@@ -93,7 +155,7 @@ export function UserForm({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="sm:max-w-[425px]">
+			<DialogContent className="sm:max-w-[500px]">
 				<DialogHeader>
 					<DialogTitle>
 						{mode === "create" ? "Create User" : "Edit User"}
@@ -260,6 +322,54 @@ export function UserForm({
 								)}
 							/>
 						</div>
+
+						{/* Roles Selection */}
+						{mode === "edit" && (
+							<FormItem>
+								<FormLabel>Roles</FormLabel>
+								<div className="space-y-2 mt-2">
+									{rolesLoading ? (
+										<div className="text-sm text-muted-foreground">
+											Loading roles...
+										</div>
+									) : assignableRoles.length > 0 ? (
+										assignableRoles.map((role) => (
+											<div
+												key={role.id}
+												className="flex items-center space-x-2"
+											>
+												<Checkbox
+													id={`role-${role.id}`}
+													checked={selectedRoles.includes(role.name || "")}
+													onCheckedChange={(checked) =>
+														handleRoleChange(
+															role.name || "",
+															checked as boolean,
+														)
+													}
+												/>
+												<label
+													htmlFor={`role-${role.id}`}
+													className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+												>
+													{role.name}
+												</label>
+												{role.isDefault && (
+													<Badge variant="secondary" className="text-xs">
+														Default
+													</Badge>
+												)}
+											</div>
+										))
+									) : (
+										<div className="text-sm text-muted-foreground">
+											No roles available
+										</div>
+									)}
+								</div>
+								<FormMessage />
+							</FormItem>
+						)}
 
 						<DialogFooter>
 							<Button

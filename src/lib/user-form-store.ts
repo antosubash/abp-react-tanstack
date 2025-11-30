@@ -6,6 +6,7 @@ interface UserFormState {
 	open: boolean;
 	isLoading: boolean;
 	mode: "create" | "edit";
+	selectedRoles: string[];
 }
 
 interface UserFormActions {
@@ -13,6 +14,7 @@ interface UserFormActions {
 	openEditForm: (user: IdentityUserDto) => void;
 	closeForm: () => void;
 	setLoading: (loading: boolean) => void;
+	setSelectedRoles: (roles: string[]) => void;
 	reset: () => void;
 }
 
@@ -23,6 +25,7 @@ const initialState: UserFormState = {
 	open: false,
 	isLoading: false,
 	mode: "create",
+	selectedRoles: [],
 };
 
 export const useUserFormStore = create<UserFormStore>((set) => ({
@@ -33,6 +36,7 @@ export const useUserFormStore = create<UserFormStore>((set) => ({
 			user: null,
 			open: true,
 			mode: "create",
+			selectedRoles: [],
 		}),
 
 	openEditForm: (user: IdentityUserDto) =>
@@ -50,6 +54,11 @@ export const useUserFormStore = create<UserFormStore>((set) => ({
 	setLoading: (loading: boolean) =>
 		set({
 			isLoading: loading,
+		}),
+
+	setSelectedRoles: (roles: string[]) =>
+		set({
+			selectedRoles: roles,
 		}),
 
 	reset: () => set(initialState),

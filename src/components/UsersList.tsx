@@ -25,6 +25,7 @@ import {
 	userGetListOptions,
 	userGetListQueryKey,
 	userUpdateMutation,
+	userUpdateRolesMutation,
 } from "@/client/@tanstack/react-query.gen";
 import type { IdentityUserDto } from "@/client/types.gen";
 import { Badge } from "@/components/ui/badge";
@@ -110,6 +111,10 @@ export function UsersList() {
 		...userUpdateMutation(),
 	});
 
+	const _updateUserRolesMutation = useMutation({
+		...userUpdateRolesMutation(),
+	});
+
 	const deleteUserMutation = useMutation({
 		...userDeleteMutation(),
 	});
@@ -165,6 +170,17 @@ export function UsersList() {
 					concurrencyStamp: editingUser.concurrencyStamp || null,
 				},
 			});
+
+			// Update user roles if they are provided
+			if (data.roles && Array.isArray(data.roles)) {
+				await _updateUserRolesMutation.mutateAsync({
+					path: { id: editingUser.id },
+					body: {
+						roleNames: data.roles,
+					},
+				});
+			}
+
 			// Invalidate and refetch the user list to update the table
 			await queryClient.invalidateQueries({
 				queryKey: userGetListQueryKey(queryOptions),
