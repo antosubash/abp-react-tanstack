@@ -19,14 +19,6 @@ import {
 } from "@tanstack/react-table";
 import { toast } from "sonner";
 
-import {
-	tenantCreateMutation,
-	tenantDeleteMutation,
-	tenantGetListOptions,
-	tenantGetListQueryKey,
-	tenantUpdateMutation,
-	tenantGetDefaultConnectionStringOptions,
-} from "@/client/@tanstack/react-query.gen";
 import type { TenantDto } from "@/client/types.gen";
 import { Button } from "@/components/ui/button";
 import {
@@ -66,6 +58,13 @@ import { TenantForm, type TenantFormData } from "@/components/TenantForm";
 import { TenantConnectionStringModal } from "@/components/TenantConnectionStringModal";
 import { useTenantFormStore } from "@/lib/tenant-form-store";
 import { useTenantConnectionStore } from "@/lib/tenant-connection-store";
+import {
+	tenantCreateMutation,
+	tenantDeleteMutation,
+	tenantGetListOptions,
+	tenantGetListQueryKey,
+	tenantUpdateMutation,
+} from "@/client/@tanstack/react-query.gen";
 
 export function TenantsList() {
 	const [sorting, setSorting] = useState<SortingState>([]);
@@ -194,19 +193,9 @@ export function TenantsList() {
 	};
 
 	const handleManageConnectionString = async (tenant: TenantDto) => {
-		// First, try to get the current connection string
-		try {
-			const connectionString = await queryClient.fetchQuery({
-				...tenantGetDefaultConnectionStringOptions({
-					path: { id: tenant.id || "" },
-				}),
-			});
-
-			openConnectionStringModal(tenant, connectionString || "");
-		} catch (_error) {
-			// If there's no connection string or an error, open with empty string
-			openConnectionStringModal(tenant, "");
-		}
+		// Open the connection string modal
+		// The modal will handle fetching the connection string itself
+		openConnectionStringModal(tenant);
 	};
 
 	const columns: ColumnDef<TenantDto>[] = [

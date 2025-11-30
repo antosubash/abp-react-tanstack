@@ -31,7 +31,7 @@ export const useTenantConnectionStore = create<TenantConnectionState>(
 			set({
 				open: true,
 				tenant,
-				connectionString,
+				connectionString: connectionString || "",
 			}),
 
 		closeModal: () =>

@@ -58,20 +58,57 @@ export function TenantConnectionStringModal() {
 	});
 
 	// Query to get the current connection string
-	const { data: currentConnectionString } = useQuery({
+	const { data: currentConnectionString, isLoading } = useQuery({
 		...tenantGetDefaultConnectionStringOptions({
 			path: { id: tenant?.id || "" },
 		}),
 		enabled: !!tenant?.id && open,
+		select: (data) => {
+			// Handle null or undefined data (204 No Content)
+			if (data === null || data === undefined) {
+				return "";
+			}
+
+			// If it's already a string, return it
+			if (typeof data === "string") {
+				return data;
+			}
+
+			// If it's an object, try to convert to string
+			if (typeof data === "object") {
+				try {
+					const stringResult = String(data);
+					// Check if it's "[object ReadableStream]" issue
+					if (stringResult === "[object ReadableStream]") {
+						console.warn(
+							"Received ReadableStream instead of string for connection string",
+						);
+						return "";
+					}
+					return stringResult;
+				} catch (e) {
+					console.error("Error converting connection string to string:", e);
+					return "";
+				}
+			}
+
+			// For any other type, try to convert to string
+			return String(data);
+		},
 	});
 
 	// Update form when connection string changes
 	useEffect(() => {
 		if (currentConnectionString !== undefined) {
-			setConnectionString(currentConnectionString || "");
-			form.setValue("connectionString", currentConnectionString || "");
+			setConnectionString(currentConnectionString);
+			form.setValue("connectionString", currentConnectionString);
 		}
 	}, [currentConnectionString, setConnectionString, form]);
+
+	// Set loading state based on query
+	useEffect(() => {
+		setLoading(isLoading);
+	}, [isLoading, setLoading]);
 
 	// Reset form when dialog closes
 	useEffect(() => {
