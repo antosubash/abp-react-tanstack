@@ -18,20 +18,23 @@ export function UsersHeader({
 	onSearchChange,
 }: UsersHeaderProps) {
 	return (
-		<div className="flex items-center justify-between">
+		<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div className="flex items-center gap-2">
 				<IconUsers className="h-5 w-5" />
 				<span className="text-sm text-muted-foreground">
 					{totalCount} users total
 				</span>
 			</div>
-			<div className="flex items-center gap-4" suppressHydrationWarning>
+			<div
+				className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4"
+				suppressHydrationWarning
+			>
 				{onSearchChange && (
 					<Input
 						placeholder="Search users..."
 						value={searchValue}
 						onChange={(e) => onSearchChange(e.target.value)}
-						className="w-64"
+						className="w-full sm:w-64"
 						data-testid="field-user-search"
 						suppressHydrationWarning
 					/>
@@ -40,6 +43,7 @@ export function UsersHeader({
 					onClick={onCreateUser}
 					disabled={isCreating}
 					data-testid="btn-create-user"
+					className="w-full sm:w-auto"
 				>
 					<IconPlus className="mr-2 h-4 w-4" />
 					{isCreating ? "Creating..." : "Add User"}

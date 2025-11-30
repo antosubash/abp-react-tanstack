@@ -39,7 +39,7 @@ export function DashboardActivity({
 	teamMembers,
 }: DashboardActivityProps) {
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+		<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
 			{/* Activity Timeline */}
 			<Card
 				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors lg:col-span-2"

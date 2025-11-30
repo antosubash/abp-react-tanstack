@@ -199,7 +199,10 @@ export function UserForm({
 
 	return (
 		<Dialog open={open} onOpenChange={handleOpenChange}>
-			<DialogContent className="sm:max-w-[500px]" data-testid="user-form-modal">
+			<DialogContent
+				className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto"
+				data-testid="user-form-modal"
+			>
 				<DialogHeader>
 					<DialogTitle>
 						{mode === "create" ? "Create User" : "Edit User"}
@@ -216,7 +219,7 @@ export function UserForm({
 						className="space-y-4"
 						suppressHydrationWarning
 					>
-						<div className="grid grid-cols-2 gap-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<FormField
 								control={form.control}
 								name="userName"
@@ -254,7 +257,7 @@ export function UserForm({
 							/>
 						</div>
 
-						<div className="grid grid-cols-2 gap-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<FormField
 								control={form.control}
 								name="name"
@@ -306,7 +309,7 @@ export function UserForm({
 						/>
 
 						{mode === "create" && (
-							<div className="grid grid-cols-2 gap-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 								<FormField
 									control={form.control}
 									name="password"
@@ -346,12 +349,12 @@ export function UserForm({
 							</div>
 						)}
 
-						<div className="flex items-center space-x-4">
+						<div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:space-x-4">
 							<FormField
 								control={form.control}
 								name="isActive"
 								render={({ field }) => (
-									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 w-full sm:w-auto">
 										<div className="space-y-0.5">
 											<FormLabel>Active</FormLabel>
 										</div>
@@ -368,7 +371,7 @@ export function UserForm({
 								control={form.control}
 								name="lockoutEnabled"
 								render={({ field }) => (
-									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 w-full sm:w-auto">
 										<div className="space-y-0.5">
 											<FormLabel>Lockout Enabled</FormLabel>
 										</div>

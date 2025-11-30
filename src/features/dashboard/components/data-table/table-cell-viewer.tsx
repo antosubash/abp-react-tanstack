@@ -144,7 +144,7 @@ function TableCellViewerComponent({ item }: { item: DataTableSchema }) {
 							<Label htmlFor="header">Header</Label>
 							<Input id={headerId} defaultValue={item.header} />
 						</div>
-						<div className="grid grid-cols-2 gap-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="flex flex-col gap-3">
 								<Label htmlFor="type">Type</Label>
 								<Select defaultValue={item.type}>
@@ -171,7 +171,7 @@ function TableCellViewerComponent({ item }: { item: DataTableSchema }) {
 								</Select>
 							</div>
 						</div>
-						<div className="grid grid-cols-2 gap-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div className="flex flex-col gap-3">
 								<Label htmlFor="target">Target</Label>
 								<Input id={targetId} defaultValue={item.target} />

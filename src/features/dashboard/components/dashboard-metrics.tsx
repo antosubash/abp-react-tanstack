@@ -30,7 +30,7 @@ export function DashboardMetrics({
 		totalUsers > 0 ? (activeUsers / totalUsers) * 100 : 0;
 
 	return (
-		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
 			<Card
 				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
 				data-testid="metric-total-users"

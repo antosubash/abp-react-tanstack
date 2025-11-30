@@ -247,7 +247,7 @@ export function UsersList() {
 			{/* Bulk Actions */}
 			{selectedUsers.length > 0 && (
 				<div
-					className="flex items-center gap-2 p-4 bg-muted rounded-lg"
+					className="flex flex-col sm:flex-row sm:items-center gap-2 p-4 bg-muted rounded-lg"
 					data-testid="bulk-actions"
 				>
 					<span className="text-sm text-muted-foreground">
@@ -259,6 +259,7 @@ export function UsersList() {
 						data-testid="bulk-delete-btn"
 						onClick={() => setDeleteUserId("bulk")}
 						disabled={deleteUserMutation.isPending}
+						className="w-full sm:w-auto"
 					>
 						{deleteUserMutation.isPending ? "Deleting..." : "Delete Selected"}
 					</Button>

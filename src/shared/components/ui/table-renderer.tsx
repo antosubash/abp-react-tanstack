@@ -52,8 +52,8 @@ export function TableRenderer<TData>({
 
 	return (
 		<div className="space-y-4">
-			<div className="rounded-md border">
-				<Table data-testid={tableTestId}>
+			<div className="rounded-md border overflow-x-auto">
+				<Table data-testid={tableTestId} className="min-w-[640px]">
 					<TableHeader>
 						<TableRow>
 							{columns.map((column, index) => (
@@ -129,7 +129,7 @@ export function TableRenderer<TData>({
 
 			{/* Pagination */}
 			<div
-				className="flex items-center justify-between px-2"
+				className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-2"
 				data-testid="users-pagination"
 			>
 				<div className="flex-1 text-sm text-muted-foreground">
@@ -140,9 +140,10 @@ export function TableRenderer<TData>({
 					)}{" "}
 					of {totalCount} entries
 				</div>
-				<div className="flex items-center space-x-6 lg:space-x-8">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:space-x-6 lg:space-x-8">
 					<div className="flex items-center space-x-2">
-						<p className="text-sm font-medium">Rows per page</p>
+						<p className="text-sm font-medium hidden sm:block">Rows per page</p>
+						<p className="text-sm font-medium sm:hidden">Rows</p>
 						<Select
 							value={`${pagination.pageSize}`}
 							onValueChange={(value) =>
@@ -166,7 +167,7 @@ export function TableRenderer<TData>({
 					</div>
 
 					<div
-						className="flex w-[100px] items-center justify-center text-sm font-medium"
+						className="flex w-auto sm:w-[100px] items-center justify-center text-sm font-medium"
 						data-testid="current-page"
 					>
 						Page {pagination.pageIndex + 1} of {totalPages}

@@ -177,7 +177,7 @@ export default function Dashboard() {
 	if (hasError) {
 		return (
 			<ProtectedRoute>
-				<div className="min-h-screen text-slate-100 p-6">
+				<div className="min-h-screen text-slate-100 p-2 sm:p-4 md:p-6">
 					<Card className="bg-slate-800/50 border-slate-700">
 						<CardHeader>
 							<CardTitle className="text-white">Error</CardTitle>
@@ -202,19 +202,21 @@ export default function Dashboard() {
 	return (
 		<ProtectedRoute>
 			<div
-				className="min-h-screen text-slate-100 p-6"
+				className="min-h-screen text-slate-100 p-2 sm:p-4 md:p-6"
 				data-testid="dashboard-content"
 			>
 				{/* Header */}
-				<div className="flex items-center justify-between mb-8">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
 					<div>
-						<h1 className="text-3xl font-bold text-white mb-2">
+						<h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
 							{DASHBOARD_CONSTANTS.TITLE}
 						</h1>
-						<p className="text-slate-400">{DASHBOARD_CONSTANTS.DESCRIPTION}</p>
+						<p className="text-sm sm:text-base text-slate-400">
+							{DASHBOARD_CONSTANTS.DESCRIPTION}
+						</p>
 					</div>
 					<div className="flex items-center gap-4">
-						<div className="text-sm text-slate-400">
+						<div className="text-xs sm:text-sm text-slate-400">
 							Welcome, {user?.name || user?.preferred_username || "User"}
 						</div>
 					</div>

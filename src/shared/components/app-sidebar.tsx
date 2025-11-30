@@ -34,6 +34,7 @@ import {
 	SidebarMenuSub,
 	SidebarMenuSubTrigger,
 	SidebarMenuSubItem,
+	SidebarRail,
 } from "@/shared/components/ui/sidebar";
 
 const data = {
@@ -104,7 +105,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	return (
-		<Sidebar data-collapsible="offcanvas" {...props}>
+		<Sidebar data-collapsible="icon" {...props}>
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
@@ -114,7 +115,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						>
 							<div className="flex items-center gap-2">
 								<IconInnerShadowTop className="!size-5" />
-								<span className="text-base font-semibold">TanStack Start</span>
+								<span className="text-base font-semibold group-data-[collapsible=icon]:hidden">
+									TanStack Start
+								</span>
 							</div>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
@@ -124,7 +127,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<NavMain items={data.navMain} />
 
 				<SidebarGroup>
-					<SidebarGroupLabel>Demos</SidebarGroupLabel>
+					<SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">
+						Demos
+					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{data.demos.map((item) => (
@@ -135,8 +140,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 												<CollapsibleTrigger asChild>
 													<SidebarMenuButton tooltip={item.title}>
 														<item.icon />
-														<span>{item.title}</span>
-														<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+														<span className="group-data-[collapsible=icon]:hidden">
+															{item.title}
+														</span>
+														<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
 													</SidebarMenuButton>
 												</CollapsibleTrigger>
 												<CollapsibleContent>
@@ -157,7 +164,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											<SidebarMenuButton asChild tooltip={item.title}>
 												<Link to={item.url}>
 													<item.icon />
-													<span>{item.title}</span>
+													<span className="group-data-[collapsible=icon]:hidden">
+														{item.title}
+													</span>
 												</Link>
 											</SidebarMenuButton>
 										)}
@@ -171,6 +180,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarFooter>
 				<NavUser />
 			</SidebarFooter>
+			<SidebarRail />
 		</Sidebar>
 	);
 }

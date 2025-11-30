@@ -50,7 +50,7 @@ export function DashboardCharts({
 	} satisfies ChartConfig;
 
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+		<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
 			{/* Status Distribution Pie Chart */}
 			<Card
 				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
@@ -70,7 +70,10 @@ export function DashboardCharts({
 					</div>
 				</CardHeader>
 				<CardContent>
-					<ChartContainer config={chartConfig} className="h-[300px]">
+					<ChartContainer
+						config={chartConfig}
+						className="h-[250px] sm:h-[300px]"
+					>
 						<PieChart>
 							<Pie
 								data={usersChartData}
@@ -137,7 +140,10 @@ export function DashboardCharts({
 					</div>
 				</CardHeader>
 				<CardContent>
-					<ChartContainer config={chartConfig} className="h-[300px]">
+					<ChartContainer
+						config={chartConfig}
+						className="h-[250px] sm:h-[300px]"
+					>
 						<BarChart
 							data={rolesChartData}
 							margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
