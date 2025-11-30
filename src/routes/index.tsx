@@ -11,17 +11,21 @@ import {
 	Waves,
 	Zap,
 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
-import { Button } from "../components/ui/button";
+import {
+	Alert,
+	AlertDescription,
+	AlertTitle,
+} from "@/shared/components/ui/alert";
+import { Button } from "@/shared/components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "../components/ui/card";
-import { Separator } from "../components/ui/separator";
-import { useAuthCombined } from "../hooks/use-auth";
+} from "@/shared/components/ui/card";
+import { Separator } from "@/shared/components/ui/separator";
+import { useAuthCombined } from "@/features/auth/hooks/use-auth";
 
 export const Route = createFileRoute("/")({ component: App });
 

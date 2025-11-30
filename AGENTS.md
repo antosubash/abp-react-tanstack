@@ -55,43 +55,56 @@ This document serves as a comprehensive guide for AI agents working with the ABP
 
 ```
 src/
-├── app/dashboard/
-│   └── data.json                    # Sample project management data
-├── client/                          # Generated API client
-│   ├── @tanstack/
-│   ├── client/                      # Fetch client utilities
-│   ├── core/                        # Core API utilities
-│   ├── index.ts                     # Main API exports
-│   ├── sdk.gen.ts                   # Generated SDK
-│   └── types.gen.ts                 # Generated TypeScript types
-├── components/
-│   ├── ui/                          # Shadcn/ui components
-│   ├── app-sidebar.tsx             # Application sidebar
-│   ├── data-table.tsx              # Data table component
-│   ├── Header.tsx                  # Application header
-│   ├── nav-*.tsx                   # Navigation components
-│   ├── ProtectedRoute.tsx          # Route protection wrapper
-│   ├── section-cards.tsx           # UI card components
-│   └── SidebarLayout.tsx           # Sidebar layout wrapper
-├── data/
-│   └── demo.punk-songs.ts          # Demo data
-├── hooks/
-│   ├── use-auth.tsx                # Authentication hooks
-│   └── use-mobile.ts               # Mobile detection hook
-├── lib/
-│   ├── auth-server.ts              # Server-side auth utilities
-│   ├── constants.ts                # Application constants
-│   ├── oidc.ts                     # OIDC client utilities
-│   ├── session.ts                  # Session management
-│   └── utils.ts                    # Utility functions
-├── routes/
-│   ├── __root.tsx                  # Root route with providers
-│   ├── index.tsx                   # Landing page
-│   ├── dashboard.tsx               # Main dashboard
-│   ├── auth.*.ts                   # Authentication routes
-│   ├── api.*.ts                    # API routes
-│   └── demo/                       # Demo feature routes
-└── hey-api.ts                      # API client configuration
+├── features/                    # Feature-based modules
+│   ├── auth/                   # Authentication feature
+│   │   ├── components/        # Auth-specific components
+│   │   ├── hooks/             # Auth-specific hooks
+│   │   ├── stores/            # Auth state management
+│   │   └── constants.ts       # Auth-specific constants
+│   ├── users/                 # User management feature
+│   │   ├── components/        # User-related components
+│   │   ├── hooks/             # User-specific hooks
+│   │   ├── stores/            # User state management
+│   │   └── constants.ts       # User-specific constants
+│   ├── roles/                 # Role management feature
+│   │   ├── components/        # Role-related components
+│   │   ├── hooks/             # Role-specific hooks
+│   │   ├── stores/            # Role state management
+│   │   └── constants.ts       # Role-specific constants
+│   ├── tenants/               # Tenant management feature
+│   │   ├── components/        # Tenant-related components
+│   │   ├── hooks/             # Tenant-specific hooks
+│   │   ├── stores/            # Tenant state management
+│   │   └── constants.ts       # Tenant-specific constants
+│   └── dashboard/             # Dashboard feature
+│       ├── components/        # Dashboard components
+│       ├── hooks/             # Dashboard hooks
+│       ├── data/              # Dashboard data
+│       └── types/             # Dashboard types
+├── shared/                    # Shared code across features
+│   ├── components/            # Reusable UI components
+│   ├── hooks/                 # Shared hooks
+│   ├── stores/                # Shared stores
+│   ├── utils/                 # Utility functions
+│   └── types/                 # Shared types
+├── infrastructure/            # Infrastructure concerns
+│   ├── api/                   # API client configuration
+│   ├── auth/                  # Authentication infrastructure
+│   └── config/                # Configuration files
+├── routes/                    # Route definitions (TanStack Router file-based routing)
+│   ├── __root.tsx            # Root route (always rendered)
+│   ├── index.tsx             # Home page route
+│   ├── dashboard.tsx         # Dashboard route
+│   ├── users.tsx             # Users route
+│   ├── roles.tsx             # Roles route
+│   ├── tenants.tsx           # Tenants route
+│   ├── auth.*.ts             # Authentication routes (login, logout, callback, me)
+│   └── demo/                 # Demo routes
+├── router.tsx                # Router configuration (TanStack Router setup)
+├── routeTree.gen.ts          # Auto-generated route tree (gitignored)
+├── constants.ts              # Application constants (API endpoints, base URLs)
+├── styles.css                # Global styles
+└── logo.svg                  # Application logo
 ```
 
 ## 🔧 Key Configuration Files
@@ -99,7 +112,7 @@ src/
 ### `hey-api.config.ts`
 - **Purpose**: Configures automated API client generation
 - **Input**: OpenAPI spec from ABP backend (`https://abp.antosubash.com/swagger/v1/swagger.json`)
-- **Output**: TypeScript client in `src/client/`
+- **Output**: TypeScript client in `src/infrastructure/api/`
 - **Plugins**:
   - `@hey-api/client-fetch`: HTTP client
   - `zod`: Runtime validation schemas
@@ -109,9 +122,20 @@ src/
 - **Purpose**: Vite configuration for development and build
 - **Plugins**:
   - `tanstackStart()`: Full-stack framework integration
+    - `router.entry`: `router.tsx` (router configuration file)
+    - `router.routesDirectory`: `routes` (file-based routing directory)
   - `viteReact()`: React plugin
   - `tailwindcss()`: CSS framework
   - `viteTsConfigPaths()`: Path alias resolution
+
+### `router.tsx`
+- **Purpose**: TanStack Router configuration
+- **Location**: `src/router.tsx`
+- **Exports**: `getRouter()` function that returns a router instance
+- **Configuration**:
+  - Route tree imported from auto-generated `routeTree.gen.ts`
+  - Scroll restoration enabled
+  - Preload stale time configuration
 
 ### `package.json`
 - **Scripts**:
@@ -121,6 +145,14 @@ src/
   - `pnpm test`: Run tests with Vitest
   - `pnpm lint`: Code linting with Biome
   - `pnpm format`: Code formatting with Biome
+  - `check-file-size`: Verify file size limits (500 lines max)
+
+### `tsconfig.json`
+- **Path Aliases**:
+  - `@/*`: Points to `./src/*`
+  - `@/shared/*`: Points to `./src/shared/*`
+  - `@/features/*`: Points to `./src/features/*`
+  - `@/infrastructure/*`: Points to `./src/infrastructure/*`
 
 ## 🔐 Authentication System
 
@@ -151,7 +183,7 @@ VITE_SESSION_SECRET=your-super-secret-key
 ## 📊 Dashboard Features
 
 ### Project Management Dashboard
-- **Data Source**: `src/app/dashboard/data.json` (615 sample tasks)
+- **Data Source**: `src/features/dashboard/data/` (615 sample tasks)
 - **Features**:
   - Task status tracking (Done/In Process)
   - Metrics calculation (completion rates, reviewer stats)
@@ -194,19 +226,29 @@ pnpm format
    - Generates TypeScript types and functions
    - Creates TanStack Query hooks
    - Adds Zod validation schemas
-3. **Output**: Updated files in `src/client/`
+3. **Output**: Updated files in `src/infrastructure/api/`
 
-### Adding New Routes
-1. Create new file in `src/routes/` following file-based routing
-2. TanStack Router auto-generates route configuration
-3. Use `createFileRoute()` for route definition
-4. Import and use `Link` component for navigation
+### Adding New Features
+1. Create feature directory in `src/features/[feature-name]/`
+2. Add components, hooks, stores, and constants as needed
+3. Create route file in `src/routes/[feature].tsx` (or `src/routes/[feature]/index.tsx` for nested routes)
+4. Use `createFileRoute` to define the route:
+   ```typescript
+   import { createFileRoute } from "@tanstack/react-router";
+   import { FeatureComponent } from "@/features/[feature-name]/components/FeatureComponent";
+   
+   export const Route = createFileRoute("/[feature-path]")({
+     component: FeatureComponent,
+   });
+   ```
+5. The route tree will be auto-generated on next dev server start or build
 
 ### Component Development
-- Use Shadcn/ui components from `src/components/ui/`
+- Use Shadcn/ui components from `src/shared/components/ui/`
 - Follow existing patterns for consistency
 - Implement responsive design with Tailwind
 - Use TypeScript for type safety
+- Keep files under 500 lines (enforced by check-file-size script)
 
 ## 🐳 Deployment & Docker
 
@@ -251,11 +293,57 @@ pnpm docker:compose:up
 - **Punk Songs**: Demo data for music-related features
 - **Mock API Responses**: Simulated backend responses
 
+## 🛣️ Routing System
+
+### File-Based Routing
+TanStack Start uses file-based routing following TanStack Router conventions:
+- **Routes Directory**: `src/routes/`
+- **Router Config**: `src/router.tsx`
+- **Route Tree**: `src/routeTree.gen.ts` (auto-generated, gitignored)
+
+### Route File Naming
+| URL Path | File Path | Type |
+|----------|-----------|------|
+| `/` | `routes/index.tsx` | Index Route |
+| `/about` | `routes/about.tsx` | Static Route |
+| `/posts` | `routes/posts.tsx` | Layout Route |
+| `/posts/:id` | `routes/posts/$id.tsx` | Dynamic Route |
+| `/api/*` | `routes/api/$.tsx` | Wildcard Route |
+
+### Creating Routes
+```typescript
+// src/routes/feature.tsx
+import { createFileRoute } from "@tanstack/react-router";
+import { FeatureComponent } from "@/features/feature/components/FeatureComponent";
+
+export const Route = createFileRoute("/feature")({
+  component: FeatureComponent,
+  // Optional: loader, beforeLoad, etc.
+});
+```
+
+### Root Route
+The `__root.tsx` file is always rendered and contains:
+- Document shell (`<html>`, `<body>`)
+- Global providers (QueryClient, AuthProvider)
+- Layout logic
+- HeadContent and Scripts components
+
+### Route Tree Generation
+The route tree is automatically generated when:
+- Running `pnpm dev`
+- Running `pnpm build`
+- The TanStack Router plugin detects route file changes
+
+**Reference**: [TanStack Start Routing Guide](https://tanstack.com/start/latest/docs/framework/react/guide/routing)
+
 ## 🔍 Common Tasks for AI Agents
 
 ### 1. Adding New Features
-- Create route file in `src/routes/`
-- Implement component with TypeScript
+- Create feature directory structure under `src/features/`
+- Implement components with TypeScript
+- Create route file in `src/routes/[feature].tsx`
+- Use `createFileRoute` to define the route
 - Add API integration if needed
 - Update navigation components
 - Add tests for new functionality
@@ -273,7 +361,7 @@ pnpm docker:compose:up
 - Add proper TypeScript types
 
 ### 4. Authentication Updates
-- Modify OIDC configuration in `src/lib/oidc.ts`
+- Modify OIDC configuration in `src/infrastructure/auth/`
 - Update route protection logic
 - Handle token refresh scenarios
 - Update error handling
@@ -344,12 +432,11 @@ pnpm test --watch
 1. **Code Style**: Follow Biome configuration
 2. **TypeScript**: Use strict typing throughout
 3. **Testing**: Add tests for new features
-4. **Documentation**: Update this AGENTS.md for significant changes
-5. **Commits**: Use conventional commit messages
-6. **PR Reviews**: Required for all changes
+4. **Commits**: Use conventional commit messages
+5. **PR Reviews**: Required for all changes
 
 ---
 
 **Last Updated**: November 2025
-**Version**: 0.0.1
+**Version**: 0.0.6
 **Maintainer**: AI Development Team

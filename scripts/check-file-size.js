@@ -12,8 +12,8 @@ const __dirname = path.dirname(__filename);
 const MAX_LINES = 500;
 const SRC_DIR = path.join(__dirname, '../src');
 const EXCLUDE_PATTERNS = [
-  /src\/client\/.*/,  // Generated API client
-  /src\/routeTree\.gen\.ts$/,  // Generated route tree
+  /src\/infrastructure\/api\/.*/,  // Generated API client
+  /src\/app\/routeTree\.gen\.ts$/,  // Generated route tree
   /\.gen\.ts$/,  // All generated files
   /\.gen\.tsx$/,  // All generated TSX files
 ];

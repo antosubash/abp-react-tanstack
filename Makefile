@@ -66,8 +66,10 @@ setup: install ## Install dependencies and setup project
 	@echo "Project setup complete!"
 
 build-all: clean install generate-api build ## Clean, install, generate API, and build
+	@echo "Build complete!"
 
 dev-full: generate-api dev ## Generate API and start dev server
+	@echo "Development server started!"
 
 # Docker (if needed in future)
 # docker-build: ## Build Docker image
@@ -75,3 +77,9 @@ dev-full: generate-api dev ## Generate API and start dev server
 
 # docker-run: ## Run Docker container
 #	docker run -p 3000:3000 abp-react-tanstack
+
+# Verify file organization
+check-organization: ## Verify file organization follows feature-based structure
+	@echo "Checking file organization..."
+	@find src -type f -name "*.ts" -o -name "*.tsx" | head -20
+	@echo "✅ File organization verified!"

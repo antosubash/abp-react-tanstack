@@ -1,4 +1,5 @@
 {
+  "files": ["src/hey-api.ts"],
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "target": "ES2022",
@@ -22,7 +23,10 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/shared/*": ["./src/shared/*"],
+      "@/features/*": ["./src/features/*"],
+      "@/infrastructure/*": ["./src/infrastructure/*"]
     }
   }
 }

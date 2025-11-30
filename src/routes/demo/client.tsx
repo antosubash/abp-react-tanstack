@@ -1,96 +1,196 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
-import { abpApplicationConfigurationGetOptions } from "@/client/@tanstack/react-query.gen";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/shared/components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@/shared/components/ui/card";
+import { Input } from "@/shared/components/ui/input";
+import { Label } from "@/shared/components/ui/label";
+import { useId } from "react";
+import { Toaster } from "@/shared/components/ui/sonner";
+import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import {
+	userCreateMutation,
+	userGetListOptions,
+	userGetListQueryKey,
+} from "@/infrastructure/api/@tanstack/react-query.gen";
+import type { IdentityUserCreateDto } from "@/infrastructure/api/types.gen";
 
 export const Route = createFileRoute("/demo/client")({
-	component: ApiClientDemo,
+	component: ClientDemo,
 });
 
-function ApiClientDemo() {
+function ClientDemo() {
+	const queryClient = useQueryClient();
+	const userNameId = useId();
+	const emailId = useId();
+
+	const createUserMutation = useMutation({
+		...userCreateMutation(),
+	});
+
+	const handleCreateUser = async (data: IdentityUserCreateDto) => {
+		try {
+			await createUserMutation.mutateAsync({ body: data });
+			queryClient.invalidateQueries({
+				queryKey: userGetListQueryKey(),
+			});
+			toast.success("User created successfully");
+		} catch (error: unknown) {
+			const errorMessage =
+				error instanceof Error ? error.message : "Failed to create user";
+			toast.error(errorMessage);
+			throw error;
+		}
+	};
+
 	const {
-		data: applicationConfiguration,
-		isLoading,
-		error,
-		isError,
-	} = useQuery(
-		abpApplicationConfigurationGetOptions({
-			query: {
-				IncludeLocalizationResources: false,
-			},
-		}),
-	);
+		data: usersResponse,
+		isLoading: usersLoading,
+		error: usersError,
+		isError: usersIsError,
+	} = useQuery(userGetListOptions());
 
-	if (isError) {
-		return (
-			<div className="flex items-center justify-center min-h-screen p-4">
-				<Alert variant="destructive" className="max-w-md">
-					<AlertCircle className="h-4 w-4" />
-					<AlertTitle>Failed to Load Data</AlertTitle>
-					<AlertDescription>
-						{error?.error?.message ||
-							"Failed to load application configuration"}
-					</AlertDescription>
-				</Alert>
-			</div>
-		);
-	}
-
-	if (isLoading) {
-		return (
-			<div className="flex items-center justify-center min-h-screen p-4">
-				<Card className="max-w-md w-full">
+	return (
+		<div className="container mx-auto py-8">
+			<Toaster />
+			<div className="space-y-4">
+				<Card>
 					<CardHeader>
-						<CardTitle>Loading Application Configuration</CardTitle>
+						<CardTitle>Generated API Client Demo</CardTitle>
 						<CardDescription>
-							Please wait while we fetch the data...
+							Generated API client from ABP OpenAPI specification with full
+							TypeScript support.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-3/4" />
-						<Skeleton className="h-4 w-1/2" />
+						<div className="space-y-2">
+							<Label htmlFor={userNameId}>User Name</Label>
+							<Input
+								id={userNameId}
+								placeholder="Enter user name"
+								defaultValue="Demo User"
+							/>
+						</div>
+						<div className="space-y-2">
+							<Label htmlFor={emailId}>Email</Label>
+							<Input
+								id={emailId}
+								type="email"
+								placeholder="Enter email"
+								defaultValue="demo@example.com"
+							/>
+						</div>
+						<Button
+							onClick={() =>
+								handleCreateUser({
+									userName: "Demo User",
+									email: "demo@example.com",
+									password: "demo-password",
+								})
+							}
+							disabled={createUserMutation.isPending}
+						>
+							{createUserMutation.isPending ? "Creating..." : "Create User"}
+						</Button>
+					</CardContent>
+
+					{usersIsError && (
+						<Card>
+							<CardHeader>
+								<CardTitle>Error</CardTitle>
+							</CardHeader>
+							<CardContent>
+								{usersError?.error?.message || "Failed to load users"}
+							</CardContent>
+						</Card>
+					)}
+
+					{usersLoading && (
+						<Card>
+							<CardHeader>
+								<CardTitle>Loading</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<div className="flex items-center justify-center space-x-2">
+									<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+									<span>Loading users...</span>
+								</div>
+							</CardContent>
+						</Card>
+					)}
+
+					{usersResponse && (
+						<Card>
+							<CardHeader>
+								<CardTitle>Users</CardTitle>
+								<CardDescription>
+									{usersResponse.items?.length || 0} users found
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<div className="rounded-md border">
+									<table className="w-full">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>Name</th>
+												<th>Email</th>
+											</tr>
+										</thead>
+										<tbody>
+											{usersResponse.items?.map((user) => (
+												<tr key={user.id}>
+													<td>{user.id}</td>
+													<td>{user.name}</td>
+													<td>{user.email}</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</CardContent>
+						</Card>
+					)}
+				</Card>
+
+				<Card>
+					<CardHeader>
+						<CardTitle>API Client Info</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<div className="space-y-2 text-sm">
+							<p>
+								<strong>Generated from:</strong>{" "}
+								<a
+									href="https://abp.antosubash.com/swagger/v1/swagger.json"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-primary hover:underline"
+								>
+									https://abp.antosubash.com/swagger/v1/swagger.json
+								</a>
+							</p>
+							<p>
+								<strong>TypeScript types:</strong> Generated with full type
+								safety
+							</p>
+							<p>
+								<strong>TanStack Query hooks:</strong> Auto-generated for all
+								API endpoints
+							</p>
+							<p>
+								<strong>Zod validation:</strong> Runtime type validation for API
+								responses
+							</p>
+						</div>
 					</CardContent>
 				</Card>
-			</div>
-		);
-	}
-
-	const currentUser = applicationConfiguration?.currentUser || [];
-
-	return (
-		<div className="w-full bg-background">
-			<div className="w-full px-6 py-8">
-				<div className="flex items-center justify-center min-h-screen">
-					<div className="w-full max-w-4xl bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
-						<div className="flex items-center gap-2 mb-4">
-							<CheckCircle2 className="h-5 w-5 text-green-400" />
-							<Badge variant="secondary">API Client Demo</Badge>
-						</div>
-						<h2 className="text-white text-2xl font-semibold mb-2">
-							Application Configuration
-						</h2>
-						<p className="text-slate-400 mb-4">
-							This demo shows the generated API client with TanStack Query hooks
-							and displays current user information.
-						</p>
-						<div className="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
-							<pre className="text-sm text-slate-300 overflow-x-auto">
-								{JSON.stringify(currentUser, null, 2)}
-							</pre>
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
 	);

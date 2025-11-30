@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
-import { API_CONSTANTS } from "../lib/constants";
-import { getUserSession } from "../lib/auth-server";
+import { APP_CONSTANTS } from "../constants";
+import { performApiProxy } from "../infrastructure/auth/auth-server";
 
 export const Route = createFileRoute("/api/proxy/$")({
 	server: {
@@ -33,12 +33,14 @@ export const Route = createFileRoute("/api/proxy/$")({
 
 async function handleProxyRequest(request: Request) {
 	try {
-		// Extract the path from the request URL
+		// Extract path from request URL
 		const url = new URL(request.url);
 		const path = url.pathname.replace("/api/proxy/", "");
 
-		// Construct the target URL
-		const targetUrl = `${API_CONSTANTS.BASE_URL}/${path}`;
+		// Only allow proxy to API endpoints
+		const targetUrl = `${APP_CONSTANTS.API_BASE_URL}/${path}`;
+
+		// Add query parameters to target URL
 		const queryString = url.search;
 
 		// Add query parameters to target URL
@@ -53,7 +55,7 @@ async function handleProxyRequest(request: Request) {
 
 		// Add access token if available
 		try {
-			const session = await getUserSession();
+			const session = await performApiProxy(request);
 			if (session?.accessToken) {
 				headers.set("Authorization", `Bearer ${session.accessToken}`);
 			}

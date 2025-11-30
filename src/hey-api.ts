@@ -1,5 +1,5 @@
-import type { CreateClientConfig } from "./client/client.gen";
-import { API_CONSTANTS } from "./lib/constants";
+import { API_CONSTANTS } from "@/shared/constants";
+import type { Config } from "@/infrastructure/api/client";
 
 /**
  * Runtime configuration for the Hey API Fetch client.
@@ -9,7 +9,7 @@ import { API_CONSTANTS } from "./lib/constants";
  * The config parameter contains the default configuration from the OpenAPI spec,
  * and we override it with our runtime environment-based configuration.
  */
-export const createClientConfig: CreateClientConfig = (config) => ({
+export const createClientConfig = (config?: Config) => ({
 	...config,
 	baseUrl: API_CONSTANTS.PROXY_PATH,
 	// You can add other runtime configurations here

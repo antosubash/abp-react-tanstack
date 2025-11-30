@@ -8,9 +8,9 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
-import { SidebarLayout } from "../components/SidebarLayout";
-import { AuthProvider } from "../hooks/use-auth";
-import { Toaster } from "../components/ui/sonner";
+import { SidebarLayout } from "@/shared/components/SidebarLayout";
+import { AuthProvider } from "@/features/auth/hooks/use-auth";
+import { Toaster } from "@/shared/components/ui/sonner";
 
 // Configure API client to use proxy
 // import "@/lib/api-config";

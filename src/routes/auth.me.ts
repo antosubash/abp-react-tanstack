@@ -1,6 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { json } from "@tanstack/react-start";
-import { getUserSession } from "../lib/auth-server";
+import { getUserSession } from "@/infrastructure/auth/session";
+import type { User } from "@/infrastructure/auth/session";
+
+interface MeResponse {
+	user: User | null;
+	expiresAt?: number;
+}
+
+const json = (data: MeResponse) => Response.json(data);
 
 export const Route = createFileRoute("/auth/me")({
 	server: {
@@ -10,7 +17,7 @@ export const Route = createFileRoute("/auth/me")({
 					const session = await getUserSession();
 
 					if (!session) {
-						return json({ user: null }, { status: 401 });
+						return json({ user: null });
 					}
 
 					// Return user info without sensitive tokens
@@ -20,7 +27,7 @@ export const Route = createFileRoute("/auth/me")({
 					});
 				} catch (error) {
 					console.error("Session retrieval failed:", error);
-					return json({ user: null }, { status: 500 });
+					return json({ user: null });
 				}
 			},
 		},

@@ -1,7 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Database } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { getPunkSongs } from "@/data/demo.punk-songs";
+import { Badge } from "@/shared/components/ui/badge";
+import { getPunkSongs } from "@/shared/data/demo.punk-songs";
+
+type PunkSong = {
+	id: number;
+	name: string;
+	artist: string;
+};
 
 export const Route = createFileRoute("/demo/start/ssr/data-only")({
 	ssr: "data-only",
@@ -29,7 +35,7 @@ function RouteComponent() {
 							the server but rendering happens on the client
 						</p>
 						<div className="space-y-3">
-							{punkSongs.map((song) => (
+							{punkSongs.map((song: PunkSong) => (
 								<div
 									key={song.id}
 									className="flex items-center justify-between bg-slate-700/50 border border-slate-600 rounded-lg p-4 hover:bg-slate-700/70 transition-colors"

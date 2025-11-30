@@ -12,7 +12,7 @@ export default defineConfig({
 
   // Output configuration
   output: {
-    path: 'src/client',
+    path: 'src/infrastructure/api',
     clean: true, // Clean output directory before generating
   },
 
@@ -23,7 +23,7 @@ export default defineConfig({
   plugins: [
     {
       name: '@hey-api/client-fetch',
-      runtimeConfigPath: '../hey-api.ts',
+      runtimeConfigPath: '../hey-api',
     },
     // Zod validation schemas
     {
