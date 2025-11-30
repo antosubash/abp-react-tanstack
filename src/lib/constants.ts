@@ -51,4 +51,8 @@ export const OIDC_CONSTANTS = {
 export const QUERY_KEYS = {
 	// Authentication (custom endpoint)
 	AUTH_ME: ["auth", "me"] as const,
+
+	// Tenant Management
+	TENANTS: ["tenants"] as const,
+	TENANT_CONNECTION_STRING: ["tenant", "connection-string"] as const,
 } as const;

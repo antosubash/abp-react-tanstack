@@ -63,7 +63,7 @@ function ConditionalLayout({ children }: { children: React.ReactNode }) {
 	const location = useLocation();
 
 	// Routes that should use the sidebar layout
-	const sidebarRoutes = ["/dashboard", "/demo"];
+	const sidebarRoutes = ["/dashboard", "/demo", "/users", "/roles", "/tenants"];
 
 	const shouldUseSidebar = sidebarRoutes.some((route) =>
 		location.pathname.startsWith(route),
