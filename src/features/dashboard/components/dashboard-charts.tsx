@@ -27,19 +27,19 @@ interface ChartData {
 	color: string;
 }
 
-interface TypeChartData {
-	type: string;
+interface RoleChartData {
+	name: string;
 	count: number;
 }
 
 interface DashboardChartsProps {
-	statusChartData: ChartData[];
-	typeChartData: TypeChartData[];
+	usersChartData: ChartData[];
+	rolesChartData: RoleChartData[];
 }
 
 export function DashboardCharts({
-	statusChartData,
-	typeChartData,
+	usersChartData,
+	rolesChartData,
 }: DashboardChartsProps) {
 	const gradientId = useId();
 
@@ -61,10 +61,10 @@ export function DashboardCharts({
 						<div>
 							<CardTitle className="text-white flex items-center gap-2">
 								<IconChartPie className="w-5 h-5 text-blue-400" />
-								Status Distribution
+								Users Distribution
 							</CardTitle>
 							<CardDescription className="text-slate-400">
-								Overview of completed vs in-progress tasks
+								Overview of active vs locked users
 							</CardDescription>
 						</div>
 					</div>
@@ -73,7 +73,7 @@ export function DashboardCharts({
 					<ChartContainer config={chartConfig} className="h-[300px]">
 						<PieChart>
 							<Pie
-								data={statusChartData}
+								data={usersChartData}
 								cx="50%"
 								cy="50%"
 								outerRadius={100}
@@ -83,7 +83,7 @@ export function DashboardCharts({
 								}
 								labelLine={false}
 							>
-								{statusChartData.map((entry, _index) => (
+								{usersChartData.map((entry, _index) => (
 									<Cell
 										key={`cell-${entry.name}`}
 										fill={entry.color}
@@ -105,7 +105,7 @@ export function DashboardCharts({
 					</ChartContainer>
 					{/* Legend */}
 					<div className="flex justify-center gap-6 mt-4">
-						{statusChartData.map((entry) => (
+						{usersChartData.map((entry) => (
 							<div key={entry.name} className="flex items-center gap-2">
 								<div
 									className="w-3 h-3 rounded-full"
@@ -128,10 +128,10 @@ export function DashboardCharts({
 						<div>
 							<CardTitle className="text-white flex items-center gap-2">
 								<IconChartBar className="w-5 h-5 text-cyan-400" />
-								Task Types
+								Roles Distribution
 							</CardTitle>
 							<CardDescription className="text-slate-400">
-								Distribution of tasks by type
+								Distribution of roles in the system
 							</CardDescription>
 						</div>
 					</div>
@@ -139,12 +139,12 @@ export function DashboardCharts({
 				<CardContent>
 					<ChartContainer config={chartConfig} className="h-[300px]">
 						<BarChart
-							data={typeChartData}
+							data={rolesChartData}
 							margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
 						>
 							<CartesianGrid strokeDasharray="3 3" stroke="#374151" />
 							<XAxis
-								dataKey="type"
+								dataKey="name"
 								stroke="#9ca3af"
 								fontSize={12}
 								angle={-45}

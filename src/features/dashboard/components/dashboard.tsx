@@ -1,149 +1,203 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
-import dashboardData from "../data/data.json";
-import { DataTable, type DataTableSchema } from "./data-table";
-import { ProtectedRoute } from "../../auth/components/protected-route";
-import { Button } from "@/shared/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 import {
-	Avatar,
-	AvatarFallback,
-	AvatarImage,
-} from "@/shared/components/ui/avatar";
+	userGetListOptions,
+	roleGetListOptions,
+	tenantGetListOptions,
+} from "@/infrastructure/api/@tanstack/react-query.gen";
+import { ProtectedRoute } from "../../auth/components/protected-route";
 import { useAuth } from "../../auth/hooks/use-auth";
 import { DashboardMetrics } from "./dashboard-metrics";
 import { DashboardCharts } from "./dashboard-charts";
 import { DashboardActivity } from "./dashboard-activity";
-import { Badge } from "@/shared/components/ui/badge";
-
-// Type assertion for dashboardData
-const typedDashboardData = dashboardData as DataTableSchema[];
-
-export const Route = createFileRoute("/dashboard")({
-	component: Dashboard,
-});
+import { DASHBOARD_CONSTANTS } from "../constants";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/shared/components/ui/card";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function Dashboard() {
 	const { authState } = useAuth();
 	const { user } = authState;
 
-	// Calculate metrics from the data
+	// Fetch users data
+	const {
+		data: usersResponse,
+		isLoading: isLoadingUsers,
+		error: usersError,
+	} = useQuery(
+		userGetListOptions({
+			query: {
+				MaxResultCount: 1000,
+				SkipCount: 0,
+			},
+		}),
+	);
+
+	// Fetch roles data
+	const {
+		data: rolesResponse,
+		isLoading: isLoadingRoles,
+		error: rolesError,
+	} = useQuery(
+		roleGetListOptions({
+			query: {
+				MaxResultCount: 1000,
+				SkipCount: 0,
+			},
+		}),
+	);
+
+	// Fetch tenants data
+	const {
+		data: tenantsResponse,
+		isLoading: isLoadingTenants,
+		error: tenantsError,
+	} = useQuery(
+		tenantGetListOptions({
+			query: {
+				MaxResultCount: 1000,
+				SkipCount: 0,
+			},
+		}),
+	);
+
+	const isLoading = isLoadingUsers || isLoadingRoles || isLoadingTenants;
+	const hasError = usersError || rolesError || tenantsError;
+
+	// Calculate metrics
 	const metrics = useMemo(() => {
-		const totalTasks = typedDashboardData.length;
-		const doneTasks = typedDashboardData.filter(
-			(task) => task.status === "Done",
-		).length;
-		const inProcessTasks = typedDashboardData.filter(
-			(task) => task.status === "In Process",
-		).length;
-		const completionRate = totalTasks > 0 ? (doneTasks / totalTasks) * 100 : 0;
+		const totalUsers = usersResponse?.totalCount || 0;
+		const totalRoles = rolesResponse?.totalCount || 0;
+		const totalTenants = tenantsResponse?.totalCount || 0;
+
+		// Calculate active users (users that are not locked out)
+		const activeUsers =
+			usersResponse?.items?.filter((u) => !u.lockoutEnabled || !u.lockoutEnd)
+				.length || 0;
 
 		return {
-			totalTasks,
-			doneTasks,
-			inProcessTasks,
-			completionRate,
+			totalUsers,
+			activeUsers,
+			totalRoles,
+			totalTenants,
 		};
-	}, []);
+	}, [usersResponse, rolesResponse, tenantsResponse]);
 
 	// Prepare data for charts
-	const statusChartData = useMemo(
-		() => [
+	const usersChartData = useMemo(() => {
+		if (!usersResponse?.items) return [];
+
+		const activeCount =
+			usersResponse.items.filter((u) => !u.lockoutEnabled || !u.lockoutEnd)
+				.length || 0;
+		const lockedCount = usersResponse.items.length - activeCount;
+
+		return [
 			{
-				name: "Completed",
-				value: metrics.doneTasks,
+				name: "Active",
+				value: activeCount,
 				color: "#10b981",
 			},
 			{
-				name: "In Progress",
-				value: metrics.inProcessTasks,
-				color: "#f59e0b",
+				name: "Locked",
+				value: lockedCount,
+				color: "#ef4444",
 			},
-		],
-		[metrics.doneTasks, metrics.inProcessTasks],
-	);
+		];
+	}, [usersResponse]);
 
-	const typeChartData = useMemo(() => {
-		const typeCount: Record<string, number> = {};
-		typedDashboardData.forEach((task) => {
-			typeCount[task.type] = (typeCount[task.type] || 0) + 1;
+	const rolesChartData = useMemo(() => {
+		if (!rolesResponse?.items) return [];
+
+		const roleCount: Record<string, number> = {};
+		rolesResponse.items.forEach((role) => {
+			const roleName = role.name || "Unknown";
+			roleCount[roleName] = (roleCount[roleName] || 0) + 1;
 		});
 
-		return Object.entries(typeCount).map(([type, count]) => ({
-			type,
+		return Object.entries(roleCount).map(([name, count]) => ({
+			name,
 			count,
 		}));
-	}, []);
+	}, [rolesResponse]);
 
-	// Prepare data for activity timeline
+	// Prepare recent activity from users
 	const recentActivity = useMemo(() => {
-		// Get 5 most recently updated tasks (Done tasks get fake completion dates)
-		// Use a fixed reference date to ensure consistent formatting between server and client
-		const referenceDate = new Date("2024-01-01T00:00:00Z");
-		return typedDashboardData
-			.filter((task) => task.status === "Done")
+		if (!usersResponse?.items) return [];
+
+		return usersResponse.items
+			.sort((a, b) => {
+				const aTime = a.lastModificationTime || a.creationTime || "";
+				const bTime = b.lastModificationTime || b.creationTime || "";
+				return new Date(bTime).getTime() - new Date(aTime).getTime();
+			})
 			.slice(0, 5)
-			.map((task, index) => {
-				const date = new Date(referenceDate);
-				date.setDate(date.getDate() - index);
-				// Use ISO date format to ensure consistency between server and client
-				const formattedDate = date.toISOString().split("T")[0];
+			.map((userItem, index) => {
+				const date =
+					userItem.lastModificationTime ||
+					userItem.creationTime ||
+					new Date().toISOString();
+				const formattedDate = new Date(date).toLocaleDateString();
 				return {
 					id: index,
-					user: task.reviewer || "Unknown",
-					action: "Completed task",
-					target: task.header,
+					user: userItem.userName || "Unknown",
+					action: userItem.lastModificationTime
+						? "Updated user"
+						: "Created user",
+					target: userItem.userName || "Unknown",
 					time: formattedDate,
-					avatar: (task.reviewer || "Unknown")
-						.split(" ")
-						.map((n: string) => n[0])
-						.join("")
-						.toUpperCase(),
+					avatar: (userItem.userName || "U").substring(0, 2).toUpperCase(),
 				};
 			});
-	}, []);
+	}, [usersResponse]);
 
-	// Prepare data for team members
+	// Prepare team members from users
 	const teamMembers = useMemo(() => {
-		const memberMap: Record<
-			string,
-			{
-				name: string;
-				tasksCompleted: number;
-			}
-		> = {};
+		if (!usersResponse?.items) return [];
 
-		typedDashboardData.forEach((task) => {
-			const reviewer = task.reviewer || "Unknown";
-
-			if (!memberMap[reviewer]) {
-				memberMap[reviewer] = {
-					name: reviewer,
-					tasksCompleted: 0,
-				};
-			}
-
-			if (task.status === "Done") {
-				memberMap[reviewer].tasksCompleted++;
-			}
-		});
-
-		return Object.entries(memberMap).map(([name, data], index) => ({
-			id: index,
-			name,
-			avatar: name
-				.split(" ")
-				.map((n: string) => n[0])
-				.join("")
-				.toUpperCase(),
-			role: "Developer",
+		return usersResponse.items.slice(0, 5).map((userItem, index) => ({
+			id: userItem.id || index.toString(),
+			name: userItem.userName || "Unknown",
+			avatar: (userItem.userName || "U").substring(0, 2).toUpperCase(),
+			role: "User",
 			status: (index % 3 === 0
 				? "online"
 				: index % 3 === 1
 					? "away"
 					: "offline") as "online" | "away" | "offline",
-			tasksCompleted: data.tasksCompleted,
+			tasksCompleted: 0,
 		}));
-	}, []);
+	}, [usersResponse]);
+
+	if (hasError) {
+		return (
+			<ProtectedRoute>
+				<div className="min-h-screen text-slate-100 p-6">
+					<Card className="bg-slate-800/50 border-slate-700">
+						<CardHeader>
+							<CardTitle className="text-white">Error</CardTitle>
+							<CardDescription className="text-slate-400">
+								Failed to load dashboard data
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<p className="text-red-400">
+								{usersError?.message ||
+									rolesError?.message ||
+									tenantsError?.message ||
+									"Unknown error occurred"}
+							</p>
+						</CardContent>
+					</Card>
+				</div>
+			</ProtectedRoute>
+		);
+	}
 
 	return (
 		<ProtectedRoute>
@@ -155,70 +209,59 @@ export default function Dashboard() {
 				<div className="flex items-center justify-between mb-8">
 					<div>
 						<h1 className="text-3xl font-bold text-white mb-2">
-							Project Dashboard
+							{DASHBOARD_CONSTANTS.TITLE}
 						</h1>
-						<p className="text-slate-400">
-							Track your project progress and team performance
-						</p>
+						<p className="text-slate-400">{DASHBOARD_CONSTANTS.DESCRIPTION}</p>
 					</div>
 					<div className="flex items-center gap-4">
-						<Button
-							variant="outline"
-							size="sm"
-							className="border-slate-600 text-slate-300 hover:bg-slate-700"
-						>
-							Export Report
-						</Button>
-						<Button className="bg-cyan-600 hover:bg-cyan-700">
-							Create Task
-						</Button>
-						<Button
-							variant="ghost"
-							size="sm"
-							className="text-slate-300 hover:bg-slate-800"
-						>
-							Notifications
-							<Badge variant="destructive" className="ml-2">
-								3
-							</Badge>
-						</Button>
-						<Avatar>
-							<AvatarImage src="" alt={user?.name || "User"} />
-							<AvatarFallback>
-								{user?.name?.substring(0, 2).toUpperCase() || "U"}
-							</AvatarFallback>
-						</Avatar>
+						<div className="text-sm text-slate-400">
+							Welcome, {user?.name || user?.userName || "User"}
+						</div>
 					</div>
 				</div>
 
+				{/* Loading State */}
+				{isLoading && (
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+						{["users", "roles", "tenants"].map((key) => (
+							<Card key={key} className="bg-slate-800/50 border-slate-700">
+								<CardHeader>
+									<Skeleton className="h-4 w-24" />
+								</CardHeader>
+								<CardContent>
+									<Skeleton className="h-8 w-16 mb-2" />
+									<Skeleton className="h-4 w-32" />
+								</CardContent>
+							</Card>
+						))}
+					</div>
+				)}
+
 				{/* Metrics Cards */}
-				<DashboardMetrics
-					totalTasks={metrics.totalTasks}
-					doneTasks={metrics.doneTasks}
-					inProcessTasks={metrics.inProcessTasks}
-					completionRate={metrics.completionRate}
-				/>
+				{!isLoading && (
+					<DashboardMetrics
+						totalUsers={metrics.totalUsers}
+						activeUsers={metrics.activeUsers}
+						totalRoles={metrics.totalRoles}
+						totalTenants={metrics.totalTenants}
+					/>
+				)}
 
 				{/* Charts */}
-				<DashboardCharts
-					statusChartData={statusChartData}
-					typeChartData={typeChartData}
-				/>
+				{!isLoading && (
+					<DashboardCharts
+						usersChartData={usersChartData}
+						rolesChartData={rolesChartData}
+					/>
+				)}
 
 				{/* Activity and Team Members */}
-				<DashboardActivity
-					recentActivity={recentActivity}
-					teamMembers={teamMembers}
-				/>
-
-				{/* Data Table */}
-				<div
-					className="bg-slate-800/50 rounded-lg border border-slate-700 p-6"
-					data-testid="tasks-table"
-				>
-					<h2 className="text-xl font-semibold text-white mb-4">All Tasks</h2>
-					<DataTable data={typedDashboardData} />
-				</div>
+				{!isLoading && (
+					<DashboardActivity
+						recentActivity={recentActivity}
+						teamMembers={teamMembers}
+					/>
+				)}
 			</div>
 		</ProtectedRoute>
 	);

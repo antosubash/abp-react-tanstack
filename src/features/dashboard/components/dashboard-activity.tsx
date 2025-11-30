@@ -51,7 +51,7 @@ export function DashboardActivity({
 						Recent Activity
 					</CardTitle>
 					<CardDescription className="text-slate-400">
-						Latest updates and task changes
+						Latest user updates and changes
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -106,7 +106,6 @@ export function DashboardActivity({
 				<CardContent>
 					<div className="space-y-4">
 						{teamMembers.map((member) => {
-							const memberTasksCompleted = member.tasksCompleted;
 							return (
 								<div key={member.id} className="flex items-center gap-3">
 									<div className="relative">
@@ -137,9 +136,7 @@ export function DashboardActivity({
 												{member.role}
 											</Badge>
 										</div>
-										<p className="text-xs text-slate-400">
-											{memberTasksCompleted} tasks completed
-										</p>
+										<p className="text-xs text-slate-400">System user</p>
 									</div>
 								</div>
 							);

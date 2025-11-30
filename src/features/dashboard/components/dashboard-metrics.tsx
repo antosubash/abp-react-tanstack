@@ -1,8 +1,8 @@
 import {
-	IconCircleCheckFilled,
-	IconClock,
-	IconTarget,
-	IconTrendingUp,
+	IconUsers,
+	IconShield,
+	IconBuilding,
+	IconUserCheck,
 } from "@tabler/icons-react";
 import {
 	Card,
@@ -11,89 +11,70 @@ import {
 	CardTitle,
 } from "@/shared/components/ui/card";
 import { Progress } from "@/shared/components/ui/progress";
+import { DASHBOARD_CONSTANTS } from "../constants";
 
 interface DashboardMetricsProps {
-	totalTasks: number;
-	doneTasks: number;
-	inProcessTasks: number;
-	completionRate: number;
+	totalUsers: number;
+	activeUsers: number;
+	totalRoles: number;
+	totalTenants: number;
 }
 
 export function DashboardMetrics({
-	totalTasks,
-	doneTasks,
-	inProcessTasks,
-	completionRate,
+	totalUsers,
+	activeUsers,
+	totalRoles,
+	totalTenants,
 }: DashboardMetricsProps) {
+	const activeUsersPercentage =
+		totalUsers > 0 ? (activeUsers / totalUsers) * 100 : 0;
+
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 			<Card
 				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
-				data-testid="metric-total-tasks"
+				data-testid="metric-total-users"
 			>
 				<CardHeader className="pb-3">
 					<div className="flex items-center justify-between">
-						<CardTitle className="text-lg text-white">Total Tasks</CardTitle>
-						<IconTarget className="w-5 h-5 text-cyan-400" />
+						<CardTitle className="text-lg text-white">
+							{DASHBOARD_CONSTANTS.METRICS.USERS.TITLE}
+						</CardTitle>
+						<IconUsers className="w-5 h-5 text-cyan-400" />
 					</div>
 				</CardHeader>
 				<CardContent>
 					<div className="text-3xl font-bold text-cyan-400 mb-2">
-						{totalTasks}
+						{totalUsers}
 					</div>
 					<div className="flex items-center text-sm text-slate-400">
-						<IconTrendingUp className="w-4 h-4 mr-1" />
-						<span>All project tasks</span>
+						<span>{DASHBOARD_CONSTANTS.METRICS.USERS.DESCRIPTION}</span>
 					</div>
 				</CardContent>
 			</Card>
 
 			<Card
 				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
-				data-testid="metric-completed-tasks"
+				data-testid="metric-active-users"
 			>
 				<CardHeader className="pb-3">
 					<div className="flex items-center justify-between">
-						<CardTitle className="text-lg text-white">Completed</CardTitle>
-						<IconCircleCheckFilled className="w-5 h-5 text-green-400" />
+						<CardTitle className="text-lg text-white">Active Users</CardTitle>
+						<IconUserCheck className="w-5 h-5 text-green-400" />
 					</div>
 				</CardHeader>
 				<CardContent>
 					<div className="text-3xl font-bold text-green-400 mb-2">
-						{doneTasks}
+						{activeUsers}
 					</div>
 					<div className="flex items-center justify-between text-sm">
-						<span className="text-slate-400">Completion rate</span>
+						<span className="text-slate-400">Active rate</span>
 						<span className="text-green-400 font-medium">
-							{completionRate.toFixed(1)}%
-						</span>
-					</div>
-					<Progress value={completionRate} className="mt-2 h-2 bg-slate-700" />
-				</CardContent>
-			</Card>
-
-			<Card
-				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
-				data-testid="metric-in-progress-tasks"
-			>
-				<CardHeader className="pb-3">
-					<div className="flex items-center justify-between">
-						<CardTitle className="text-lg text-white">In Progress</CardTitle>
-						<IconClock className="w-5 h-5 text-yellow-400" />
-					</div>
-				</CardHeader>
-				<CardContent>
-					<div className="text-3xl font-bold text-yellow-400 mb-2">
-						{inProcessTasks}
-					</div>
-					<div className="flex items-center justify-between text-sm">
-						<span className="text-slate-400">Remaining</span>
-						<span className="text-yellow-400 font-medium">
-							{inProcessTasks}
+							{activeUsersPercentage.toFixed(1)}%
 						</span>
 					</div>
 					<Progress
-						value={(inProcessTasks / totalTasks) * 100}
+						value={activeUsersPercentage}
 						className="mt-2 h-2 bg-slate-700"
 					/>
 				</CardContent>
@@ -101,23 +82,44 @@ export function DashboardMetrics({
 
 			<Card
 				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
-				data-testid="metric-completion-rate"
+				data-testid="metric-total-roles"
 			>
 				<CardHeader className="pb-3">
 					<div className="flex items-center justify-between">
 						<CardTitle className="text-lg text-white">
-							Completion Rate
+							{DASHBOARD_CONSTANTS.METRICS.ROLES.TITLE}
 						</CardTitle>
-						<IconTrendingUp className="w-5 h-5 text-purple-400" />
+						<IconShield className="w-5 h-5 text-yellow-400" />
+					</div>
+				</CardHeader>
+				<CardContent>
+					<div className="text-3xl font-bold text-yellow-400 mb-2">
+						{totalRoles}
+					</div>
+					<div className="flex items-center text-sm text-slate-400">
+						<span>{DASHBOARD_CONSTANTS.METRICS.ROLES.DESCRIPTION}</span>
+					</div>
+				</CardContent>
+			</Card>
+
+			<Card
+				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors"
+				data-testid="metric-total-tenants"
+			>
+				<CardHeader className="pb-3">
+					<div className="flex items-center justify-between">
+						<CardTitle className="text-lg text-white">
+							{DASHBOARD_CONSTANTS.METRICS.TENANTS.TITLE}
+						</CardTitle>
+						<IconBuilding className="w-5 h-5 text-purple-400" />
 					</div>
 				</CardHeader>
 				<CardContent>
 					<div className="text-3xl font-bold text-purple-400 mb-2">
-						{completionRate.toFixed(1)}%
+						{totalTenants}
 					</div>
 					<div className="flex items-center text-sm text-slate-400">
-						<IconTrendingUp className="w-4 h-4 mr-1" />
-						<span>Overall progress</span>
+						<span>{DASHBOARD_CONSTANTS.METRICS.TENANTS.DESCRIPTION}</span>
 					</div>
 				</CardContent>
 			</Card>
