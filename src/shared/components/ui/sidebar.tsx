@@ -80,10 +80,7 @@ const Sidebar = React.forwardRef<
 				{
 					"--sidebar-width": SIDEBAR_WIDTH,
 					"--sidebar-width-icon": SIDEBAR_WIDTH_ICON,
-					width:
-						state === "collapsed"
-							? SIDEBAR_WIDTH_ICON
-							: SIDEBAR_WIDTH,
+					width: state === "collapsed" ? SIDEBAR_WIDTH_ICON : SIDEBAR_WIDTH,
 					transition: "width 200ms ease-in-out",
 				} as React.CSSProperties
 			}

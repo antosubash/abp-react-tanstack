@@ -114,15 +114,6 @@ export async function createSession(
 }
 
 /**
- * Perform API proxy by getting user session
- */
-export async function performApiProxy(
-	_request: Request,
-): Promise<SessionData | null> {
-	return getUserSession();
-}
-
-/**
  * Perform complete logout including token revocation and end session URL
  */
 export async function performLogout(): Promise<{ endSessionUrl?: string }> {

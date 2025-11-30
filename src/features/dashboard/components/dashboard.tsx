@@ -113,7 +113,7 @@ export default function Dashboard() {
 
 		typedDashboardData.forEach((task) => {
 			const assignee = task.assignee || "Unknown";
-			
+
 			if (!memberMap[assignee]) {
 				memberMap[assignee] = {
 					name: assignee,
@@ -146,7 +146,7 @@ export default function Dashboard() {
 
 	return (
 		<ProtectedRoute>
-			<div className="min-h-screen bg-slate-900 text-slate-100 p-6">
+			<div className="min-h-screen text-slate-100 p-6">
 				{/* Header */}
 				<div className="flex items-center justify-between mb-8">
 					<div>

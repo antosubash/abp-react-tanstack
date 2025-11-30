@@ -84,7 +84,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					<head>
 						<HeadContent />
 					</head>
-					<body>
+					<body className="min-h-screen bg-slate-900 text-slate-100">
 						<ConditionalLayout>{children}</ConditionalLayout>
 						<Toaster />
 						<TanStackDevtools

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
 import { APP_CONSTANTS } from "../constants";
-import { performApiProxy } from "../infrastructure/auth/auth-server";
+import { getUserSession } from "../infrastructure/auth/auth-server";
 
 export const Route = createFileRoute("/api/proxy/$")({
 	server: {
@@ -55,17 +55,25 @@ async function handleProxyRequest(request: Request) {
 
 		// Add access token if available
 		try {
-			const session = await performApiProxy(request);
+			const session = await getUserSession();
 			if (session?.accessToken) {
 				headers.set("Authorization", `Bearer ${session.accessToken}`);
+			} else {
+				// Log cookie presence for debugging
+				const cookieHeader = request.headers.get("cookie");
+				const hasCookies = cookieHeader && cookieHeader.length > 0;
+				console.warn(
+					`Proxy request to ${finalTargetUrl}: No session or access token available. Cookies present: ${hasCookies}. Request will likely return 401.`,
+				);
 			}
 		} catch (sessionError) {
-			console.warn(
-				"Failed to retrieve session for proxy request:",
+			console.error(
+				`Proxy request to ${finalTargetUrl}: Failed to retrieve session:`,
 				sessionError,
 			);
-			// Continue without authorization header
+			// Continue without authorization header - this will likely result in 401
 		}
+
 		// Create the proxy request
 		const proxyRequest = new Request(finalTargetUrl, {
 			method: request.method,
