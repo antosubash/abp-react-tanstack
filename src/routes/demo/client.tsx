@@ -1,96 +1,372 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
-import { abpApplicationConfigurationGetOptions } from "@/client/@tanstack/react-query.gen";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@/shared/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+
+import { abpApplicationConfigurationGetOptions } from "@/infrastructure/api/@tanstack/react-query.gen";
+import { DEMO_CONSTANTS } from "./constants";
 
 export const Route = createFileRoute("/demo/client")({
-	component: ApiClientDemo,
+	component: ClientDemo,
 });
 
-function ApiClientDemo() {
+function ClientDemo() {
 	const {
-		data: applicationConfiguration,
-		isLoading,
-		error,
-		isError,
-	} = useQuery(
-		abpApplicationConfigurationGetOptions({
-			query: {
-				IncludeLocalizationResources: false,
-			},
-		}),
-	);
-
-	if (isError) {
-		return (
-			<div className="flex items-center justify-center min-h-screen p-4">
-				<Alert variant="destructive" className="max-w-md">
-					<AlertCircle className="h-4 w-4" />
-					<AlertTitle>Failed to Load Data</AlertTitle>
-					<AlertDescription>
-						{error?.error?.message ||
-							"Failed to load application configuration"}
-					</AlertDescription>
-				</Alert>
-			</div>
-		);
-	}
-
-	if (isLoading) {
-		return (
-			<div className="flex items-center justify-center min-h-screen p-4">
-				<Card className="max-w-md w-full">
-					<CardHeader>
-						<CardTitle>Loading Application Configuration</CardTitle>
-						<CardDescription>
-							Please wait while we fetch the data...
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="space-y-4">
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-3/4" />
-						<Skeleton className="h-4 w-1/2" />
-					</CardContent>
-				</Card>
-			</div>
-		);
-	}
-
-	const currentUser = applicationConfiguration?.currentUser || [];
+		data: appConfigResponse,
+		isLoading: appConfigLoading,
+		error: appConfigError,
+		isError: appConfigIsError,
+	} = useQuery(abpApplicationConfigurationGetOptions());
 
 	return (
-		<div className="w-full bg-background">
-			<div className="w-full px-6 py-8">
-				<div className="flex items-center justify-center min-h-screen">
-					<div className="w-full max-w-4xl bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
-						<div className="flex items-center gap-2 mb-4">
-							<CheckCircle2 className="h-5 w-5 text-green-400" />
-							<Badge variant="secondary">API Client Demo</Badge>
-						</div>
-						<h2 className="text-white text-2xl font-semibold mb-2">
-							Application Configuration
-						</h2>
-						<p className="text-slate-400 mb-4">
-							This demo shows the generated API client with TanStack Query hooks
-							and displays current user information.
-						</p>
-						<div className="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
-							<pre className="text-sm text-slate-300 overflow-x-auto">
-								{JSON.stringify(currentUser, null, 2)}
-							</pre>
-						</div>
-					</div>
-				</div>
+		<div className="container mx-auto py-8">
+			<div className="space-y-4">
+				<Card>
+					<CardHeader>
+						<CardTitle>{DEMO_CONSTANTS.CLIENT.APP_CONFIG.TITLE}</CardTitle>
+						<CardDescription>
+							{DEMO_CONSTANTS.CLIENT.APP_CONFIG.DESCRIPTION}
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						{appConfigLoading && (
+							<div className="flex items-center justify-center space-x-2 py-8">
+								<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+								<span>{DEMO_CONSTANTS.CLIENT.APP_CONFIG.LOADING}</span>
+							</div>
+						)}
+
+						{appConfigIsError && (
+							<div className="text-destructive py-4">
+								{appConfigError?.error?.message ||
+									DEMO_CONSTANTS.CLIENT.APP_CONFIG.ERROR}
+							</div>
+						)}
+
+						{appConfigResponse && (
+							<div className="space-y-6">
+								{appConfigResponse.currentUser && (
+									<div>
+										<h3 className="font-semibold mb-2">
+											{DEMO_CONSTANTS.CLIENT.APP_CONFIG.SECTIONS.CURRENT_USER}
+										</h3>
+										<div className="rounded-md border p-4 bg-muted/50">
+											<div className="space-y-1 text-sm">
+												<p>
+													<strong>Authenticated:</strong>{" "}
+													{appConfigResponse.currentUser.isAuthenticated
+														? "Yes"
+														: "No"}
+												</p>
+												{appConfigResponse.currentUser.userName && (
+													<p>
+														<strong>Username:</strong>{" "}
+														{appConfigResponse.currentUser.userName}
+													</p>
+												)}
+												{appConfigResponse.currentUser.name && (
+													<p>
+														<strong>Name:</strong>{" "}
+														{appConfigResponse.currentUser.name}
+													</p>
+												)}
+												{appConfigResponse.currentUser.email && (
+													<p>
+														<strong>Email:</strong>{" "}
+														{appConfigResponse.currentUser.email}
+													</p>
+												)}
+												{appConfigResponse.currentUser.id && (
+													<p>
+														<strong>ID:</strong>{" "}
+														{appConfigResponse.currentUser.id}
+													</p>
+												)}
+											</div>
+										</div>
+									</div>
+								)}
+
+								{appConfigResponse.multiTenancy && (
+									<div>
+										<h3 className="font-semibold mb-2">
+											{DEMO_CONSTANTS.CLIENT.APP_CONFIG.SECTIONS.MULTI_TENANCY}
+										</h3>
+										<div className="rounded-md border p-4 bg-muted/50">
+											<div className="space-y-1 text-sm">
+												<p>
+													<strong>Enabled:</strong>{" "}
+													{appConfigResponse.multiTenancy.isEnabled
+														? "Yes"
+														: "No"}
+												</p>
+											</div>
+										</div>
+									</div>
+								)}
+
+								{appConfigResponse.currentTenant && (
+									<div>
+										<h3 className="font-semibold mb-2">
+											{DEMO_CONSTANTS.CLIENT.APP_CONFIG.SECTIONS.CURRENT_TENANT}
+										</h3>
+										<div className="rounded-md border p-4 bg-muted/50">
+											<div className="space-y-1 text-sm">
+												{appConfigResponse.currentTenant.id && (
+													<p>
+														<strong>ID:</strong>{" "}
+														{appConfigResponse.currentTenant.id}
+													</p>
+												)}
+												{appConfigResponse.currentTenant.name && (
+													<p>
+														<strong>Name:</strong>{" "}
+														{appConfigResponse.currentTenant.name}
+													</p>
+												)}
+												<p>
+													<strong>Available:</strong>{" "}
+													{appConfigResponse.currentTenant.isAvailable
+														? "Yes"
+														: "No"}
+												</p>
+											</div>
+										</div>
+									</div>
+								)}
+
+								{appConfigResponse.auth && (
+									<div>
+										<h3 className="font-semibold mb-2">
+											{DEMO_CONSTANTS.CLIENT.APP_CONFIG.SECTIONS.AUTH}
+										</h3>
+										<div className="rounded-md border p-4 bg-muted/50">
+											{appConfigResponse.auth.grantedPolicies && (
+												<div className="space-y-1 text-sm">
+													<p className="mb-2">
+														<strong>Granted Policies:</strong>
+													</p>
+													<div className="max-h-48 overflow-y-auto">
+														{Object.entries(
+															appConfigResponse.auth.grantedPolicies,
+														).map(([policy, granted]) => (
+															<div
+																key={policy}
+																className="flex items-center gap-2 py-1"
+															>
+																<span
+																	className={
+																		granted ? "text-green-600" : "text-red-600"
+																	}
+																>
+																	{granted ? "✓" : "✗"}
+																</span>
+																<span className="font-mono text-xs">
+																	{policy}
+																</span>
+															</div>
+														))}
+													</div>
+												</div>
+											)}
+										</div>
+									</div>
+								)}
+
+								{appConfigResponse.features && (
+									<div>
+										<h3 className="font-semibold mb-2">
+											{DEMO_CONSTANTS.CLIENT.APP_CONFIG.SECTIONS.FEATURES}
+										</h3>
+										<div className="rounded-md border p-4 bg-muted/50">
+											{appConfigResponse.features.values && (
+												<div className="space-y-1 text-sm">
+													{Object.entries(
+														appConfigResponse.features.values,
+													).map(([key, value]) => (
+														<p key={key}>
+															<strong>{key}:</strong> {value || "N/A"}
+														</p>
+													))}
+												</div>
+											)}
+										</div>
+									</div>
+								)}
+
+								{appConfigResponse.globalFeatures && (
+									<div>
+										<h3 className="font-semibold mb-2">
+											{
+												DEMO_CONSTANTS.CLIENT.APP_CONFIG.SECTIONS
+													.GLOBAL_FEATURES
+											}
+										</h3>
+										<div className="rounded-md border p-4 bg-muted/50">
+											{appConfigResponse.globalFeatures.enabledFeatures && (
+												<div className="space-y-1 text-sm">
+													<p className="mb-2">
+														<strong>Enabled Features:</strong>
+													</p>
+													<div className="flex flex-wrap gap-2">
+														{appConfigResponse.globalFeatures.enabledFeatures.map(
+															(feature) => (
+																<span
+																	key={feature}
+																	className="px-2 py-1 bg-primary/10 text-primary rounded text-xs"
+																>
+																	{feature}
+																</span>
+															),
+														)}
+													</div>
+												</div>
+											)}
+										</div>
+									</div>
+								)}
+
+								{appConfigResponse.timing && (
+									<div>
+										<h3 className="font-semibold mb-2">
+											{DEMO_CONSTANTS.CLIENT.APP_CONFIG.SECTIONS.TIMING}
+										</h3>
+										<div className="rounded-md border p-4 bg-muted/50">
+											<div className="space-y-1 text-sm">
+												{appConfigResponse.timing.timeZone && (
+													<>
+														{appConfigResponse.timing.timeZone.iana
+															?.timeZoneName && (
+															<p>
+																<strong>IANA Time Zone:</strong>{" "}
+																{
+																	appConfigResponse.timing.timeZone.iana
+																		.timeZoneName
+																}
+															</p>
+														)}
+														{appConfigResponse.timing.timeZone.windows
+															?.timeZoneId && (
+															<p>
+																<strong>Windows Time Zone ID:</strong>{" "}
+																{
+																	appConfigResponse.timing.timeZone.windows
+																		.timeZoneId
+																}
+															</p>
+														)}
+													</>
+												)}
+											</div>
+										</div>
+									</div>
+								)}
+
+								{appConfigResponse.clock && (
+									<div>
+										<h3 className="font-semibold mb-2">
+											{DEMO_CONSTANTS.CLIENT.APP_CONFIG.SECTIONS.CLOCK}
+										</h3>
+										<div className="rounded-md border p-4 bg-muted/50">
+											<div className="space-y-1 text-sm">
+												{appConfigResponse.clock.kind && (
+													<p>
+														<strong>Kind:</strong>{" "}
+														{appConfigResponse.clock.kind}
+													</p>
+												)}
+											</div>
+										</div>
+									</div>
+								)}
+
+								{appConfigResponse.setting && (
+									<div>
+										<h3 className="font-semibold mb-2">
+											{DEMO_CONSTANTS.CLIENT.APP_CONFIG.SECTIONS.SETTINGS}
+										</h3>
+										<div className="rounded-md border p-4 bg-muted/50">
+											{appConfigResponse.setting.values && (
+												<div className="space-y-1 text-sm max-h-48 overflow-y-auto">
+													{Object.entries(appConfigResponse.setting.values).map(
+														([key, value]) => (
+															<p key={key}>
+																<strong>{key}:</strong> {value || "N/A"}
+															</p>
+														),
+													)}
+												</div>
+											)}
+										</div>
+									</div>
+								)}
+
+								{appConfigResponse.localization && (
+									<div>
+										<h3 className="font-semibold mb-2">
+											{DEMO_CONSTANTS.CLIENT.APP_CONFIG.SECTIONS.LOCALIZATION}
+										</h3>
+										<div className="rounded-md border p-4 bg-muted/50">
+											<div className="space-y-2 text-sm">
+												{appConfigResponse.localization.currentCulture && (
+													<div>
+														<p>
+															<strong>Current Culture:</strong>{" "}
+															{appConfigResponse.localization.currentCulture
+																.displayName || "N/A"}
+															{appConfigResponse.localization.currentCulture
+																.twoLetterIsoLanguageName && (
+																<>
+																	{" "}
+																	(
+																	{
+																		appConfigResponse.localization
+																			.currentCulture.twoLetterIsoLanguageName
+																	}
+																	)
+																</>
+															)}
+														</p>
+													</div>
+												)}
+												{appConfigResponse.localization.defaultResourceName && (
+													<p>
+														<strong>Default Resource:</strong>{" "}
+														{appConfigResponse.localization.defaultResourceName}
+													</p>
+												)}
+												{appConfigResponse.localization.languages && (
+													<div>
+														<p className="mb-2">
+															<strong>Available Languages:</strong>
+														</p>
+														<div className="flex flex-wrap gap-2">
+															{appConfigResponse.localization.languages.map(
+																(lang) => (
+																	<span
+																		key={lang.cultureName}
+																		className="px-2 py-1 bg-secondary rounded text-xs"
+																	>
+																		{lang.displayName} ({lang.cultureName})
+																	</span>
+																),
+															)}
+														</div>
+													</div>
+												)}
+											</div>
+										</div>
+									</div>
+								)}
+							</div>
+						)}
+					</CardContent>
+				</Card>
 			</div>
 		</div>
 	);

@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Loader2, Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getPunkSongs } from "@/data/demo.punk-songs";
+import { Badge } from "@/shared/components/ui/badge";
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { getPunkSongs } from "@/shared/data/demo.punk-songs";
 
 export const Route = createFileRoute("/demo/start/ssr/spa-mode")({
 	ssr: false,

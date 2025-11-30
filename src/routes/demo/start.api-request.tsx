@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Database } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/shared/components/ui/badge";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
+} from "@/shared/components/ui/card";
 
 function getNames() {
 	return fetch("/demo/api/names").then(

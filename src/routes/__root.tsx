@@ -8,9 +8,9 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
-import { SidebarLayout } from "../components/SidebarLayout";
-import { AuthProvider } from "../hooks/use-auth";
-import { Toaster } from "../components/ui/sonner";
+import { SidebarLayout } from "@/shared/components/sidebar-layout";
+import { AuthProvider } from "@/features/auth/hooks/use-auth";
+import { Toaster } from "@/shared/components/ui/sonner";
 
 // Configure API client to use proxy
 // import "@/lib/api-config";
@@ -84,7 +84,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					<head>
 						<HeadContent />
 					</head>
-					<body>
+					<body className="min-h-screen bg-slate-900 text-slate-100">
 						<ConditionalLayout>{children}</ConditionalLayout>
 						<Toaster />
 						<TanStackDevtools

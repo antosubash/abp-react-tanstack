@@ -13,8 +13,8 @@
 			"**/index.html",
 			"**/vite.config.js",
 			"!**/src/routeTree.gen.ts",
-			"!**/src/styles.css",
-			"!**/src/client/**/*"
+			"!**/src/infrastructure/api/**/*",
+			"!**/src/styles.css"
 		]
 	},
 	"formatter": {

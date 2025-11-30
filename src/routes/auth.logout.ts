@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { performLogout } from "../lib/auth-server";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { performLogout } from "@/infrastructure/auth/auth-server";
 
 export const Route = createFileRoute("/auth/logout")({
 	server: {
@@ -18,15 +18,15 @@ export const Route = createFileRoute("/auth/logout")({
 					}
 
 					// Fallback: redirect to home page if no end session URL
-					return new Response(null, {
-						status: 302,
-						headers: { Location: "/" },
+					return redirect({
+						to: "/",
+						throw: false,
 					});
 				} catch (error) {
 					console.error("Logout failed:", error);
-					return new Response(null, {
-						status: 302,
-						headers: { Location: "/?error=logout_failed" },
+					return redirect({
+						to: "/",
+						throw: false,
 					});
 				}
 			},

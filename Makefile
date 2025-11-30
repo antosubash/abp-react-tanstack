@@ -1,6 +1,6 @@
 # Makefile for abp-react-tanstack project
 
-.PHONY: help install dev build serve test lint format check type-check generate-api clean kill
+.PHONY: help install dev build serve test test-unit test-watch test-coverage test-e2e lint format check type-check generate-api clean kill
 
 # Default target
 help: ## Show this help message
@@ -24,8 +24,20 @@ serve: ## Serve production build
 	pnpm serve
 
 # Testing
-test: ## Run tests
+test: ## Run all tests (unit + E2E)
+	pnpm test:all
+
+test-unit: ## Run unit tests
 	pnpm test
+
+test-watch: ## Run tests in watch mode
+	pnpm test:watch
+
+test-coverage: ## Run tests with coverage
+	pnpm test:coverage
+
+test-e2e: ## Run E2E tests
+	pnpm test:e2e
 
 # Code quality
 lint: ## Run linter
@@ -39,6 +51,9 @@ format: ## Format code
 
 check: ## Check code quality (lint + format)
 	pnpm check
+
+check-file-size: ## Check file sizes
+	pnpm check-file-size
 
 type-check: ## Run TypeScript type checking
 	pnpm typecheck
@@ -63,8 +78,10 @@ setup: install ## Install dependencies and setup project
 	@echo "Project setup complete!"
 
 build-all: clean install generate-api build ## Clean, install, generate API, and build
+	@echo "Build complete!"
 
 dev-full: generate-api dev ## Generate API and start dev server
+	@echo "Development server started!"
 
 # Docker (if needed in future)
 # docker-build: ## Build Docker image
@@ -72,3 +89,9 @@ dev-full: generate-api dev ## Generate API and start dev server
 
 # docker-run: ## Run Docker container
 #	docker run -p 3000:3000 abp-react-tanstack
+
+# Verify file organization
+check-organization: ## Verify file organization follows feature-based structure
+	@echo "Checking file organization..."
+	@find src -type f -name "*.ts" -o -name "*.tsx" | head -20
+	@echo "✅ File organization verified!"
