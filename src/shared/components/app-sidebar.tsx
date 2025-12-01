@@ -1,4 +1,5 @@
 import {
+	IconBuilding,
 	IconCode,
 	IconDashboard,
 	IconFunction,
@@ -6,10 +7,9 @@ import {
 	IconInnerShadowTop,
 	IconNetwork,
 	IconNote,
+	IconSettings,
 	IconShield,
 	IconUsers,
-	IconBuilding,
-	IconSettings,
 } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
@@ -33,8 +33,8 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarMenuSub,
-	SidebarMenuSubTrigger,
 	SidebarMenuSubItem,
+	SidebarMenuSubTrigger,
 	SidebarRail,
 	useSidebar,
 } from "@/shared/components/ui/sidebar";
@@ -162,15 +162,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									<SidebarMenuItem>
 										{item.items ? (
 											<>
-												<CollapsibleTrigger asChild>
-													<SidebarMenuButton tooltip={item.title}>
-														<item.icon className="size-4 shrink-0" />
-														<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
-															{item.title}
-														</span>
-														<ChevronRight className="ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0 shrink-0" />
+												<div className="relative flex items-center group/nav-item">
+													<SidebarMenuButton
+														asChild
+														tooltip={item.title}
+														className="flex-1"
+													>
+														<Link to={item.url}>
+															<item.icon className="size-4 shrink-0" />
+															<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
+																{item.title}
+															</span>
+														</Link>
 													</SidebarMenuButton>
-												</CollapsibleTrigger>
+													<CollapsibleTrigger asChild>
+														<button
+															type="button"
+															className="absolute right-2 p-1 hover:bg-sidebar-accent rounded-sm group-data-[collapsible=icon]:hidden"
+														>
+															<ChevronRight className="size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 shrink-0" />
+														</button>
+													</CollapsibleTrigger>
+												</div>
 												{!isCollapsed && (
 													<CollapsibleContent>
 														<SidebarMenuSub>
