@@ -4,9 +4,11 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/shared/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+import { useSidebar } from "./sidebar-context";
 
 const sidebarMenuButtonVariants = cva(
-	"peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-has-[[data-variant=inset]]:w-full data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:font-medium group-has-[[data-variant=inset]]:h-8 group-has-[[data-variant=inset]]:justify-normal group-has-[[data-variant=inset]]:px-2",
+	"peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-has-[[data-variant=inset]]:w-full data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:font-medium group-has-[[data-variant=inset]]:h-8 group-has-[[data-variant=inset]]:justify-normal group-has-[[data-variant=inset]]:px-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:gap-0",
 	{
 		variants: {
 			variant: {
@@ -17,7 +19,7 @@ const sidebarMenuButtonVariants = cva(
 			size: {
 				default: "h-8 text-sm",
 				sm: "h-7 text-xs",
-				lg: "h-12 text-sm group-data-[collapsible=icon]:h-8",
+				lg: "h-12 text-sm group-data-[collapsible=icon]:h-10",
 			},
 		},
 		defaultVariants: {
@@ -56,9 +58,11 @@ const SidebarMenuButton = React.forwardRef<
 		{ asChild = false, isActive, variant, size, className, tooltip, ...props },
 		ref,
 	) => {
+		const { state } = useSidebar();
+		const isCollapsed = state === "collapsed";
 		const Comp = asChild ? Slot : "button";
 
-		return (
+		const button = (
 			<Comp
 				ref={ref}
 				data-sidebar="menu-button"
@@ -68,6 +72,19 @@ const SidebarMenuButton = React.forwardRef<
 				{...props}
 			/>
 		);
+
+		if (tooltip && isCollapsed) {
+			return (
+				<Tooltip>
+					<TooltipTrigger asChild>{button}</TooltipTrigger>
+					<TooltipContent side="right" sideOffset={8}>
+						{tooltip}
+					</TooltipContent>
+				</Tooltip>
+			);
+		}
+
+		return button;
 	},
 );
 SidebarMenuButton.displayName = "SidebarMenuButton";

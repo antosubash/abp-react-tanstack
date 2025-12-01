@@ -1,16 +1,10 @@
-import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import {
-	userGetListOptions,
 	roleGetListOptions,
 	tenantGetListOptions,
+	userGetListOptions,
 } from "@/infrastructure/api/@tanstack/react-query.gen";
-import { ProtectedRoute } from "../../auth/components/protected-route";
-import { useAuth } from "../../auth/hooks/use-auth";
-import { DashboardMetrics } from "./dashboard-metrics";
-import { DashboardCharts } from "./dashboard-charts";
-import { DashboardActivity } from "./dashboard-activity";
-import { DASHBOARD_CONSTANTS } from "../constants";
 import {
 	Card,
 	CardContent,
@@ -19,6 +13,14 @@ import {
 	CardTitle,
 } from "@/shared/components/ui/card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
+import { PageHeader } from "@/shared/components/page-header";
+import { PageLayout } from "@/shared/components/page-layout";
+import { ProtectedRoute } from "../../auth/components/protected-route";
+import { useAuth } from "../../auth/hooks/use-auth";
+import { DASHBOARD_CONSTANTS } from "../constants";
+import { DashboardActivity } from "./dashboard-activity";
+import { DashboardCharts } from "./dashboard-charts";
+import { DashboardMetrics } from "./dashboard-metrics";
 
 export default function Dashboard() {
 	const { authState } = useAuth();
@@ -177,94 +179,86 @@ export default function Dashboard() {
 	if (hasError) {
 		return (
 			<ProtectedRoute>
-				<div className="min-h-screen text-slate-100 p-2 sm:p-4 md:p-6">
-					<Card className="bg-slate-800/50 border-slate-700">
-						<CardHeader>
-							<CardTitle className="text-white">Error</CardTitle>
-							<CardDescription className="text-slate-400">
-								Failed to load dashboard data
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p className="text-red-400">
-								{usersError?.error?.message ||
-									rolesError?.error?.message ||
-									tenantsError?.error?.message ||
-									"Unknown error occurred"}
-							</p>
-						</CardContent>
-					</Card>
-				</div>
+				<Card className="bg-slate-800/50 border-slate-700">
+					<CardHeader>
+						<CardTitle className="text-white">Error</CardTitle>
+						<CardDescription className="text-slate-400">
+							Failed to load dashboard data
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<p className="text-red-400">
+							{usersError?.error?.message ||
+								rolesError?.error?.message ||
+								tenantsError?.error?.message ||
+								"Unknown error occurred"}
+						</p>
+					</CardContent>
+				</Card>
 			</ProtectedRoute>
 		);
 	}
 
 	return (
 		<ProtectedRoute>
-			<div
-				className="min-h-screen text-slate-100 p-2 sm:p-4 md:p-6"
-				data-testid="dashboard-content"
-			>
-				{/* Header */}
-				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
-					<div>
-						<h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-							{DASHBOARD_CONSTANTS.TITLE}
-						</h1>
-						<p className="text-sm sm:text-base text-slate-400">
-							{DASHBOARD_CONSTANTS.DESCRIPTION}
-						</p>
-					</div>
-					<div className="flex items-center gap-4">
-						<div className="text-xs sm:text-sm text-slate-400">
-							Welcome, {user?.name || user?.preferred_username || "User"}
+			<PageLayout>
+				<div className="text-slate-100" data-testid="dashboard-content">
+					<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+						<PageHeader
+							title={DASHBOARD_CONSTANTS.TITLE}
+							description={DASHBOARD_CONSTANTS.DESCRIPTION}
+						/>
+						<div className="flex items-center gap-4">
+							<div className="text-xs sm:text-sm text-slate-400">
+								Welcome, {user?.name || user?.preferred_username || "User"}
+							</div>
 						</div>
 					</div>
+
+					{/* Loading State */}
+					{isLoading && (
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+							{["users", "roles", "tenants"].map((key) => (
+								<Card key={key} className="bg-slate-800/50 border-slate-700">
+									<CardHeader>
+										<Skeleton className="h-4 w-24" />
+									</CardHeader>
+									<CardContent>
+										<Skeleton className="h-8 w-16 mb-2" />
+										<Skeleton className="h-4 w-32" />
+									</CardContent>
+								</Card>
+							))}
+						</div>
+					)}
+
+					{/* Metrics Cards */}
+					{!isLoading && (
+						<DashboardMetrics
+							totalUsers={metrics.totalUsers}
+							activeUsers={metrics.activeUsers}
+							totalRoles={metrics.totalRoles}
+							totalTenants={metrics.totalTenants}
+						/>
+					)}
+
+					{/* Charts */}
+					{!isLoading && (
+						<DashboardCharts
+							usersChartData={usersChartData}
+							rolesChartData={rolesChartData}
+						/>
+					)}
+
+					{/* Activity and Team Members */}
+					{!isLoading && (
+						<DashboardActivity
+							recentActivity={recentActivity}
+							teamMembers={teamMembers}
+						/>
+					)}
 				</div>
-
-				{/* Loading State */}
-				{isLoading && (
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-						{["users", "roles", "tenants"].map((key) => (
-							<Card key={key} className="bg-slate-800/50 border-slate-700">
-								<CardHeader>
-									<Skeleton className="h-4 w-24" />
-								</CardHeader>
-								<CardContent>
-									<Skeleton className="h-8 w-16 mb-2" />
-									<Skeleton className="h-4 w-32" />
-								</CardContent>
-							</Card>
-						))}
-					</div>
-				)}
-
-				{/* Metrics Cards */}
-				{!isLoading && (
-					<DashboardMetrics
-						totalUsers={metrics.totalUsers}
-						activeUsers={metrics.activeUsers}
-						totalRoles={metrics.totalRoles}
-						totalTenants={metrics.totalTenants}
-					/>
-				)}
-
-				{/* Charts */}
-				{!isLoading && (
-					<DashboardCharts
-						usersChartData={usersChartData}
-						rolesChartData={rolesChartData}
-					/>
-				)}
-
-				{/* Activity and Team Members */}
-				{!isLoading && (
-					<DashboardActivity
-						recentActivity={recentActivity}
-						teamMembers={teamMembers}
-					/>
-				)}
-			</div>
+			</PageLayout>
 		</ProtectedRoute>
 	);
 }

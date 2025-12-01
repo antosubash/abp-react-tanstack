@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -21,12 +21,12 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
+import { usePermissionModalStore } from "../stores/permission-store";
+import { useRoleFormStore } from "../stores/role-form-store";
 import { RoleForm, type RoleFormData } from "./role-form";
 import { RolePermissionsModal } from "./role-permissions-modal";
-import { useRoleFormStore } from "../stores/role-form-store";
-import { usePermissionModalStore } from "../stores/permission-store";
-import { RolesTable } from "./roles-table";
 import { RolesHeader } from "./roles-header";
+import { RolesTable } from "./roles-table";
 
 export function RolesList() {
 	const [sorting, setSorting] = useState([]);

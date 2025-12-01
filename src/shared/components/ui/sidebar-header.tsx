@@ -12,7 +12,7 @@ export const SidebarHeader = React.forwardRef<
 		data-sidebar="header"
 		className={cn(
 			"flex flex-col gap-2 p-2 shrink-0",
-			"group-data-[collapsible=icon]:hidden",
+			"group-data-[collapsible=icon]:p-2",
 			className,
 		)}
 		{...props}

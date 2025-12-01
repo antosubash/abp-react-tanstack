@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -12,7 +12,6 @@ import {
 } from "@/infrastructure/api/@tanstack/react-query.gen";
 import type { IdentityUserDto } from "@/infrastructure/api/types.gen";
 import { Alert, AlertDescription } from "@/shared/components/ui/alert";
-import { Button } from "@/shared/components/ui/button";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -23,12 +22,13 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
-import { UserForm, type UserFormData } from "./user-form";
-import { UserPermissionsModal } from "./user-permissions-modal";
+import { Button } from "@/shared/components/ui/button";
 import { useUserFormStore } from "../stores/user-form-store";
 import { useUserPermissionModalStore } from "../stores/user-permission-store";
-import { UsersTable } from "./users-table";
+import { UserForm, type UserFormData } from "./user-form";
+import { UserPermissionsModal } from "./user-permissions-modal";
 import { UsersHeader } from "./users-header";
+import { UsersTable } from "./users-table";
 
 export function UsersList() {
 	const [sorting, setSorting] = useState([]);

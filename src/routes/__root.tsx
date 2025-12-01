@@ -7,9 +7,8 @@ import {
 	useLocation,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-
-import { SidebarLayout } from "@/shared/components/sidebar-layout";
 import { AuthProvider } from "@/features/auth/hooks/use-auth";
+import { SidebarLayout } from "@/shared/components/sidebar-layout";
 import { Toaster } from "@/shared/components/ui/sonner";
 
 // Configure API client to use proxy
@@ -63,7 +62,13 @@ function ConditionalLayout({ children }: { children: React.ReactNode }) {
 	const location = useLocation();
 
 	// Routes that should use the sidebar layout
-	const sidebarRoutes = ["/dashboard", "/demo", "/users", "/roles", "/tenants"];
+	const sidebarRoutes = [
+		"/dashboard",
+		"/demo",
+		"/admin",
+		"/settings",
+		"/profile",
+	];
 
 	const shouldUseSidebar = sidebarRoutes.some((route) =>
 		location.pathname.startsWith(route),
