@@ -150,3 +150,4 @@ export function NavUser({
 		</SidebarMenu>
 	);
 }
+
