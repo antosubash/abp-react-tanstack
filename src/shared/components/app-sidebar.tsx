@@ -9,6 +9,7 @@ import {
 	IconShield,
 	IconUsers,
 	IconBuilding,
+	IconSettings,
 } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
@@ -64,6 +65,25 @@ const data = {
 			title: "Tenants",
 			url: "/tenants",
 			icon: IconBuilding,
+		},
+		{
+			title: "Settings",
+			url: "/settings",
+			icon: IconSettings,
+			items: [
+				{
+					title: "Email",
+					url: "/settings/email",
+				},
+				{
+					title: "Timezone",
+					url: "/settings/timezone",
+				},
+				{
+					title: "Comments",
+					url: "/settings/comments",
+				},
+			],
 		},
 	],
 	demos: [

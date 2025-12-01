@@ -11,9 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UsersRouteImport } from './routes/users'
 import { Route as TenantsRouteImport } from './routes/tenants'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RolesRouteImport } from './routes/roles'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SettingsIndexRouteImport } from './routes/settings.index'
+import { Route as SettingsTimezoneRouteImport } from './routes/settings.timezone'
+import { Route as SettingsEmailRouteImport } from './routes/settings.email'
+import { Route as SettingsCommentsRouteImport } from './routes/settings.comments'
 import { Route as DemoClientRouteImport } from './routes/demo/client'
 import { Route as AuthMeRouteImport } from './routes/auth.me'
 import { Route as AuthLogoutRouteImport } from './routes/auth.logout'
@@ -39,6 +44,11 @@ const TenantsRoute = TenantsRouteImport.update({
   path: '/tenants',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RolesRoute = RolesRouteImport.update({
   id: '/roles',
   path: '/roles',
@@ -53,6 +63,26 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsTimezoneRoute = SettingsTimezoneRouteImport.update({
+  id: '/timezone',
+  path: '/timezone',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsEmailRoute = SettingsEmailRouteImport.update({
+  id: '/email',
+  path: '/email',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsCommentsRoute = SettingsCommentsRouteImport.update({
+  id: '/comments',
+  path: '/comments',
+  getParentRoute: () => SettingsRoute,
 } as any)
 const DemoClientRoute = DemoClientRouteImport.update({
   id: '/demo/client',
@@ -129,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/roles': typeof RolesRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/tenants': typeof TenantsRoute
   '/users': typeof UsersRoute
   '/api/health': typeof ApiHealthRoute
@@ -137,6 +168,10 @@ export interface FileRoutesByFullPath {
   '/auth/logout': typeof AuthLogoutRoute
   '/auth/me': typeof AuthMeRoute
   '/demo/client': typeof DemoClientRoute
+  '/settings/comments': typeof SettingsCommentsRoute
+  '/settings/email': typeof SettingsEmailRoute
+  '/settings/timezone': typeof SettingsTimezoneRoute
+  '/settings/': typeof SettingsIndexRoute
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -158,6 +193,10 @@ export interface FileRoutesByTo {
   '/auth/logout': typeof AuthLogoutRoute
   '/auth/me': typeof AuthMeRoute
   '/demo/client': typeof DemoClientRoute
+  '/settings/comments': typeof SettingsCommentsRoute
+  '/settings/email': typeof SettingsEmailRoute
+  '/settings/timezone': typeof SettingsTimezoneRoute
+  '/settings': typeof SettingsIndexRoute
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -172,6 +211,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/roles': typeof RolesRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/tenants': typeof TenantsRoute
   '/users': typeof UsersRoute
   '/api/health': typeof ApiHealthRoute
@@ -180,6 +220,10 @@ export interface FileRoutesById {
   '/auth/logout': typeof AuthLogoutRoute
   '/auth/me': typeof AuthMeRoute
   '/demo/client': typeof DemoClientRoute
+  '/settings/comments': typeof SettingsCommentsRoute
+  '/settings/email': typeof SettingsEmailRoute
+  '/settings/timezone': typeof SettingsTimezoneRoute
+  '/settings/': typeof SettingsIndexRoute
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -195,6 +239,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/roles'
+    | '/settings'
     | '/tenants'
     | '/users'
     | '/api/health'
@@ -203,6 +248,10 @@ export interface FileRouteTypes {
     | '/auth/logout'
     | '/auth/me'
     | '/demo/client'
+    | '/settings/comments'
+    | '/settings/email'
+    | '/settings/timezone'
+    | '/settings/'
     | '/api/proxy/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -224,6 +273,10 @@ export interface FileRouteTypes {
     | '/auth/logout'
     | '/auth/me'
     | '/demo/client'
+    | '/settings/comments'
+    | '/settings/email'
+    | '/settings/timezone'
+    | '/settings'
     | '/api/proxy/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -237,6 +290,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/roles'
+    | '/settings'
     | '/tenants'
     | '/users'
     | '/api/health'
@@ -245,6 +299,10 @@ export interface FileRouteTypes {
     | '/auth/logout'
     | '/auth/me'
     | '/demo/client'
+    | '/settings/comments'
+    | '/settings/email'
+    | '/settings/timezone'
+    | '/settings/'
     | '/api/proxy/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -259,6 +317,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   RolesRoute: typeof RolesRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
   TenantsRoute: typeof TenantsRoute
   UsersRoute: typeof UsersRoute
   ApiHealthRoute: typeof ApiHealthRoute
@@ -293,6 +352,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/roles': {
       id: '/roles'
       path: '/roles'
@@ -313,6 +379,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/settings/': {
+      id: '/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/timezone': {
+      id: '/settings/timezone'
+      path: '/timezone'
+      fullPath: '/settings/timezone'
+      preLoaderRoute: typeof SettingsTimezoneRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/email': {
+      id: '/settings/email'
+      path: '/email'
+      fullPath: '/settings/email'
+      preLoaderRoute: typeof SettingsEmailRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/comments': {
+      id: '/settings/comments'
+      path: '/comments'
+      fullPath: '/settings/comments'
+      preLoaderRoute: typeof SettingsCommentsRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/demo/client': {
       id: '/demo/client'
@@ -415,10 +509,29 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface SettingsRouteChildren {
+  SettingsCommentsRoute: typeof SettingsCommentsRoute
+  SettingsEmailRoute: typeof SettingsEmailRoute
+  SettingsTimezoneRoute: typeof SettingsTimezoneRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
+}
+
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsCommentsRoute: SettingsCommentsRoute,
+  SettingsEmailRoute: SettingsEmailRoute,
+  SettingsTimezoneRoute: SettingsTimezoneRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
+}
+
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   RolesRoute: RolesRoute,
+  SettingsRoute: SettingsRouteWithChildren,
   TenantsRoute: TenantsRoute,
   UsersRoute: UsersRoute,
   ApiHealthRoute: ApiHealthRoute,
