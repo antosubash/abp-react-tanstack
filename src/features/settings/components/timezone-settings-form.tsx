@@ -95,16 +95,10 @@ export function TimezoneSettingsForm() {
 										</FormControl>
 										<SelectContent>
 											{timezonesList
-												?.filter(
-													(tz) =>
-														tz.timeZoneName && tz.timeZoneName.trim() !== "",
-												)
+												?.filter((tz) => tz.value && tz.value.trim() !== "")
 												.map((tz) => (
-													<SelectItem
-														key={tz.timeZoneName}
-														value={tz.timeZoneName || ""}
-													>
-														{tz.timeZoneName}
+													<SelectItem key={tz.value} value={tz.value || ""}>
+														{tz.name || tz.value}
 													</SelectItem>
 												))}
 										</SelectContent>

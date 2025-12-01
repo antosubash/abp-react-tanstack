@@ -18,7 +18,11 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/shared/components/ui/sidebar";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 
 export function NavUser({

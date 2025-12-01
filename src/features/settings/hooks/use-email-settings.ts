@@ -1,37 +1,43 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { emailSettingsGetOptions } from "@/infrastructure/api/@tanstack/react-query.gen";
 import {
-	emailSettingsGetOptions,
-	emailSettingsSendTestEmailMutation,
-	emailSettingsUpdateMutation,
-} from "@/infrastructure/api/@tanstack/react-query.gen";
+	emailSettingsSendTestEmail,
+	emailSettingsUpdate,
+} from "@/infrastructure/api/sdk.gen";
 import type {
 	SendTestEmailInput,
 	UpdateEmailSettingsDto,
 } from "@/infrastructure/api/types.gen";
 import { SETTINGS_MESSAGES } from "../constants";
 
-export const EMAIL_SETTINGS_QUERY_KEY = ["settings", "email"] as const;
-
 export function useEmailSettings() {
-	return useQuery({
-		...emailSettingsGetOptions({}),
-		queryKey: EMAIL_SETTINGS_QUERY_KEY,
-	});
+	return useQuery(emailSettingsGetOptions({}));
 }
 
 export function useUpdateEmailSettings() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		...emailSettingsUpdateMutation({}),
 		mutationFn: async (data: UpdateEmailSettingsDto) => {
-			return emailSettingsUpdateMutation({}).mutationFn({
+			const { data: result } = await emailSettingsUpdate({
 				body: data,
+				throwOnError: true,
 			});
+			return result;
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: EMAIL_SETTINGS_QUERY_KEY });
+			queryClient.invalidateQueries({
+				predicate: (query) => {
+					return (
+						query.queryKey[0] !== undefined &&
+						typeof query.queryKey[0] === "object" &&
+						query.queryKey[0] !== null &&
+						"url" in query.queryKey[0] &&
+						query.queryKey[0].url === "/api/setting-management/emailing"
+					);
+				},
+			});
 			toast.success(SETTINGS_MESSAGES.EMAIL.SAVE_SUCCESS);
 		},
 		onError: () => {
@@ -42,11 +48,12 @@ export function useUpdateEmailSettings() {
 
 export function useSendTestEmail() {
 	return useMutation({
-		...emailSettingsSendTestEmailMutation({}),
 		mutationFn: async (data: SendTestEmailInput) => {
-			return emailSettingsSendTestEmailMutation({}).mutationFn({
+			const { data: result } = await emailSettingsSendTestEmail({
 				body: data,
+				throwOnError: true,
 			});
+			return result;
 		},
 		onSuccess: () => {
 			toast.success(SETTINGS_MESSAGES.EMAIL.TEST_EMAIL_SUCCESS);

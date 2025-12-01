@@ -3,39 +3,41 @@ import { toast } from "sonner";
 import {
 	timeZoneSettingsGetOptions,
 	timeZoneSettingsGetTimezonesOptions,
-	timeZoneSettingsUpdateMutation,
 } from "@/infrastructure/api/@tanstack/react-query.gen";
+import { timeZoneSettingsUpdate } from "@/infrastructure/api/sdk.gen";
 import { SETTINGS_MESSAGES } from "../constants";
 
-export const TIMEZONE_SETTINGS_QUERY_KEY = ["settings", "timezone"] as const;
-export const TIMEZONES_LIST_QUERY_KEY = ["settings", "timezones"] as const;
-
 export function useTimezoneSettings() {
-	return useQuery({
-		...timeZoneSettingsGetOptions({}),
-		queryKey: TIMEZONE_SETTINGS_QUERY_KEY,
-	});
+	return useQuery(timeZoneSettingsGetOptions({}));
 }
 
 export function useTimezonesList() {
-	return useQuery({
-		...timeZoneSettingsGetTimezonesOptions({}),
-		queryKey: TIMEZONES_LIST_QUERY_KEY,
-	});
+	return useQuery(timeZoneSettingsGetTimezonesOptions({}));
 }
 
 export function useUpdateTimezoneSettings() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		...timeZoneSettingsUpdateMutation({}),
 		mutationFn: async (timezone: string) => {
-			return timeZoneSettingsUpdateMutation({}).mutationFn({
+			const { data: result } = await timeZoneSettingsUpdate({
 				query: { timezone },
+				throwOnError: true,
 			});
+			return result;
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: TIMEZONE_SETTINGS_QUERY_KEY });
+			queryClient.invalidateQueries({
+				predicate: (query) => {
+					return (
+						query.queryKey[0] !== undefined &&
+						typeof query.queryKey[0] === "object" &&
+						query.queryKey[0] !== null &&
+						"url" in query.queryKey[0] &&
+						query.queryKey[0].url === "/api/setting-management/timezone"
+					);
+				},
+			});
 			toast.success(SETTINGS_MESSAGES.TIMEZONE.SAVE_SUCCESS);
 		},
 		onError: () => {

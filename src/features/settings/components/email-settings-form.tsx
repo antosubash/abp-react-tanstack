@@ -25,7 +25,7 @@ import { TestEmailDialog } from "./test-email-dialog";
 
 const emailSettingsSchema = z.object({
 	smtpHost: z.string().optional().nullable(),
-	smtpPort: z.coerce
+	smtpPort: z
 		.number()
 		.min(1, SETTINGS_VALIDATION.EMAIL.SMTP_PORT_MIN)
 		.max(65535, SETTINGS_VALIDATION.EMAIL.SMTP_PORT_MAX)
@@ -35,8 +35,8 @@ const emailSettingsSchema = z.object({
 	smtpDomain: z.string().optional().nullable(),
 	smtpEnableSsl: z.boolean().optional(),
 	smtpUseDefaultCredentials: z.boolean().optional(),
-	defaultFromAddress: z.string().optional().nullable(),
-	defaultFromDisplayName: z.string().optional().nullable(),
+	defaultFromAddress: z.string(),
+	defaultFromDisplayName: z.string(),
 });
 
 type EmailSettingsFormData = z.infer<typeof emailSettingsSchema>;
@@ -50,11 +50,11 @@ export function EmailSettingsForm() {
 	const form = useForm<EmailSettingsFormData>({
 		resolver: zodResolver(emailSettingsSchema),
 		defaultValues: {
-			smtpHost: "",
+			smtpHost: null,
 			smtpPort: 587,
-			smtpUserName: "",
-			smtpPassword: "",
-			smtpDomain: "",
+			smtpUserName: null,
+			smtpPassword: null,
+			smtpDomain: null,
 			smtpEnableSsl: true,
 			smtpUseDefaultCredentials: false,
 			defaultFromAddress: "",
@@ -65,16 +65,16 @@ export function EmailSettingsForm() {
 	useEffect(() => {
 		if (emailSettings) {
 			form.reset({
-				smtpHost: emailSettings.smtpHost || "",
-				smtpPort: emailSettings.smtpPort || 587,
-				smtpUserName: emailSettings.smtpUserName || "",
-				smtpPassword: emailSettings.smtpPassword || "",
-				smtpDomain: emailSettings.smtpDomain || "",
+				smtpHost: emailSettings.smtpHost ?? null,
+				smtpPort: emailSettings.smtpPort ?? 587,
+				smtpUserName: emailSettings.smtpUserName ?? null,
+				smtpPassword: emailSettings.smtpPassword ?? null,
+				smtpDomain: emailSettings.smtpDomain ?? null,
 				smtpEnableSsl: emailSettings.smtpEnableSsl ?? true,
 				smtpUseDefaultCredentials:
 					emailSettings.smtpUseDefaultCredentials ?? false,
-				defaultFromAddress: emailSettings.defaultFromAddress || "",
-				defaultFromDisplayName: emailSettings.defaultFromDisplayName || "",
+				defaultFromAddress: emailSettings.defaultFromAddress ?? "",
+				defaultFromDisplayName: emailSettings.defaultFromDisplayName ?? "",
 			});
 		}
 	}, [emailSettings, form]);

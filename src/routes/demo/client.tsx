@@ -1,4 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { DEMO_CONSTANTS } from "@/features/demo/constants";
+
+import { abpApplicationConfigurationGetOptions } from "@/infrastructure/api/@tanstack/react-query.gen";
 import {
 	Card,
 	CardContent,
@@ -6,10 +10,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
-
-import { abpApplicationConfigurationGetOptions } from "@/infrastructure/api/@tanstack/react-query.gen";
-import { DEMO_CONSTANTS } from "./constants";
 
 export const Route = createFileRoute("/demo/client")({
 	component: ClientDemo,
