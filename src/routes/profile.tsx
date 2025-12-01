@@ -1,6 +1,8 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { Shield, User } from "lucide-react";
 import { PROFILE_LABELS, PROFILE_ROUTES } from "@/features/profile/constants";
+import { PageHeader } from "@/shared/components/page-header";
+import { PageLayout } from "@/shared/components/page-layout";
 import { Tabs, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 
 export const Route = createFileRoute("/profile")({
@@ -9,13 +11,11 @@ export const Route = createFileRoute("/profile")({
 
 function ProfileLayout() {
 	return (
-		<div className="container mx-auto py-6 max-w-5xl">
-			<div className="mb-8">
-				<h1 className="text-3xl font-bold tracking-tight">Profile</h1>
-				<p className="text-muted-foreground mt-2">
-					Manage your account settings and preferences
-				</p>
-			</div>
+		<PageLayout>
+			<PageHeader
+				title="Profile"
+				description="Manage your account settings and preferences"
+			/>
 
 			<Tabs defaultValue="general" className="space-y-6">
 				<TabsList>
@@ -35,6 +35,6 @@ function ProfileLayout() {
 
 				<Outlet />
 			</Tabs>
-		</div>
+		</PageLayout>
 	);
 }

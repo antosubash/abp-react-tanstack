@@ -156,41 +156,38 @@ export function TenantsList() {
 	}
 
 	return (
-		<div className="container mx-auto py-6 max-w-5xl">
-			<div className="space-y-4">
-				<TenantsHeader
-					totalCount={totalCount}
-					onCreateTenant={handleCreateNewTenant}
-					isCreating={createTenantMutation.isPending}
-				/>
+		<div className="space-y-4">
+			<TenantsHeader
+				totalCount={totalCount}
+				onCreateTenant={handleCreateNewTenant}
+				isCreating={createTenantMutation.isPending}
+			/>
+			<TenantsTable
+				tenants={tenants}
+				isLoading={isLoading}
+				sorting={sorting}
+				pagination={pagination}
+				totalCount={totalCount}
+				onSortingChange={setSorting}
+				onPaginationChange={setPagination}
+				onEditTenant={handleEditTenant}
+				onOpenConnectionString={handleOpenConnectionString}
+				onDeleteTenant={handleDeleteTenant}
+				isDeleting={deleteTenantMutation.isPending}
+			/>
 
-				<TenantsTable
-					tenants={tenants}
-					isLoading={isLoading}
-					sorting={sorting}
-					pagination={pagination}
-					totalCount={totalCount}
-					onSortingChange={setSorting}
-					onPaginationChange={setPagination}
-					onEditTenant={handleEditTenant}
-					onOpenConnectionString={handleOpenConnectionString}
-					onDeleteTenant={handleDeleteTenant}
-					isDeleting={deleteTenantMutation.isPending}
-				/>
-
-				<TenantForm
-					key={editingTenant?.id || "create"}
-					tenant={editingTenant || undefined}
-					open={formOpen}
-					onOpenChange={closeForm}
-					onSubmit={editingTenant ? handleUpdateTenant : handleCreateTenant}
-					isLoading={
-						createTenantMutation.isPending || updateTenantMutation.isPending
-					}
-					mode={editingTenant ? "edit" : "create"}
-				/>
-				<TenantConnectionStringModal />
-			</div>
+			<TenantForm
+				key={editingTenant?.id || "create"}
+				tenant={editingTenant || undefined}
+				open={formOpen}
+				onOpenChange={closeForm}
+				onSubmit={editingTenant ? handleUpdateTenant : handleCreateTenant}
+				isLoading={
+					createTenantMutation.isPending || updateTenantMutation.isPending
+				}
+				mode={editingTenant ? "edit" : "create"}
+			/>
+			<TenantConnectionStringModal />
 		</div>
 	);
 }

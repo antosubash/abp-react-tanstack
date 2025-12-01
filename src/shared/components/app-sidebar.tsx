@@ -2,9 +2,11 @@ import {
 	IconBuilding,
 	IconCode,
 	IconDashboard,
+	IconFile,
 	IconFunction,
 	IconHome,
 	IconInnerShadowTop,
+	IconMessage,
 	IconNetwork,
 	IconNote,
 	IconSettings,
@@ -67,6 +69,18 @@ const data = {
 			title: "Tenants",
 			url: "/admin/tenants",
 			icon: IconBuilding,
+		},
+	],
+	cms: [
+		{
+			title: "Pages",
+			url: "/admin/cms/pages",
+			icon: IconFile,
+		},
+		{
+			title: "Comments",
+			url: "/admin/cms/comments",
+			icon: IconMessage,
 		},
 	],
 	system: [
@@ -148,6 +162,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{data.identityManagement.map((item) => (
+								<SidebarMenuItem key={item.title}>
+									<SidebarMenuButton asChild tooltip={item.title}>
+										<Link to={item.url}>
+											<item.icon className="size-4 shrink-0" />
+											<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
+												{item.title}
+											</span>
+										</Link>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							))}
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+
+				<SidebarGroup>
+					<SidebarGroupLabel className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0">
+						CMS
+					</SidebarGroupLabel>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							{data.cms.map((item) => (
 								<SidebarMenuItem key={item.title}>
 									<SidebarMenuButton asChild tooltip={item.title}>
 										<Link to={item.url}>

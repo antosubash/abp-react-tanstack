@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { toast } from "sonner";
 import { accountSendPasswordResetCodeMutation } from "@/infrastructure/api/@tanstack/react-query.gen";
 import {
@@ -30,6 +30,7 @@ import {
 const DEFAULT_APP_NAME = "ABP React TanStack";
 
 export function ForgotPasswordForm() {
+	const emailId = useId();
 	const [email, setEmail] = useState("");
 	const [appName] = useState(DEFAULT_APP_NAME);
 	const [errors, setErrors] = useState<Record<string, string>>({});
@@ -125,12 +126,12 @@ export function ForgotPasswordForm() {
 			<CardContent>
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<div className="space-y-2">
-						<Label htmlFor="email">
+						<Label htmlFor={emailId}>
 							{FORGOT_PASSWORD_LABELS.EMAIL}
 							<span className="text-destructive ml-1">*</span>
 						</Label>
 						<Input
-							id="email"
+							id={emailId}
 							type="email"
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}

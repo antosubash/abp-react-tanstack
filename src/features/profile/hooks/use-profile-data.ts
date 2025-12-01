@@ -16,10 +16,7 @@ export function useProfileData() {
 		isLoading,
 		error,
 		refetch,
-	} = useQuery({
-		...profileGetOptions(),
-		queryKey: PROFILE_QUERY_KEY,
-	});
+	} = useQuery(profileGetOptions());
 
 	return {
 		profile: profile as ProfileDto | undefined,
@@ -46,16 +43,20 @@ export function useUpdateProfile() {
 }
 
 export function useChangePassword() {
+	const queryClient = useQueryClient();
+
 	return useMutation({
-		...profileChangePasswordMutation(),
+		mutationFn: profileChangePasswordMutation().mutationFn,
 		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
 			toast.success(PROFILE_MESSAGES.SECURITY.SAVE_SUCCESS);
 		},
-		onError: (error: Error) => {
+		onError: (error: unknown) => {
 			console.error("Failed to change password:", error);
 
 			// Check if it's an incorrect current password error
-			const errorMessage = error.message || "";
+			const errorMessage =
+				error instanceof Error ? error.message : String(error);
 			if (
 				errorMessage.includes("current") ||
 				errorMessage.includes("incorrect")

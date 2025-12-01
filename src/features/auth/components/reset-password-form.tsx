@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { CheckCircle2, Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { toast } from "sonner";
 import { accountResetPasswordMutation } from "@/infrastructure/api/@tanstack/react-query.gen";
 import {
@@ -40,6 +40,10 @@ export function ResetPasswordForm({
 	resetToken: initialResetToken,
 }: ResetPasswordFormProps) {
 	const navigate = useNavigate();
+	const userIdFieldId = useId();
+	const resetTokenId = useId();
+	const newPasswordId = useId();
+	const confirmPasswordId = useId();
 	const [userId, setUserId] = useState(initialUserId || "");
 	const [resetToken, setResetToken] = useState(initialResetToken || "");
 	const [newPassword, setNewPassword] = useState("");
@@ -150,12 +154,12 @@ export function ResetPasswordForm({
 			<CardContent>
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<div className="space-y-2">
-						<Label htmlFor="userId">
+						<Label htmlFor={userIdFieldId}>
 							{RESET_PASSWORD_LABELS.USER_ID}
 							<span className="text-destructive ml-1">*</span>
 						</Label>
 						<Input
-							id="userId"
+							id={userIdFieldId}
 							value={userId}
 							onChange={(e) => setUserId(e.target.value)}
 							placeholder="Enter user ID"
@@ -167,12 +171,12 @@ export function ResetPasswordForm({
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="resetToken">
+						<Label htmlFor={resetTokenId}>
 							{RESET_PASSWORD_LABELS.RESET_TOKEN}
 							<span className="text-destructive ml-1">*</span>
 						</Label>
 						<Input
-							id="resetToken"
+							id={resetTokenId}
 							value={resetToken}
 							onChange={(e) => setResetToken(e.target.value)}
 							placeholder="Enter reset token"
@@ -184,13 +188,13 @@ export function ResetPasswordForm({
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="newPassword">
+						<Label htmlFor={newPasswordId}>
 							{RESET_PASSWORD_LABELS.NEW_PASSWORD}
 							<span className="text-destructive ml-1">*</span>
 						</Label>
 						<div className="relative">
 							<Input
-								id="newPassword"
+								id={newPasswordId}
 								type={showNewPassword ? "text" : "password"}
 								value={newPassword}
 								onChange={(e) => setNewPassword(e.target.value)}
@@ -219,13 +223,13 @@ export function ResetPasswordForm({
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="confirmPassword">
+						<Label htmlFor={confirmPasswordId}>
 							{RESET_PASSWORD_LABELS.CONFIRM_PASSWORD}
 							<span className="text-destructive ml-1">*</span>
 						</Label>
 						<div className="relative">
 							<Input
-								id="confirmPassword"
+								id={confirmPasswordId}
 								type={showConfirmPassword ? "text" : "password"}
 								value={confirmPassword}
 								onChange={(e) => setConfirmPassword(e.target.value)}

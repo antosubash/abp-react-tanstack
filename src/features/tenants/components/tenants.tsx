@@ -1,20 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { PageHeader } from "@/shared/components/page-header";
+import { PageLayout } from "@/shared/components/page-layout";
+import { TENANT_PAGE_CONSTANTS } from "../constants";
 import { TenantsList } from "@/features/tenants/components/tenants-list";
-import { SidebarLayout } from "@/shared/components/sidebar-layout";
 
-export const Route = createFileRoute("/tenants")({
-	component: TenantsPage,
-});
-
-function TenantsPage() {
+export function TenantsPage() {
 	return (
-		<SidebarLayout>
-			<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-				<div className="flex items-center justify-between">
-					<h1 className="text-3xl font-bold tracking-tight">Tenants</h1>
-				</div>
-				<TenantsList />
-			</div>
-		</SidebarLayout>
+		<PageLayout>
+			<PageHeader
+				title={TENANT_PAGE_CONSTANTS.TITLE}
+				description={TENANT_PAGE_CONSTANTS.DESCRIPTION}
+			/>
+			<TenantsList />
+		</PageLayout>
 	);
 }

@@ -180,66 +180,62 @@ export function RolesList() {
 	}
 
 	return (
-		<div className="container mx-auto py-6 max-w-5xl">
-			<div className="space-y-4">
-				<RolesHeader
-					totalCount={totalCount}
-					onCreateRole={handleCreateNewRole}
-					isCreating={createRoleMutation.isPending}
-				/>
+		<div className="space-y-4">
+			<RolesHeader
+				totalCount={totalCount}
+				onCreateRole={handleCreateNewRole}
+				isCreating={createRoleMutation.isPending}
+			/>
 
-				<RolesTable
-					roles={roles}
-					isLoading={isLoading}
-					sorting={sorting}
-					pagination={pagination}
-					totalCount={totalCount}
-					onSortingChange={setSorting}
-					onPaginationChange={setPagination}
-					onEditRole={handleEditRole}
-					onOpenPermissions={handleOpenPermissions}
-					onDeleteRole={handleOpenDeleteDialog}
-					isDeleting={deleteRoleMutation.isPending}
-				/>
+			<RolesTable
+				roles={roles}
+				isLoading={isLoading}
+				sorting={sorting}
+				pagination={pagination}
+				totalCount={totalCount}
+				onSortingChange={setSorting}
+				onPaginationChange={setPagination}
+				onEditRole={handleEditRole}
+				onOpenPermissions={handleOpenPermissions}
+				onDeleteRole={handleOpenDeleteDialog}
+				isDeleting={deleteRoleMutation.isPending}
+			/>
 
-				<RoleForm
-					key={editingRole?.id || "create"}
-					role={editingRole}
-					open={formOpen}
-					onOpenChange={closeForm}
-					onSubmit={editingRole ? handleUpdateRole : handleCreateRole}
-					isLoading={
-						createRoleMutation.isPending || updateRoleMutation.isPending
-					}
-					mode={editingRole ? "edit" : "create"}
-				/>
-				<RolePermissionsModal />
+			<RoleForm
+				key={editingRole?.id || "create"}
+				role={editingRole}
+				open={formOpen}
+				onOpenChange={closeForm}
+				onSubmit={editingRole ? handleUpdateRole : handleCreateRole}
+				isLoading={createRoleMutation.isPending || updateRoleMutation.isPending}
+				mode={editingRole ? "edit" : "create"}
+			/>
+			<RolePermissionsModal />
 
-				<AlertDialog
-					open={!!deleteRoleId}
-					onOpenChange={() => setDeleteRoleId(null)}
-				>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Delete Role</AlertDialogTitle>
-							<AlertDialogDescription>
-								Are you sure you want to delete this role? This action cannot be
-								undone.
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction
-								data-testid="confirm-delete-btn"
-								onClick={handleConfirmDelete}
-								className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-							>
-								Delete
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
-			</div>
+			<AlertDialog
+				open={!!deleteRoleId}
+				onOpenChange={() => setDeleteRoleId(null)}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Delete Role</AlertDialogTitle>
+						<AlertDialogDescription>
+							Are you sure you want to delete this role? This action cannot be
+							undone.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							data-testid="confirm-delete-btn"
+							onClick={handleConfirmDelete}
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+						>
+							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

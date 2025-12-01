@@ -30,10 +30,15 @@ import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.se
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
 import { Route as ApiProxySplatRouteImport } from './routes/api.proxy.$'
+import { Route as AdminCmsPagesRouteImport } from './routes/admin/cms.pages'
+import { Route as AdminCmsCommentsRouteImport } from './routes/admin/cms.comments'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
+import { Route as AdminCmsPagesIndexRouteImport } from './routes/admin/cms.pages.index'
 import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
+import { Route as AdminCmsPagesNewRouteImport } from './routes/admin/cms.pages.new'
+import { Route as AdminCmsPagesIdEditRouteImport } from './routes/admin/cms.pages.$id.edit'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -140,10 +145,25 @@ const ApiProxySplatRoute = ApiProxySplatRouteImport.update({
   path: '/api/proxy/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminCmsPagesRoute = AdminCmsPagesRouteImport.update({
+  id: '/admin/cms/pages',
+  path: '/admin/cms/pages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCmsCommentsRoute = AdminCmsCommentsRouteImport.update({
+  id: '/admin/cms/comments',
+  path: '/admin/cms/comments',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
   id: '/demo/start/ssr/',
   path: '/demo/start/ssr/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCmsPagesIndexRoute = AdminCmsPagesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminCmsPagesRoute,
 } as any)
 const DemoStartSsrSpaModeRoute = DemoStartSsrSpaModeRouteImport.update({
   id: '/demo/start/ssr/spa-mode',
@@ -159,6 +179,16 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
   id: '/demo/start/ssr/data-only',
   path: '/demo/start/ssr/data-only',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCmsPagesNewRoute = AdminCmsPagesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AdminCmsPagesRoute,
+} as any)
+const AdminCmsPagesIdEditRoute = AdminCmsPagesIdEditRouteImport.update({
+  id: '/$id/edit',
+  path: '/$id/edit',
+  getParentRoute: () => AdminCmsPagesRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -179,14 +209,19 @@ export interface FileRoutesByFullPath {
   '/demo/client': typeof DemoClientRoute
   '/profile/security': typeof ProfileSecurityRoute
   '/profile/': typeof ProfileIndexRoute
+  '/admin/cms/comments': typeof AdminCmsCommentsRoute
+  '/admin/cms/pages': typeof AdminCmsPagesRouteWithChildren
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/admin/cms/pages/new': typeof AdminCmsPagesNewRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
+  '/admin/cms/pages/': typeof AdminCmsPagesIndexRoute
   '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/admin/cms/pages/$id/edit': typeof AdminCmsPagesIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -205,14 +240,18 @@ export interface FileRoutesByTo {
   '/demo/client': typeof DemoClientRoute
   '/profile/security': typeof ProfileSecurityRoute
   '/profile': typeof ProfileIndexRoute
+  '/admin/cms/comments': typeof AdminCmsCommentsRoute
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/admin/cms/pages/new': typeof AdminCmsPagesNewRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
+  '/admin/cms/pages': typeof AdminCmsPagesIndexRoute
   '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/admin/cms/pages/$id/edit': typeof AdminCmsPagesIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -233,14 +272,19 @@ export interface FileRoutesById {
   '/demo/client': typeof DemoClientRoute
   '/profile/security': typeof ProfileSecurityRoute
   '/profile/': typeof ProfileIndexRoute
+  '/admin/cms/comments': typeof AdminCmsCommentsRoute
+  '/admin/cms/pages': typeof AdminCmsPagesRouteWithChildren
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/admin/cms/pages/new': typeof AdminCmsPagesNewRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
+  '/admin/cms/pages/': typeof AdminCmsPagesIndexRoute
   '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
+  '/admin/cms/pages/$id/edit': typeof AdminCmsPagesIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -262,14 +306,19 @@ export interface FileRouteTypes {
     | '/demo/client'
     | '/profile/security'
     | '/profile/'
+    | '/admin/cms/comments'
+    | '/admin/cms/pages'
     | '/api/proxy/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/admin/cms/pages/new'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
+    | '/admin/cms/pages/'
     | '/demo/start/ssr'
+    | '/admin/cms/pages/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -288,14 +337,18 @@ export interface FileRouteTypes {
     | '/demo/client'
     | '/profile/security'
     | '/profile'
+    | '/admin/cms/comments'
     | '/api/proxy/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/admin/cms/pages/new'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
+    | '/admin/cms/pages'
     | '/demo/start/ssr'
+    | '/admin/cms/pages/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -315,14 +368,19 @@ export interface FileRouteTypes {
     | '/demo/client'
     | '/profile/security'
     | '/profile/'
+    | '/admin/cms/comments'
+    | '/admin/cms/pages'
     | '/api/proxy/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/admin/cms/pages/new'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
+    | '/admin/cms/pages/'
     | '/demo/start/ssr/'
+    | '/admin/cms/pages/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -341,6 +399,8 @@ export interface RootRouteChildren {
   AuthMeRoute: typeof AuthMeRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   DemoClientRoute: typeof DemoClientRoute
+  AdminCmsCommentsRoute: typeof AdminCmsCommentsRoute
+  AdminCmsPagesRoute: typeof AdminCmsPagesRouteWithChildren
   ApiProxySplatRoute: typeof ApiProxySplatRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
@@ -500,12 +560,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiProxySplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/cms/pages': {
+      id: '/admin/cms/pages'
+      path: '/admin/cms/pages'
+      fullPath: '/admin/cms/pages'
+      preLoaderRoute: typeof AdminCmsPagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/cms/comments': {
+      id: '/admin/cms/comments'
+      path: '/admin/cms/comments'
+      fullPath: '/admin/cms/comments'
+      preLoaderRoute: typeof AdminCmsCommentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/start/ssr/': {
       id: '/demo/start/ssr/'
       path: '/demo/start/ssr'
       fullPath: '/demo/start/ssr'
       preLoaderRoute: typeof DemoStartSsrIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/cms/pages/': {
+      id: '/admin/cms/pages/'
+      path: '/'
+      fullPath: '/admin/cms/pages/'
+      preLoaderRoute: typeof AdminCmsPagesIndexRouteImport
+      parentRoute: typeof AdminCmsPagesRoute
     }
     '/demo/start/ssr/spa-mode': {
       id: '/demo/start/ssr/spa-mode'
@@ -528,6 +609,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/cms/pages/new': {
+      id: '/admin/cms/pages/new'
+      path: '/new'
+      fullPath: '/admin/cms/pages/new'
+      preLoaderRoute: typeof AdminCmsPagesNewRouteImport
+      parentRoute: typeof AdminCmsPagesRoute
+    }
+    '/admin/cms/pages/$id/edit': {
+      id: '/admin/cms/pages/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/admin/cms/pages/$id/edit'
+      preLoaderRoute: typeof AdminCmsPagesIdEditRouteImport
+      parentRoute: typeof AdminCmsPagesRoute
+    }
   }
 }
 
@@ -543,6 +638,22 @@ const ProfileRouteChildren: ProfileRouteChildren = {
 
 const ProfileRouteWithChildren =
   ProfileRoute._addFileChildren(ProfileRouteChildren)
+
+interface AdminCmsPagesRouteChildren {
+  AdminCmsPagesNewRoute: typeof AdminCmsPagesNewRoute
+  AdminCmsPagesIndexRoute: typeof AdminCmsPagesIndexRoute
+  AdminCmsPagesIdEditRoute: typeof AdminCmsPagesIdEditRoute
+}
+
+const AdminCmsPagesRouteChildren: AdminCmsPagesRouteChildren = {
+  AdminCmsPagesNewRoute: AdminCmsPagesNewRoute,
+  AdminCmsPagesIndexRoute: AdminCmsPagesIndexRoute,
+  AdminCmsPagesIdEditRoute: AdminCmsPagesIdEditRoute,
+}
+
+const AdminCmsPagesRouteWithChildren = AdminCmsPagesRoute._addFileChildren(
+  AdminCmsPagesRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -560,6 +671,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthMeRoute: AuthMeRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   DemoClientRoute: DemoClientRoute,
+  AdminCmsCommentsRoute: AdminCmsCommentsRoute,
+  AdminCmsPagesRoute: AdminCmsPagesRouteWithChildren,
   ApiProxySplatRoute: ApiProxySplatRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,

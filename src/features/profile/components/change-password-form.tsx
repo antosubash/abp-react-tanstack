@@ -1,5 +1,5 @@
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Card,
@@ -20,6 +20,9 @@ import { useChangePassword } from "../hooks/use-profile-data";
 
 export function ChangePasswordForm() {
 	const changePassword = useChangePassword();
+	const currentPasswordId = useId();
+	const newPasswordId = useId();
+	const confirmPasswordId = useId();
 	const [currentPassword, setCurrentPassword] = useState("");
 	const [newPassword, setNewPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
@@ -98,13 +101,13 @@ export function ChangePasswordForm() {
 			<CardContent>
 				<form onSubmit={handleSubmit} className="space-y-6">
 					<div className="space-y-2">
-						<Label htmlFor="currentPassword">
+						<Label htmlFor={currentPasswordId}>
 							{PROFILE_LABELS.SECURITY.CURRENT_PASSWORD}
 							<span className="text-destructive ml-1">*</span>
 						</Label>
 						<div className="relative">
 							<Input
-								id="currentPassword"
+								id={currentPasswordId}
 								type={showCurrentPassword ? "text" : "password"}
 								value={currentPassword}
 								onChange={(e) => setCurrentPassword(e.target.value)}
@@ -131,13 +134,13 @@ export function ChangePasswordForm() {
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="newPassword">
+						<Label htmlFor={newPasswordId}>
 							{PROFILE_LABELS.SECURITY.NEW_PASSWORD}
 							<span className="text-destructive ml-1">*</span>
 						</Label>
 						<div className="relative">
 							<Input
-								id="newPassword"
+								id={newPasswordId}
 								type={showNewPassword ? "text" : "password"}
 								value={newPassword}
 								onChange={(e) => setNewPassword(e.target.value)}
@@ -166,13 +169,13 @@ export function ChangePasswordForm() {
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="confirmPassword">
+						<Label htmlFor={confirmPasswordId}>
 							{PROFILE_LABELS.SECURITY.CONFIRM_PASSWORD}
 							<span className="text-destructive ml-1">*</span>
 						</Label>
 						<div className="relative">
 							<Input
-								id="confirmPassword"
+								id={confirmPasswordId}
 								type={showConfirmPassword ? "text" : "password"}
 								value={confirmPassword}
 								onChange={(e) => setConfirmPassword(e.target.value)}

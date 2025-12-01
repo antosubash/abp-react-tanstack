@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Card,
@@ -22,6 +22,11 @@ import { ProfileView } from "./profile-view";
 export function ProfileForm() {
 	const { profile, isLoading } = useProfileData();
 	const updateProfile = useUpdateProfile();
+	const userNameId = useId();
+	const emailId = useId();
+	const nameId = useId();
+	const surnameId = useId();
+	const phoneNumberId = useId();
 	const [errors, setErrors] = useState<Record<string, string>>({});
 
 	const {
@@ -159,12 +164,12 @@ export function ProfileForm() {
 				>
 					<div className="grid gap-4 md:grid-cols-2">
 						<div className="space-y-2">
-							<Label htmlFor="userName">
+							<Label htmlFor={userNameId}>
 								{PROFILE_LABELS.GENERAL.USERNAME}
 								<span className="text-destructive ml-1">*</span>
 							</Label>
 							<Input
-								id="userName"
+								id={userNameId}
 								value={userName}
 								onChange={(e) => setUserName(e.target.value)}
 								placeholder="Enter username"
@@ -176,12 +181,12 @@ export function ProfileForm() {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="email">
+							<Label htmlFor={emailId}>
 								{PROFILE_LABELS.GENERAL.EMAIL}
 								<span className="text-destructive ml-1">*</span>
 							</Label>
 							<Input
-								id="email"
+								id={emailId}
 								type="email"
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
@@ -196,9 +201,9 @@ export function ProfileForm() {
 
 					<div className="grid gap-4 md:grid-cols-2">
 						<div className="space-y-2">
-							<Label htmlFor="name">{PROFILE_LABELS.GENERAL.NAME}</Label>
+							<Label htmlFor={nameId}>{PROFILE_LABELS.GENERAL.NAME}</Label>
 							<Input
-								id="name"
+								id={nameId}
 								value={name}
 								onChange={(e) => setName(e.target.value)}
 								placeholder="Enter first name"
@@ -210,9 +215,11 @@ export function ProfileForm() {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="surname">{PROFILE_LABELS.GENERAL.SURNAME}</Label>
+							<Label htmlFor={surnameId}>
+								{PROFILE_LABELS.GENERAL.SURNAME}
+							</Label>
 							<Input
-								id="surname"
+								id={surnameId}
 								value={surname}
 								onChange={(e) => setSurname(e.target.value)}
 								placeholder="Enter last name"
@@ -225,11 +232,11 @@ export function ProfileForm() {
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="phoneNumber">
+						<Label htmlFor={phoneNumberId}>
 							{PROFILE_LABELS.GENERAL.PHONE_NUMBER}
 						</Label>
 						<Input
-							id="phoneNumber"
+							id={phoneNumberId}
 							value={phoneNumber}
 							onChange={(e) => setPhoneNumber(e.target.value)}
 							placeholder="Enter phone number"

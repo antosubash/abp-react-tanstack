@@ -1,15 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Clock, Mail, MessageSquare } from "lucide-react";
+import { CommentSettingsForm } from "@/features/settings/components/comment-settings-form";
+import { EmailSettingsForm } from "@/features/settings/components/email-settings-form";
+import { TimezoneSettingsForm } from "@/features/settings/components/timezone-settings-form";
+import { SETTINGS_LABELS } from "@/features/settings/constants";
+import { PageHeader } from "@/shared/components/page-header";
+import { PageLayout } from "@/shared/components/page-layout";
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
 } from "@/shared/components/ui/tabs";
-import { Clock, Mail, MessageSquare } from "lucide-react";
-import { SETTINGS_LABELS } from "@/features/settings/constants";
-import { EmailSettingsForm } from "@/features/settings/components/email-settings-form";
-import { TimezoneSettingsForm } from "@/features/settings/components/timezone-settings-form";
-import { CommentSettingsForm } from "@/features/settings/components/comment-settings-form";
 
 export const Route = createFileRoute("/settings")({
 	component: SettingsPage,
@@ -23,13 +25,11 @@ const SETTINGS_TAB_VALUE = {
 
 function SettingsPage() {
 	return (
-		<div className="container mx-auto py-6 max-w-5xl">
-			<div className="mb-8">
-				<h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-				<p className="text-muted-foreground mt-2">
-					Manage your application settings and configurations
-				</p>
-			</div>
+		<PageLayout>
+			<PageHeader
+				title="Settings"
+				description="Manage your application settings and configurations"
+			/>
 
 			<Tabs defaultValue={SETTINGS_TAB_VALUE.EMAIL} className="w-full">
 				<TabsList className="grid w-full grid-cols-3 mb-6">
@@ -123,6 +123,6 @@ function SettingsPage() {
 					<CommentSettingsForm />
 				</TabsContent>
 			</Tabs>
-		</div>
+		</PageLayout>
 	);
 }
