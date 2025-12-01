@@ -292,7 +292,7 @@ function ClientDemo() {
 											{DEMO_CONSTANTS.CLIENT.APP_CONFIG.SECTIONS.SETTINGS}
 										</h3>
 										<div className="rounded-md border p-4 bg-muted/50">
-												{appConfigResponse.setting.values && (
+											{appConfigResponse.setting.values && (
 												<div className="space-y-1 text-sm max-h-48 overflow-y-auto">
 													{Object.entries(appConfigResponse.setting.values).map(
 														([key, value]) => (
