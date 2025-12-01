@@ -51,21 +51,25 @@ const data = {
 			url: "/dashboard",
 			icon: IconDashboard,
 		},
+	],
+	identityManagement: [
 		{
 			title: "Users",
-			url: "/users",
+			url: "/admin/users",
 			icon: IconUsers,
 		},
 		{
 			title: "Roles",
-			url: "/roles",
+			url: "/admin/roles",
 			icon: IconShield,
 		},
 		{
 			title: "Tenants",
-			url: "/tenants",
+			url: "/admin/tenants",
 			icon: IconBuilding,
 		},
+	],
+	system: [
 		{
 			title: "Settings",
 			url: "/settings",
@@ -136,6 +140,50 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />
+
+				<SidebarGroup>
+					<SidebarGroupLabel className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0">
+						Identity Management
+					</SidebarGroupLabel>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							{data.identityManagement.map((item) => (
+								<SidebarMenuItem key={item.title}>
+									<SidebarMenuButton asChild tooltip={item.title}>
+										<Link to={item.url}>
+											<item.icon className="size-4 shrink-0" />
+											<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
+												{item.title}
+											</span>
+										</Link>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							))}
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+
+				<SidebarGroup>
+					<SidebarGroupLabel className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0">
+						System
+					</SidebarGroupLabel>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							{data.system.map((item) => (
+								<SidebarMenuItem key={item.title}>
+									<SidebarMenuButton asChild tooltip={item.title}>
+										<Link to={item.url}>
+											<item.icon className="size-4 shrink-0" />
+											<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
+												{item.title}
+											</span>
+										</Link>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							))}
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
 
 				<SidebarGroup>
 					<SidebarGroupLabel className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0">

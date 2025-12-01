@@ -65,9 +65,7 @@ function ConditionalLayout({ children }: { children: React.ReactNode }) {
 	const sidebarRoutes = [
 		"/dashboard",
 		"/demo",
-		"/users",
-		"/roles",
-		"/tenants",
+		"/admin",
 		"/settings",
 		"/profile",
 	];

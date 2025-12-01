@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { TenantsList } from "@/features/tenants/components/tenants-list";
 
-export const Route = createFileRoute("/tenants")({
+export const Route = createFileRoute("/admin/tenants")({
 	component: TenantsList,
 });

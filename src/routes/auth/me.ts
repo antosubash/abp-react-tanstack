@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getUserSession } from "@/infrastructure/auth/session";
 import type { User } from "@/infrastructure/auth/session";
+import { getUserSession } from "@/infrastructure/auth/session";
 
 interface MeResponse {
 	user: User | null;

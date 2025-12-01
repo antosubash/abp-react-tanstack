@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { OIDC_CONSTANTS } from "@/infrastructure/constants";
 import { getAuthUrl } from "@/infrastructure/auth/oidc";
 import { updateSession } from "@/infrastructure/auth/session";
+import { OIDC_CONSTANTS } from "@/infrastructure/constants";
 
 interface LoginResponse {
 	authUrl: string;

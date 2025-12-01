@@ -9,23 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UsersRouteImport } from './routes/users'
-import { Route as TenantsRouteImport } from './routes/tenants'
 import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as RolesRouteImport } from './routes/roles'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile.index'
 import { Route as ProfileSecurityRouteImport } from './routes/profile.security'
 import { Route as DemoClientRouteImport } from './routes/demo/client'
-import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
-import { Route as AuthMeRouteImport } from './routes/auth.me'
-import { Route as AuthLogoutRouteImport } from './routes/auth.logout'
-import { Route as AuthLoginRouteImport } from './routes/auth.login'
-import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
-import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
+import { Route as AuthMeRouteImport } from './routes/auth/me'
+import { Route as AuthLogoutRouteImport } from './routes/auth/logout'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
+import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as ApiHealthRouteImport } from './routes/api.health'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as AdminTenantsRouteImport } from './routes/admin/tenants'
+import { Route as AdminRolesRouteImport } from './routes/admin/roles'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
@@ -35,24 +35,9 @@ import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
 
-const UsersRoute = UsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TenantsRoute = TenantsRouteImport.update({
-  id: '/tenants',
-  path: '/tenants',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RolesRoute = RolesRouteImport.update({
-  id: '/roles',
-  path: '/roles',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -120,6 +105,21 @@ const ApiHealthRoute = ApiHealthRouteImport.update({
   path: '/api/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTenantsRoute = AdminTenantsRouteImport.update({
+  id: '/admin/tenants',
+  path: '/admin/tenants',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRolesRoute = AdminRolesRouteImport.update({
+  id: '/admin/roles',
+  path: '/admin/roles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
   id: '/demo/start/server-funcs',
   path: '/demo/start/server-funcs',
@@ -165,10 +165,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/profile': typeof ProfileRouteWithChildren
-  '/roles': typeof RolesRoute
   '/settings': typeof SettingsRoute
-  '/tenants': typeof TenantsRoute
-  '/users': typeof UsersRoute
+  '/admin/roles': typeof AdminRolesRoute
+  '/admin/tenants': typeof AdminTenantsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -191,10 +191,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
-  '/roles': typeof RolesRoute
   '/settings': typeof SettingsRoute
-  '/tenants': typeof TenantsRoute
-  '/users': typeof UsersRoute
+  '/admin/roles': typeof AdminRolesRoute
+  '/admin/tenants': typeof AdminTenantsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -219,10 +219,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/profile': typeof ProfileRouteWithChildren
-  '/roles': typeof RolesRoute
   '/settings': typeof SettingsRoute
-  '/tenants': typeof TenantsRoute
-  '/users': typeof UsersRoute
+  '/admin/roles': typeof AdminRolesRoute
+  '/admin/tenants': typeof AdminTenantsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -248,10 +248,10 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/profile'
-    | '/roles'
     | '/settings'
-    | '/tenants'
-    | '/users'
+    | '/admin/roles'
+    | '/admin/tenants'
+    | '/admin/users'
     | '/api/health'
     | '/auth/callback'
     | '/auth/forgot-password'
@@ -274,10 +274,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dashboard'
-    | '/roles'
     | '/settings'
-    | '/tenants'
-    | '/users'
+    | '/admin/roles'
+    | '/admin/tenants'
+    | '/admin/users'
     | '/api/health'
     | '/auth/callback'
     | '/auth/forgot-password'
@@ -301,10 +301,10 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/profile'
-    | '/roles'
     | '/settings'
-    | '/tenants'
-    | '/users'
+    | '/admin/roles'
+    | '/admin/tenants'
+    | '/admin/users'
     | '/api/health'
     | '/auth/callback'
     | '/auth/forgot-password'
@@ -329,10 +329,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   ProfileRoute: typeof ProfileRouteWithChildren
-  RolesRoute: typeof RolesRoute
   SettingsRoute: typeof SettingsRoute
-  TenantsRoute: typeof TenantsRoute
-  UsersRoute: typeof UsersRoute
+  AdminRolesRoute: typeof AdminRolesRoute
+  AdminTenantsRoute: typeof AdminTenantsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
   ApiHealthRoute: typeof ApiHealthRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
@@ -353,32 +353,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/users': {
-      id: '/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof UsersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tenants': {
-      id: '/tenants'
-      path: '/tenants'
-      fullPath: '/tenants'
-      preLoaderRoute: typeof TenantsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/settings': {
       id: '/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/roles': {
-      id: '/roles'
-      path: '/roles'
-      fullPath: '/roles'
-      preLoaderRoute: typeof RolesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -472,6 +451,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/tenants': {
+      id: '/admin/tenants'
+      path: '/admin/tenants'
+      fullPath: '/admin/tenants'
+      preLoaderRoute: typeof AdminTenantsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/roles': {
+      id: '/admin/roles'
+      path: '/admin/roles'
+      fullPath: '/admin/roles'
+      preLoaderRoute: typeof AdminRolesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/start/server-funcs': {
       id: '/demo/start/server-funcs'
       path: '/demo/start/server-funcs'
@@ -548,10 +548,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   ProfileRoute: ProfileRouteWithChildren,
-  RolesRoute: RolesRoute,
   SettingsRoute: SettingsRoute,
-  TenantsRoute: TenantsRoute,
-  UsersRoute: UsersRoute,
+  AdminRolesRoute: AdminRolesRoute,
+  AdminTenantsRoute: AdminTenantsRoute,
+  AdminUsersRoute: AdminUsersRoute,
   ApiHealthRoute: ApiHealthRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
