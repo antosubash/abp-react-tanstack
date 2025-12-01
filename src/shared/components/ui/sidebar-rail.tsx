@@ -2,20 +2,36 @@
 
 import * as React from "react";
 import { useSidebar } from "./sidebar-context";
+import { cn } from "@/shared/utils";
 
 export const SidebarRail = React.forwardRef<
 	HTMLDivElement,
 	React.ComponentProps<"div">
 >(({ className, ...props }, ref) => {
-	const { toggleSidebar } = useSidebar();
+	const { toggleSidebar, state } = useSidebar();
+	const isCollapsed = state === "collapsed";
 
 	return (
-		<div ref={ref} data-sidebar="rail" className={className} {...props}>
+		<div
+			ref={ref}
+			data-sidebar="rail"
+			className={cn(
+				"absolute right-0 top-0 h-full pointer-events-none z-10",
+				isCollapsed ? "w-full" : "w-12",
+				className,
+			)}
+			{...props}
+		>
 			<button
 				type="button"
 				onClick={toggleSidebar}
 				aria-label="Toggle Sidebar"
-				className="absolute top-3 flex h-6 w-6 items-center justify-center rounded-sm bg-slate-800 text-slate-400 transition-all hover:bg-slate-700 hover:text-slate-100 data-[state=collapsed]:rotate-180 data-[side=right]:rotate-0 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+				className={cn(
+					"absolute flex h-7 w-7 items-center justify-center rounded-md transition-all pointer-events-auto z-20 shadow-md",
+					"bg-slate-700 text-slate-200 hover:bg-slate-600 hover:text-slate-100",
+					"dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500 dark:hover:text-slate-100",
+					isCollapsed ? "bottom-3 left-1/2 -translate-x-1/2" : "top-3 right-3",
+				)}
 			>
 				<svg
 					width="16"

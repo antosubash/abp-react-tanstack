@@ -26,8 +26,8 @@ export function NavMain({
 						<SidebarMenuItem key={item.title}>
 							<SidebarMenuButton asChild tooltip={item.title}>
 								<Link to={item.url}>
-									{item.icon && <item.icon />}
-									<span className="group-data-[collapsible=icon]:hidden">
+									{item.icon && <item.icon className="size-4 shrink-0" />}
+									<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:overflow-hidden">
 										{item.title}
 									</span>
 								</Link>

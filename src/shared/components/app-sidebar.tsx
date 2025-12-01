@@ -35,6 +35,7 @@ import {
 	SidebarMenuSubTrigger,
 	SidebarMenuSubItem,
 	SidebarRail,
+	useSidebar,
 } from "@/shared/components/ui/sidebar";
 
 const data = {
@@ -104,18 +105,22 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+	const { state } = useSidebar();
+	const isCollapsed = state === "collapsed";
+
 	return (
-		<Sidebar data-collapsible="icon" {...props}>
+		<Sidebar {...props}>
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton
 							asChild
-							className="data-[slot=sidebar-menu-button]:!p-1.5"
+							tooltip="TanStack Start"
+							className="data-[slot=sidebar-menu-button]:!p-1.5 group-data-[collapsible=icon]:!justify-center group-data-[collapsible=icon]:!px-2"
 						>
-							<div className="flex items-center gap-2">
-								<IconInnerShadowTop className="!size-5" />
-								<span className="text-base font-semibold group-data-[collapsible=icon]:hidden">
+							<div className="flex items-center gap-2 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center">
+								<IconInnerShadowTop className="!size-5 shrink-0" />
+								<span className="text-base font-semibold group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
 									TanStack Start
 								</span>
 							</div>
@@ -127,7 +132,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<NavMain items={data.navMain} />
 
 				<SidebarGroup>
-					<SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">
+					<SidebarGroupLabel className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0">
 						Demos
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
@@ -139,32 +144,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 											<>
 												<CollapsibleTrigger asChild>
 													<SidebarMenuButton tooltip={item.title}>
-														<item.icon />
-														<span className="group-data-[collapsible=icon]:hidden">
+														<item.icon className="size-4 shrink-0" />
+														<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
 															{item.title}
 														</span>
-														<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
+														<ChevronRight className="ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0 shrink-0" />
 													</SidebarMenuButton>
 												</CollapsibleTrigger>
-												<CollapsibleContent>
-													<SidebarMenuSub>
-														{item.items.map((subItem) => (
-															<SidebarMenuSubItem key={subItem.title}>
-																<SidebarMenuSubTrigger asChild>
-																	<Link to={subItem.url}>
-																		<span>{subItem.title}</span>
-																	</Link>
-																</SidebarMenuSubTrigger>
-															</SidebarMenuSubItem>
-														))}
-													</SidebarMenuSub>
-												</CollapsibleContent>
+												{!isCollapsed && (
+													<CollapsibleContent>
+														<SidebarMenuSub>
+															{item.items.map((subItem) => (
+																<SidebarMenuSubItem key={subItem.title}>
+																	<SidebarMenuSubTrigger asChild>
+																		<Link to={subItem.url}>
+																			<span>{subItem.title}</span>
+																		</Link>
+																	</SidebarMenuSubTrigger>
+																</SidebarMenuSubItem>
+															))}
+														</SidebarMenuSub>
+													</CollapsibleContent>
+												)}
 											</>
 										) : (
 											<SidebarMenuButton asChild tooltip={item.title}>
 												<Link to={item.url}>
-													<item.icon />
-													<span className="group-data-[collapsible=icon]:hidden">
+													<item.icon className="size-4 shrink-0" />
+													<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
 														{item.title}
 													</span>
 												</Link>
