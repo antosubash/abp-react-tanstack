@@ -68,8 +68,8 @@ function SettingsPage() {
 				<TabsContent value={SETTINGS_TAB_VALUE.EMAIL} className="mt-6">
 					<div className="mb-6">
 						<div className="flex items-center gap-3 mb-4">
-							<div className="p-3 rounded-lg bg-blue-500/10">
-								<Mail className="h-8 w-8 text-blue-500" />
+							<div className="p-3 rounded-lg bg-primary/10">
+								<Mail className="h-8 w-8 text-primary" />
 							</div>
 							<div>
 								<h2 className="text-2xl font-bold tracking-tight">
@@ -88,8 +88,8 @@ function SettingsPage() {
 				<TabsContent value={SETTINGS_TAB_VALUE.TIMEZONE} className="mt-6">
 					<div className="mb-6">
 						<div className="flex items-center gap-3 mb-4">
-							<div className="p-3 rounded-lg bg-purple-500/10">
-								<Clock className="h-8 w-8 text-purple-500" />
+							<div className="p-3 rounded-lg bg-accent/10">
+								<Clock className="h-8 w-8 text-accent-foreground" />
 							</div>
 							<div>
 								<h2 className="text-2xl font-bold tracking-tight">
@@ -107,8 +107,8 @@ function SettingsPage() {
 				<TabsContent value={SETTINGS_TAB_VALUE.COMMENTS} className="mt-6">
 					<div className="mb-6">
 						<div className="flex items-center gap-3 mb-4">
-							<div className="p-3 rounded-lg bg-green-500/10">
-								<MessageSquare className="h-8 w-8 text-green-500" />
+							<div className="p-3 rounded-lg bg-primary/10">
+								<MessageSquare className="h-8 w-8 text-primary" />
 							</div>
 							<div>
 								<h2 className="text-2xl font-bold tracking-tight">

@@ -27,21 +27,21 @@ function RouteComponent() {
 		<div className="w-full bg-background">
 			<div className="w-full px-6 py-8">
 				<div className="flex items-center justify-center min-h-screen">
-					<div className="w-full max-w-3xl bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
+					<div className="w-full max-w-3xl bg-card/50 backdrop-blur-sm border border-border rounded-xl p-6">
 						<div className="flex items-center gap-2 mb-4">
 							<Smartphone className="h-5 w-5 text-green-400" />
 							<Badge variant="secondary">SPA Mode Demo</Badge>
 						</div>
-						<h2 className="text-white text-3xl font-semibold mb-2">
+						<h2 className="text-foreground text-3xl font-semibold mb-2">
 							Punk Songs Collection
 						</h2>
-						<p className="text-slate-400 mb-4">
+						<p className="text-muted-foreground mb-4">
 							This page demonstrates Single Page Application mode with
 							client-side data fetching
 						</p>
 						{isLoading ? (
 							<div className="space-y-3">
-								<div className="flex items-center gap-2 text-slate-300">
+								<div className="flex items-center gap-2 text-foreground">
 									<Loader2 className="h-4 w-4 animate-spin" />
 									Loading songs...
 								</div>
@@ -63,13 +63,13 @@ function RouteComponent() {
 								{punkSongs?.map((song) => (
 									<div
 										key={song.id}
-										className="flex items-center justify-between bg-slate-700/50 border border-slate-600 rounded-lg p-4 hover:bg-slate-700/70 transition-colors"
+										className="flex items-center justify-between bg-muted/50 border border-border rounded-lg p-4 hover:bg-muted/70 transition-colors"
 									>
 										<div>
-											<span className="text-lg text-white font-medium">
+											<span className="text-lg text-foreground font-medium">
 												{song.name}
 											</span>
-											<span className="text-slate-400 ml-2">
+											<span className="text-muted-foreground ml-2">
 												- {song.artist}
 											</span>
 										</div>

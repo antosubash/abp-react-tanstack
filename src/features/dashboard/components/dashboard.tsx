@@ -103,12 +103,12 @@ export default function Dashboard() {
 			{
 				name: "Active",
 				value: activeCount,
-				color: "#10b981",
+				color: "var(--chart-1)",
 			},
 			{
 				name: "Locked",
 				value: lockedCount,
-				color: "#ef4444",
+				color: "var(--destructive)",
 			},
 		];
 	}, [usersResponse]);
@@ -179,15 +179,15 @@ export default function Dashboard() {
 	if (hasError) {
 		return (
 			<ProtectedRoute>
-				<Card className="bg-slate-800/50 border-slate-700">
+				<Card className="bg-card border-border">
 					<CardHeader>
-						<CardTitle className="text-white">Error</CardTitle>
-						<CardDescription className="text-slate-400">
+						<CardTitle className="text-foreground">Error</CardTitle>
+						<CardDescription className="text-muted-foreground">
 							Failed to load dashboard data
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<p className="text-red-400">
+						<p className="text-destructive">
 							{usersError?.error?.message ||
 								rolesError?.error?.message ||
 								tenantsError?.error?.message ||
@@ -202,14 +202,14 @@ export default function Dashboard() {
 	return (
 		<ProtectedRoute>
 			<PageLayout>
-				<div className="text-slate-100" data-testid="dashboard-content">
+				<div className="text-foreground" data-testid="dashboard-content">
 					<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
 						<PageHeader
 							title={DASHBOARD_CONSTANTS.TITLE}
 							description={DASHBOARD_CONSTANTS.DESCRIPTION}
 						/>
 						<div className="flex items-center gap-4">
-							<div className="text-xs sm:text-sm text-slate-400">
+							<div className="text-xs sm:text-sm text-muted-foreground">
 								Welcome, {user?.name || user?.preferred_username || "User"}
 							</div>
 						</div>
@@ -219,7 +219,7 @@ export default function Dashboard() {
 					{isLoading && (
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
 							{["users", "roles", "tenants"].map((key) => (
-								<Card key={key} className="bg-slate-800/50 border-slate-700">
+								<Card key={key} className="bg-card border-border">
 									<CardHeader>
 										<Skeleton className="h-4 w-24" />
 									</CardHeader>

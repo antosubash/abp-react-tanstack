@@ -162,7 +162,9 @@ function ClientDemo() {
 															>
 																<span
 																	className={
-																		granted ? "text-green-600" : "text-red-600"
+																		granted
+																			? "text-primary"
+																			: "text-destructive"
 																	}
 																>
 																	{granted ? "✓" : "✗"}

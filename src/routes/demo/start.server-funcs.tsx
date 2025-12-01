@@ -70,38 +70,38 @@ function Home() {
 		<div className="w-full bg-background">
 			<div className="w-full px-6 py-8">
 				<div className="flex items-center justify-center min-h-screen">
-					<div className="w-full max-w-2xl bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
+					<div className="w-full max-w-2xl bg-card/50 backdrop-blur-sm border border-border rounded-xl p-6">
 						<div className="flex items-center gap-2 mb-4">
 							<CheckCircle2 className="h-5 w-5 text-green-400" />
 							<Badge variant="secondary">Server Functions Demo</Badge>
 						</div>
-						<h2 className="text-white text-2xl font-semibold mb-2">
+						<h2 className="text-foreground text-2xl font-semibold mb-2">
 							Todo List with Server Functions
 						</h2>
-						<p className="text-slate-400 mb-4">
+						<p className="text-muted-foreground mb-4">
 							Add and manage todos using TanStack Start server functions
 						</p>
 						<div className="space-y-4">
 							{todos && todos.length > 0 && (
 								<div className="space-y-2">
-									<h3 className="text-sm font-medium text-slate-300">
+									<h3 className="text-sm font-medium text-foreground">
 										Your Todos
 									</h3>
 									<ul className="space-y-2">
 										{todos.map((t: { id: number; name: string }) => (
 											<li
 												key={t.id}
-												className="flex items-center gap-3 bg-slate-700/50 border border-slate-600 rounded-lg p-3"
+												className="flex items-center gap-3 bg-muted/50 border border-border rounded-lg p-3"
 											>
 												<CheckCircle2 className="h-4 w-4 text-green-400 flex-shrink-0" />
-												<span className="text-slate-200">{t.name}</span>
+												<span className="text-foreground">{t.name}</span>
 											</li>
 										))}
 									</ul>
 								</div>
 							)}
 							<div className="space-y-3">
-								<h3 className="text-sm font-medium text-slate-300">
+								<h3 className="text-sm font-medium text-foreground">
 									Add New Todo
 								</h3>
 								<div className="flex gap-2">

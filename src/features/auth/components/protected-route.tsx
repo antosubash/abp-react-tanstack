@@ -24,8 +24,8 @@ export function ProtectedRoute({
 			loading || (
 				<div className="flex items-center justify-center min-h-screen">
 					<div className="text-center">
-						<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
-						<p className="text-gray-600">Checking authentication...</p>
+						<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+						<p className="text-muted-foreground">Checking authentication...</p>
 					</div>
 				</div>
 			)
@@ -36,12 +36,12 @@ export function ProtectedRoute({
 	if (!isAuthenticated) {
 		return (
 			fallback || (
-				<div className="flex items-center justify-center min-h-screen bg-gray-50">
-					<div className="text-center max-w-md mx-auto p-8 bg-white rounded-lg shadow-lg">
+				<div className="flex items-center justify-center min-h-screen bg-background">
+					<div className="text-center max-w-md mx-auto p-8 bg-card rounded-lg shadow-lg">
 						<div className="mb-6">
-							<div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+							<div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
 								<svg
-									className="w-8 h-8 text-red-600"
+									className="w-8 h-8 text-destructive"
 									fill="none"
 									stroke="currentColor"
 									viewBox="0 0 24 24"
@@ -57,10 +57,10 @@ export function ProtectedRoute({
 									/>
 								</svg>
 							</div>
-							<h2 className="text-2xl font-bold text-gray-900 mb-2">
+							<h2 className="text-2xl font-bold text-foreground mb-2">
 								Authentication Required
 							</h2>
-							<p className="text-gray-600 mb-6">
+							<p className="text-muted-foreground mb-6">
 								You need to be logged in to access this page.
 							</p>
 							<button
@@ -68,7 +68,7 @@ export function ProtectedRoute({
 								onClick={() => {
 									window.location.href = "/";
 								}}
-								className="px-6 py-3 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors font-medium"
+								className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
 							>
 								Go to Home
 							</button>

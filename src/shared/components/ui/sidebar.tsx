@@ -30,7 +30,7 @@ import { SidebarHeader } from "./sidebar-header";
 import { SidebarFooter } from "./sidebar-footer";
 
 const sidebarVariants = cva(
-	"fixed left-0 top-0 z-50 bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100 flex flex-col h-screen overflow-hidden",
+	"fixed left-0 top-0 z-50 bg-sidebar text-sidebar-foreground flex flex-col h-screen overflow-hidden",
 	{
 		variants: {
 			variant: {
@@ -57,7 +57,7 @@ const Sidebar = React.forwardRef<
 		return (
 			<Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
 				<SheetContent
-					className="w-[270px] p-0 text-slate-900 dark:bg-slate-800 dark:text-slate-100"
+					className="w-[270px] p-0 bg-sidebar text-sidebar-foreground"
 					style={
 						{
 							"--sidebar-width": SIDEBAR_WIDTH_MOBILE,

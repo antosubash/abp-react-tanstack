@@ -28,8 +28,7 @@ export const SidebarRail = React.forwardRef<
 				aria-label="Toggle Sidebar"
 				className={cn(
 					"absolute flex h-7 w-7 items-center justify-center rounded-md transition-all pointer-events-auto z-20 shadow-md",
-					"bg-slate-700 text-slate-200 hover:bg-slate-600 hover:text-slate-100",
-					"dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500 dark:hover:text-slate-100",
+					"bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent/80",
 					isCollapsed ? "bottom-3 left-1/2 -translate-x-1/2" : "top-3 right-3",
 				)}
 			>

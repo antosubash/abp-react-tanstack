@@ -42,15 +42,15 @@ export function DashboardActivity({
 		<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
 			{/* Activity Timeline */}
 			<Card
-				className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors lg:col-span-2"
+				className="bg-card border-border hover:border-accent transition-colors lg:col-span-2"
 				data-testid="recent-activity"
 			>
 				<CardHeader>
-					<CardTitle className="text-white flex items-center gap-2">
+					<CardTitle className="text-foreground flex items-center gap-2">
 						<IconActivity className="w-5 h-5 text-green-400" />
 						Recent Activity
 					</CardTitle>
-					<CardDescription className="text-slate-400">
+					<CardDescription className="text-muted-foreground">
 						Latest user updates and changes
 					</CardDescription>
 				</CardHeader>
@@ -65,7 +65,7 @@ export function DashboardActivity({
 								<div className="flex flex-col items-center">
 									<div className="w-2 h-2 bg-green-400 rounded-full mt-2" />
 									{index < recentActivity.length - 1 && (
-										<div className="w-px h-12 bg-slate-600" />
+										<div className="w-px h-12 bg-muted" />
 									)}
 								</div>
 								<div className="flex-1">
@@ -75,14 +75,14 @@ export function DashboardActivity({
 												{activity.avatar}
 											</AvatarFallback>
 										</Avatar>
-										<span className="text-sm font-medium text-white">
+										<span className="text-sm font-medium text-foreground">
 											{activity.user}
 										</span>
-										<span className="text-xs text-slate-400">
+										<span className="text-xs text-muted-foreground">
 											{activity.time}
 										</span>
 									</div>
-									<p className="text-sm text-slate-300">
+									<p className="text-sm text-muted-foreground">
 										{activity.action} "{activity.target}"
 									</p>
 								</div>
@@ -93,13 +93,13 @@ export function DashboardActivity({
 			</Card>
 
 			{/* Team Members */}
-			<Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700 hover:border-slate-600 transition-colors">
+			<Card className="bg-card border-border hover:border-accent transition-colors">
 				<CardHeader>
-					<CardTitle className="text-white flex items-center gap-2">
+					<CardTitle className="text-foreground flex items-center gap-2">
 						<IconUser className="w-5 h-5 text-blue-400" />
 						Team Members
 					</CardTitle>
-					<CardDescription className="text-slate-400">
+					<CardDescription className="text-muted-foreground">
 						Active contributors
 					</CardDescription>
 				</CardHeader>
@@ -115,38 +115,38 @@ export function DashboardActivity({
 											</AvatarFallback>
 										</Avatar>
 										<div
-											className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-slate-800 ${
+											className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-card ${
 												member.status === "online"
 													? "bg-green-400"
 													: member.status === "away"
 														? "bg-yellow-400"
-														: "bg-slate-400"
+														: "bg-muted"
 											}`}
 										/>
 									</div>
 									<div className="flex-1 min-w-0">
 										<div className="flex items-center justify-between">
-											<p className="text-sm font-medium text-white truncate">
+											<p className="text-sm font-medium text-foreground truncate">
 												{member.name}
 											</p>
 											<Badge
 												variant="outline"
-												className="text-xs border-slate-600 text-slate-400"
+												className="text-xs border-border text-muted-foreground"
 											>
 												{member.role}
 											</Badge>
 										</div>
-										<p className="text-xs text-slate-400">System user</p>
+										<p className="text-xs text-muted-foreground">System user</p>
 									</div>
 								</div>
 							);
 						})}
 					</div>
-					<Separator className="my-4 bg-slate-700" />
+					<Separator className="my-4 bg-border" />
 					<Button
 						variant="outline"
 						size="sm"
-						className="w-full border-slate-600 text-slate-300 hover:bg-slate-700"
+						className="w-full border-border text-foreground hover:bg-accent"
 					>
 						View All Members
 					</Button>

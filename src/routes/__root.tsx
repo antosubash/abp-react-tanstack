@@ -45,11 +45,11 @@ export const Route = createRootRoute({
 	notFoundComponent: () => (
 		<div className="flex items-center justify-center min-h-screen">
 			<div className="text-center">
-				<h1 className="text-4xl font-bold text-gray-800 mb-4">404</h1>
-				<p className="text-lg text-gray-600 mb-8">Page not found</p>
+				<h1 className="text-4xl font-bold text-foreground mb-4">404</h1>
+				<p className="text-lg text-muted-foreground mb-8">Page not found</p>
 				<a
 					href="/"
-					className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+					className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
 				>
 					Go Home
 				</a>
@@ -89,7 +89,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					<head>
 						<HeadContent />
 					</head>
-					<body className="min-h-screen bg-slate-900 text-slate-100">
+					<body className="min-h-screen bg-background text-foreground">
 						<ConditionalLayout>{children}</ConditionalLayout>
 						<Toaster />
 						<TanStackDevtools

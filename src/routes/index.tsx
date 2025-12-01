@@ -73,7 +73,7 @@ function App() {
 	];
 
 	return (
-		<div className="min-h-screen">
+		<div className="min-h-screen bg-background">
 			<section className="relative py-20 px-6 text-center overflow-hidden">
 				<div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10"></div>
 				<div className="relative max-w-5xl mx-auto">
@@ -83,17 +83,17 @@ function App() {
 							alt="TanStack Logo"
 							className="w-24 h-24 md:w-32 md:h-32"
 						/>
-						<h1 className="text-6xl md:text-7xl font-black text-white [letter-spacing:-0.08em]">
-							<span className="text-gray-300">TANSTACK</span>{" "}
+						<h1 className="text-6xl md:text-7xl font-black text-foreground [letter-spacing:-0.08em]">
+							<span className="text-muted-foreground">TANSTACK</span>{" "}
 							<span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
 								START
 							</span>
 						</h1>
 					</div>
-					<p className="text-2xl md:text-3xl text-gray-300 mb-4 font-light">
+					<p className="text-2xl md:text-3xl text-muted-foreground mb-4 font-light">
 						The framework for next generation AI applications
 					</p>
-					<p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
+					<p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
 						Full-stack framework powered by TanStack Router for React and Solid.
 						Build modern applications with server functions, streaming, and type
 						safety.
@@ -102,10 +102,10 @@ function App() {
 					{/* Authentication-based content */}
 					{isLoading ? (
 						<div className="flex items-center justify-center py-8">
-							<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
+							<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
 						</div>
 					) : isAuthenticated ? (
-						<div className="bg-slate-800/30 backdrop-blur-sm border border-slate-700 rounded-xl p-6 mb-8 max-w-md mx-auto">
+						<div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-6 mb-8 max-w-md mx-auto">
 							<div className="flex items-center gap-4 mb-4">
 								{user?.picture ? (
 									<img
@@ -114,16 +114,16 @@ function App() {
 										className="w-12 h-12 rounded-full"
 									/>
 								) : (
-									<div className="w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center">
+									<div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
 										<User size={24} />
 									</div>
 								)}
 								<div>
-									<h3 className="text-xl font-semibold text-white">
+									<h3 className="text-xl font-semibold text-foreground">
 										Welcome back,{" "}
 										{user?.name || user?.preferred_username || "User"}!
 									</h3>
-									<p className="text-gray-400 text-sm">
+									<p className="text-muted-foreground text-sm">
 										You're signed in and ready to explore
 									</p>
 								</div>
@@ -159,7 +159,7 @@ function App() {
 											variant="link"
 											size="sm"
 											onClick={clearError}
-											className="h-auto p-0 ml-2 text-red-400 hover:text-red-300"
+											className="h-auto p-0 ml-2 text-destructive hover:text-destructive/80"
 										>
 											Dismiss
 										</Button>
@@ -175,9 +175,9 @@ function App() {
 								<LogIn size={16} />
 								{isLoading ? "Signing In..." : "Sign In to Get Started"}
 							</Button>
-							<p className="text-gray-400 text-sm mt-2">
+							<p className="text-muted-foreground text-sm mt-2">
 								Begin your TanStack Start journey by editing{" "}
-								<code className="px-2 py-1 bg-slate-700 rounded text-cyan-400">
+								<code className="px-2 py-1 bg-muted rounded text-primary">
 									/src/routes/index.tsx
 								</code>
 							</p>
@@ -191,14 +191,16 @@ function App() {
 					{features.map((feature) => (
 						<Card
 							key={feature.title}
-							className="bg-slate-800/50 backdrop-blur-sm border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10"
+							className="bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
 						>
 							<CardHeader>
 								<div className="mb-2">{feature.icon}</div>
-								<CardTitle className="text-white">{feature.title}</CardTitle>
+								<CardTitle className="text-foreground">
+									{feature.title}
+								</CardTitle>
 							</CardHeader>
 							<CardContent>
-								<CardDescription className="text-gray-400 leading-relaxed">
+								<CardDescription className="text-muted-foreground leading-relaxed">
 									{feature.description}
 								</CardDescription>
 							</CardContent>
@@ -212,23 +214,23 @@ function App() {
 				<div className="max-w-7xl mx-auto">
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
 						<div>
-							<h3 className="text-lg font-semibold text-white mb-4">
+							<h3 className="text-lg font-semibold text-foreground mb-4">
 								TanStack Start
 							</h3>
-							<p className="text-slate-400 text-sm leading-relaxed">
+							<p className="text-muted-foreground text-sm leading-relaxed">
 								The framework for next generation AI applications. Built with
 								TanStack Router for React and Solid.
 							</p>
 						</div>
 						<div>
-							<h4 className="text-sm font-semibold text-white mb-4">
+							<h4 className="text-sm font-semibold text-foreground mb-4">
 								Resources
 							</h4>
 							<ul className="space-y-2 text-sm">
 								<li>
 									<a
 										href="https://tanstack.com/start"
-										className="text-slate-400 hover:text-cyan-400 transition-colors"
+										className="text-muted-foreground hover:text-primary transition-colors"
 									>
 										Documentation
 									</a>
@@ -236,7 +238,7 @@ function App() {
 								<li>
 									<a
 										href="https://github.com/TanStack/router"
-										className="text-slate-400 hover:text-cyan-400 transition-colors"
+										className="text-muted-foreground hover:text-primary transition-colors"
 									>
 										TanStack Router
 									</a>
@@ -244,7 +246,7 @@ function App() {
 								<li>
 									<a
 										href="https://tanstack.com/query"
-										className="text-slate-400 hover:text-cyan-400 transition-colors"
+										className="text-muted-foreground hover:text-primary transition-colors"
 									>
 										TanStack Query
 									</a>
@@ -252,14 +254,14 @@ function App() {
 							</ul>
 						</div>
 						<div>
-							<h4 className="text-sm font-semibold text-white mb-4">
+							<h4 className="text-sm font-semibold text-foreground mb-4">
 								Community
 							</h4>
 							<ul className="space-y-2 text-sm">
 								<li>
 									<a
 										href="https://discord.gg/tanstack"
-										className="text-slate-400 hover:text-cyan-400 transition-colors"
+										className="text-muted-foreground hover:text-primary transition-colors"
 									>
 										Discord
 									</a>
@@ -267,7 +269,7 @@ function App() {
 								<li>
 									<a
 										href="https://github.com/TanStack/start"
-										className="text-slate-400 hover:text-cyan-400 transition-colors"
+										className="text-muted-foreground hover:text-primary transition-colors"
 									>
 										GitHub
 									</a>
@@ -275,7 +277,7 @@ function App() {
 								<li>
 									<a
 										href="https://twitter.com/tan_stack"
-										className="text-slate-400 hover:text-cyan-400 transition-colors"
+										className="text-muted-foreground hover:text-primary transition-colors"
 									>
 										Twitter
 									</a>
@@ -284,24 +286,21 @@ function App() {
 						</div>
 					</div>
 					<Separator className="mb-8" />
-					<div className="flex flex-col md:flex-row justify-between items-center text-sm text-slate-400">
+					<div className="flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
 						<p>© 2025 TanStack. All rights reserved.</p>
 						<div className="flex gap-6 mt-4 md:mt-0">
 							<a
 								href="#privacy"
-								className="hover:text-cyan-400 transition-colors"
+								className="hover:text-primary transition-colors"
 							>
 								Privacy
 							</a>
-							<a
-								href="#terms"
-								className="hover:text-cyan-400 transition-colors"
-							>
+							<a href="#terms" className="hover:text-primary transition-colors">
 								Terms
 							</a>
 							<a
 								href="#support"
-								className="hover:text-cyan-400 transition-colors"
+								className="hover:text-primary transition-colors"
 							>
 								Support
 							</a>

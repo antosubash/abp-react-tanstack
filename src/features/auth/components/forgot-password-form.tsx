@@ -86,7 +86,7 @@ export function ForgotPasswordForm() {
 			<Card className="w-full max-w-md mx-auto">
 				<CardHeader>
 					<div className="flex justify-center mb-4">
-						<CheckCircle2 className="h-12 w-12 text-green-500" />
+						<CheckCircle2 className="h-12 w-12 text-primary" />
 					</div>
 					<CardTitle className="text-center">
 						{FORGOT_PASSWORD_LABELS.SUCCESS_TITLE}
