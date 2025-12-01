@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { DEMO_CONSTANTS } from "@/features/demo/constants";
 
 import { abpApplicationConfigurationGetOptions } from "@/infrastructure/api/@tanstack/react-query.gen";
+import type { LanguageInfo } from "@/infrastructure/api/types.gen";
 import {
 	Card,
 	CardContent,
@@ -189,7 +191,7 @@ function ClientDemo() {
 														appConfigResponse.features.values,
 													).map(([key, value]) => (
 														<p key={key}>
-															<strong>{key}:</strong> {value || "N/A"}
+															<strong>{key}:</strong> {String(value ?? "N/A")}
 														</p>
 													))}
 												</div>
@@ -214,7 +216,7 @@ function ClientDemo() {
 													</p>
 													<div className="flex flex-wrap gap-2">
 														{appConfigResponse.globalFeatures.enabledFeatures.map(
-															(feature) => (
+															(feature: string) => (
 																<span
 																	key={feature}
 																	className="px-2 py-1 bg-primary/10 text-primary rounded text-xs"
@@ -290,12 +292,12 @@ function ClientDemo() {
 											{DEMO_CONSTANTS.CLIENT.APP_CONFIG.SECTIONS.SETTINGS}
 										</h3>
 										<div className="rounded-md border p-4 bg-muted/50">
-											{appConfigResponse.setting.values && (
+												{appConfigResponse.setting.values && (
 												<div className="space-y-1 text-sm max-h-48 overflow-y-auto">
 													{Object.entries(appConfigResponse.setting.values).map(
 														([key, value]) => (
 															<p key={key}>
-																<strong>{key}:</strong> {value || "N/A"}
+																<strong>{key}:</strong> {String(value ?? "N/A")}
 															</p>
 														),
 													)}
@@ -346,7 +348,7 @@ function ClientDemo() {
 														</p>
 														<div className="flex flex-wrap gap-2">
 															{appConfigResponse.localization.languages.map(
-																(lang) => (
+																(lang: LanguageInfo) => (
 																	<span
 																		key={lang.cultureName}
 																		className="px-2 py-1 bg-secondary rounded text-xs"
