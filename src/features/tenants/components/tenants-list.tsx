@@ -1,13 +1,6 @@
-import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { toast } from "sonner";
-
-import type { TenantDto } from "@/infrastructure/api/types.gen";
-import { Alert, AlertDescription } from "@/shared/components/ui/alert";
-import { TenantForm, type TenantFormData } from "./tenant-form";
-import { TenantConnectionStringModal } from "./tenant-connection-string-modal";
-import { useTenantFormStore } from "../stores/tenant-form-store";
-import { useTenantConnectionStore } from "../stores/tenant-connection-store";
 import {
 	tenantCreateMutation,
 	tenantDeleteMutation,
@@ -15,8 +8,14 @@ import {
 	tenantGetListQueryKey,
 	tenantUpdateMutation,
 } from "@/infrastructure/api/@tanstack/react-query.gen";
-import { TenantsTable } from "./tenants-table";
+import type { TenantDto } from "@/infrastructure/api/types.gen";
+import { Alert, AlertDescription } from "@/shared/components/ui/alert";
+import { useTenantConnectionStore } from "../stores/tenant-connection-store";
+import { useTenantFormStore } from "../stores/tenant-form-store";
+import { TenantConnectionStringModal } from "./tenant-connection-string-modal";
+import { TenantForm, type TenantFormData } from "./tenant-form";
 import { TenantsHeader } from "./tenants-header";
+import { TenantsTable } from "./tenants-table";
 
 export function TenantsList() {
 	const [sorting, setSorting] = useState([]);
@@ -157,39 +156,41 @@ export function TenantsList() {
 	}
 
 	return (
-		<div className="space-y-4">
-			<TenantsHeader
-				totalCount={totalCount}
-				onCreateTenant={handleCreateNewTenant}
-				isCreating={createTenantMutation.isPending}
-			/>
+		<div className="container mx-auto py-6 max-w-5xl">
+			<div className="space-y-4">
+				<TenantsHeader
+					totalCount={totalCount}
+					onCreateTenant={handleCreateNewTenant}
+					isCreating={createTenantMutation.isPending}
+				/>
 
-			<TenantsTable
-				tenants={tenants}
-				isLoading={isLoading}
-				sorting={sorting}
-				pagination={pagination}
-				totalCount={totalCount}
-				onSortingChange={setSorting}
-				onPaginationChange={setPagination}
-				onEditTenant={handleEditTenant}
-				onOpenConnectionString={handleOpenConnectionString}
-				onDeleteTenant={handleDeleteTenant}
-				isDeleting={deleteTenantMutation.isPending}
-			/>
+				<TenantsTable
+					tenants={tenants}
+					isLoading={isLoading}
+					sorting={sorting}
+					pagination={pagination}
+					totalCount={totalCount}
+					onSortingChange={setSorting}
+					onPaginationChange={setPagination}
+					onEditTenant={handleEditTenant}
+					onOpenConnectionString={handleOpenConnectionString}
+					onDeleteTenant={handleDeleteTenant}
+					isDeleting={deleteTenantMutation.isPending}
+				/>
 
-			<TenantForm
-				key={editingTenant?.id || "create"}
-				tenant={editingTenant || undefined}
-				open={formOpen}
-				onOpenChange={closeForm}
-				onSubmit={editingTenant ? handleUpdateTenant : handleCreateTenant}
-				isLoading={
-					createTenantMutation.isPending || updateTenantMutation.isPending
-				}
-				mode={editingTenant ? "edit" : "create"}
-			/>
-			<TenantConnectionStringModal />
+				<TenantForm
+					key={editingTenant?.id || "create"}
+					tenant={editingTenant || undefined}
+					open={formOpen}
+					onOpenChange={closeForm}
+					onSubmit={editingTenant ? handleUpdateTenant : handleCreateTenant}
+					isLoading={
+						createTenantMutation.isPending || updateTenantMutation.isPending
+					}
+					mode={editingTenant ? "edit" : "create"}
+				/>
+				<TenantConnectionStringModal />
+			</div>
 		</div>
 	);
 }

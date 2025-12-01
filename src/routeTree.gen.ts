@@ -13,16 +13,17 @@ import { Route as UsersRouteImport } from './routes/users'
 import { Route as TenantsRouteImport } from './routes/tenants'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RolesRouteImport } from './routes/roles'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SettingsIndexRouteImport } from './routes/settings.index'
-import { Route as SettingsTimezoneRouteImport } from './routes/settings.timezone'
-import { Route as SettingsEmailRouteImport } from './routes/settings.email'
-import { Route as SettingsCommentsRouteImport } from './routes/settings.comments'
+import { Route as ProfileIndexRouteImport } from './routes/profile.index'
+import { Route as ProfileSecurityRouteImport } from './routes/profile.security'
 import { Route as DemoClientRouteImport } from './routes/demo/client'
+import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthMeRouteImport } from './routes/auth.me'
 import { Route as AuthLogoutRouteImport } from './routes/auth.logout'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as ApiHealthRouteImport } from './routes/api.health'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
@@ -54,6 +55,11 @@ const RolesRoute = RolesRouteImport.update({
   path: '/roles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -64,29 +70,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SettingsIndexRoute = SettingsIndexRouteImport.update({
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => SettingsRoute,
+  getParentRoute: () => ProfileRoute,
 } as any)
-const SettingsTimezoneRoute = SettingsTimezoneRouteImport.update({
-  id: '/timezone',
-  path: '/timezone',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const SettingsEmailRoute = SettingsEmailRouteImport.update({
-  id: '/email',
-  path: '/email',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const SettingsCommentsRoute = SettingsCommentsRouteImport.update({
-  id: '/comments',
-  path: '/comments',
-  getParentRoute: () => SettingsRoute,
+const ProfileSecurityRoute = ProfileSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => ProfileRoute,
 } as any)
 const DemoClientRoute = DemoClientRouteImport.update({
   id: '/demo/client',
   path: '/demo/client',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/auth/reset-password',
+  path: '/auth/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthMeRoute = AuthMeRouteImport.update({
@@ -102,6 +103,11 @@ const AuthLogoutRoute = AuthLogoutRouteImport.update({
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/auth/login',
   path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/auth/forgot-password',
+  path: '/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
@@ -158,20 +164,21 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/roles': typeof RolesRoute
-  '/settings': typeof SettingsRouteWithChildren
+  '/settings': typeof SettingsRoute
   '/tenants': typeof TenantsRoute
   '/users': typeof UsersRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
   '/auth/me': typeof AuthMeRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/demo/client': typeof DemoClientRoute
-  '/settings/comments': typeof SettingsCommentsRoute
-  '/settings/email': typeof SettingsEmailRoute
-  '/settings/timezone': typeof SettingsTimezoneRoute
-  '/settings/': typeof SettingsIndexRoute
+  '/profile/security': typeof ProfileSecurityRoute
+  '/profile/': typeof ProfileIndexRoute
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -185,18 +192,19 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/roles': typeof RolesRoute
+  '/settings': typeof SettingsRoute
   '/tenants': typeof TenantsRoute
   '/users': typeof UsersRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
   '/auth/me': typeof AuthMeRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/demo/client': typeof DemoClientRoute
-  '/settings/comments': typeof SettingsCommentsRoute
-  '/settings/email': typeof SettingsEmailRoute
-  '/settings/timezone': typeof SettingsTimezoneRoute
-  '/settings': typeof SettingsIndexRoute
+  '/profile/security': typeof ProfileSecurityRoute
+  '/profile': typeof ProfileIndexRoute
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -210,20 +218,21 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/roles': typeof RolesRoute
-  '/settings': typeof SettingsRouteWithChildren
+  '/settings': typeof SettingsRoute
   '/tenants': typeof TenantsRoute
   '/users': typeof UsersRoute
   '/api/health': typeof ApiHealthRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/logout': typeof AuthLogoutRoute
   '/auth/me': typeof AuthMeRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/demo/client': typeof DemoClientRoute
-  '/settings/comments': typeof SettingsCommentsRoute
-  '/settings/email': typeof SettingsEmailRoute
-  '/settings/timezone': typeof SettingsTimezoneRoute
-  '/settings/': typeof SettingsIndexRoute
+  '/profile/security': typeof ProfileSecurityRoute
+  '/profile/': typeof ProfileIndexRoute
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -238,20 +247,21 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/profile'
     | '/roles'
     | '/settings'
     | '/tenants'
     | '/users'
     | '/api/health'
     | '/auth/callback'
+    | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/logout'
     | '/auth/me'
+    | '/auth/reset-password'
     | '/demo/client'
-    | '/settings/comments'
-    | '/settings/email'
-    | '/settings/timezone'
-    | '/settings/'
+    | '/profile/security'
+    | '/profile/'
     | '/api/proxy/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -265,18 +275,19 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/roles'
+    | '/settings'
     | '/tenants'
     | '/users'
     | '/api/health'
     | '/auth/callback'
+    | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/logout'
     | '/auth/me'
+    | '/auth/reset-password'
     | '/demo/client'
-    | '/settings/comments'
-    | '/settings/email'
-    | '/settings/timezone'
-    | '/settings'
+    | '/profile/security'
+    | '/profile'
     | '/api/proxy/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -289,20 +300,21 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/dashboard'
+    | '/profile'
     | '/roles'
     | '/settings'
     | '/tenants'
     | '/users'
     | '/api/health'
     | '/auth/callback'
+    | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/logout'
     | '/auth/me'
+    | '/auth/reset-password'
     | '/demo/client'
-    | '/settings/comments'
-    | '/settings/email'
-    | '/settings/timezone'
-    | '/settings/'
+    | '/profile/security'
+    | '/profile/'
     | '/api/proxy/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -316,15 +328,18 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
+  ProfileRoute: typeof ProfileRouteWithChildren
   RolesRoute: typeof RolesRoute
-  SettingsRoute: typeof SettingsRouteWithChildren
+  SettingsRoute: typeof SettingsRoute
   TenantsRoute: typeof TenantsRoute
   UsersRoute: typeof UsersRoute
   ApiHealthRoute: typeof ApiHealthRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthLogoutRoute: typeof AuthLogoutRoute
   AuthMeRoute: typeof AuthMeRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   DemoClientRoute: typeof DemoClientRoute
   ApiProxySplatRoute: typeof ApiProxySplatRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
@@ -366,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RolesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -380,39 +402,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings/': {
-      id: '/settings/'
+    '/profile/': {
+      id: '/profile/'
       path: '/'
-      fullPath: '/settings/'
-      preLoaderRoute: typeof SettingsIndexRouteImport
-      parentRoute: typeof SettingsRoute
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof ProfileRoute
     }
-    '/settings/timezone': {
-      id: '/settings/timezone'
-      path: '/timezone'
-      fullPath: '/settings/timezone'
-      preLoaderRoute: typeof SettingsTimezoneRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/settings/email': {
-      id: '/settings/email'
-      path: '/email'
-      fullPath: '/settings/email'
-      preLoaderRoute: typeof SettingsEmailRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/settings/comments': {
-      id: '/settings/comments'
-      path: '/comments'
-      fullPath: '/settings/comments'
-      preLoaderRoute: typeof SettingsCommentsRouteImport
-      parentRoute: typeof SettingsRoute
+    '/profile/security': {
+      id: '/profile/security'
+      path: '/security'
+      fullPath: '/profile/security'
+      preLoaderRoute: typeof ProfileSecurityRouteImport
+      parentRoute: typeof ProfileRoute
     }
     '/demo/client': {
       id: '/demo/client'
       path: '/demo/client'
       fullPath: '/demo/client'
       preLoaderRoute: typeof DemoClientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/reset-password': {
+      id: '/auth/reset-password'
+      path: '/auth/reset-password'
+      fullPath: '/auth/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/me': {
@@ -434,6 +449,13 @@ declare module '@tanstack/react-router' {
       path: '/auth/login'
       fullPath: '/auth/login'
       preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/auth/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/callback': {
@@ -509,36 +531,34 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface SettingsRouteChildren {
-  SettingsCommentsRoute: typeof SettingsCommentsRoute
-  SettingsEmailRoute: typeof SettingsEmailRoute
-  SettingsTimezoneRoute: typeof SettingsTimezoneRoute
-  SettingsIndexRoute: typeof SettingsIndexRoute
+interface ProfileRouteChildren {
+  ProfileSecurityRoute: typeof ProfileSecurityRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
 }
 
-const SettingsRouteChildren: SettingsRouteChildren = {
-  SettingsCommentsRoute: SettingsCommentsRoute,
-  SettingsEmailRoute: SettingsEmailRoute,
-  SettingsTimezoneRoute: SettingsTimezoneRoute,
-  SettingsIndexRoute: SettingsIndexRoute,
+const ProfileRouteChildren: ProfileRouteChildren = {
+  ProfileSecurityRoute: ProfileSecurityRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
 }
 
-const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
-  SettingsRouteChildren,
-)
+const ProfileRouteWithChildren =
+  ProfileRoute._addFileChildren(ProfileRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
+  ProfileRoute: ProfileRouteWithChildren,
   RolesRoute: RolesRoute,
-  SettingsRoute: SettingsRouteWithChildren,
+  SettingsRoute: SettingsRoute,
   TenantsRoute: TenantsRoute,
   UsersRoute: UsersRoute,
   ApiHealthRoute: ApiHealthRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthLogoutRoute: AuthLogoutRoute,
   AuthMeRoute: AuthMeRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
   DemoClientRoute: DemoClientRoute,
   ApiProxySplatRoute: ApiProxySplatRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,

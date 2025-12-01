@@ -1,9 +1,6 @@
 // Settings Feature Constants
 
 export const SETTINGS_ROUTES = {
-	EMAIL: "/settings/email",
-	TIMEZONE: "/settings/timezone",
-	COMMENTS: "/settings/comments",
 	INDEX: "/settings",
 } as const;
 

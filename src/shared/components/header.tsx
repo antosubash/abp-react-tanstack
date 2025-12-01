@@ -10,9 +10,11 @@ import {
 	SquareFunction,
 	StickyNote,
 	User,
+	UserCircle,
 	X,
 } from "lucide-react";
 import { useState } from "react";
+import { PROFILE_ROUTES } from "@/features/profile/constants";
 import { useAuth } from "../hooks/use-auth";
 
 export default function Header() {
@@ -50,7 +52,7 @@ export default function Header() {
 					{isLoading ? (
 						<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-cyan-400"></div>
 					) : isAuthenticated ? (
-						<div className="flex items-center gap-4">
+						<div className="flex items-center gap-2">
 							<div className="flex items-center gap-2">
 								{user?.picture ? (
 									<img
@@ -67,6 +69,16 @@ export default function Header() {
 									{user?.name || user?.preferred_username || "User"}
 								</span>
 							</div>
+							<Link to={PROFILE_ROUTES.INDEX}>
+								<button
+									type="button"
+									className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors text-sm font-medium"
+									title="Profile"
+								>
+									<UserCircle size={16} />
+									<span className="hidden sm:inline">Profile</span>
+								</button>
+							</Link>
 							<button
 								type="button"
 								onClick={logout}

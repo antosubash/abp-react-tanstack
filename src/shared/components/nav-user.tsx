@@ -1,4 +1,7 @@
 import { IconDotsVertical, IconLogout, IconUser } from "@tabler/icons-react";
+import { Link } from "@tanstack/react-router";
+import { useAuth } from "@/features/auth/hooks/use-auth";
+import { PROFILE_ROUTES } from "@/features/profile/constants";
 import {
 	Avatar,
 	AvatarFallback,
@@ -23,7 +26,6 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/shared/components/ui/tooltip";
-import { useAuth } from "@/features/auth/hooks/use-auth";
 
 export function NavUser({
 	user,
@@ -132,6 +134,12 @@ export function NavUser({
 							</div>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
+						<Link to={PROFILE_ROUTES.INDEX}>
+							<DropdownMenuItem>
+								<IconUser />
+								Profile
+							</DropdownMenuItem>
+						</Link>
 						<DropdownMenuItem onClick={logout}>
 							<IconLogout />
 							Log out

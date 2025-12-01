@@ -70,20 +70,6 @@ const data = {
 			title: "Settings",
 			url: "/settings",
 			icon: IconSettings,
-			items: [
-				{
-					title: "Email",
-					url: "/settings/email",
-				},
-				{
-					title: "Timezone",
-					url: "/settings/timezone",
-				},
-				{
-					title: "Comments",
-					url: "/settings/comments",
-				},
-			],
 		},
 	],
 	demos: [

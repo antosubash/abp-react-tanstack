@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -21,12 +21,12 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
+import { usePermissionModalStore } from "../stores/permission-store";
+import { useRoleFormStore } from "../stores/role-form-store";
 import { RoleForm, type RoleFormData } from "./role-form";
 import { RolePermissionsModal } from "./role-permissions-modal";
-import { useRoleFormStore } from "../stores/role-form-store";
-import { usePermissionModalStore } from "../stores/permission-store";
-import { RolesTable } from "./roles-table";
 import { RolesHeader } from "./roles-header";
+import { RolesTable } from "./roles-table";
 
 export function RolesList() {
 	const [sorting, setSorting] = useState([]);
@@ -180,62 +180,66 @@ export function RolesList() {
 	}
 
 	return (
-		<div className="space-y-4">
-			<RolesHeader
-				totalCount={totalCount}
-				onCreateRole={handleCreateNewRole}
-				isCreating={createRoleMutation.isPending}
-			/>
+		<div className="container mx-auto py-6 max-w-5xl">
+			<div className="space-y-4">
+				<RolesHeader
+					totalCount={totalCount}
+					onCreateRole={handleCreateNewRole}
+					isCreating={createRoleMutation.isPending}
+				/>
 
-			<RolesTable
-				roles={roles}
-				isLoading={isLoading}
-				sorting={sorting}
-				pagination={pagination}
-				totalCount={totalCount}
-				onSortingChange={setSorting}
-				onPaginationChange={setPagination}
-				onEditRole={handleEditRole}
-				onOpenPermissions={handleOpenPermissions}
-				onDeleteRole={handleOpenDeleteDialog}
-				isDeleting={deleteRoleMutation.isPending}
-			/>
+				<RolesTable
+					roles={roles}
+					isLoading={isLoading}
+					sorting={sorting}
+					pagination={pagination}
+					totalCount={totalCount}
+					onSortingChange={setSorting}
+					onPaginationChange={setPagination}
+					onEditRole={handleEditRole}
+					onOpenPermissions={handleOpenPermissions}
+					onDeleteRole={handleOpenDeleteDialog}
+					isDeleting={deleteRoleMutation.isPending}
+				/>
 
-			<RoleForm
-				key={editingRole?.id || "create"}
-				role={editingRole}
-				open={formOpen}
-				onOpenChange={closeForm}
-				onSubmit={editingRole ? handleUpdateRole : handleCreateRole}
-				isLoading={createRoleMutation.isPending || updateRoleMutation.isPending}
-				mode={editingRole ? "edit" : "create"}
-			/>
-			<RolePermissionsModal />
+				<RoleForm
+					key={editingRole?.id || "create"}
+					role={editingRole}
+					open={formOpen}
+					onOpenChange={closeForm}
+					onSubmit={editingRole ? handleUpdateRole : handleCreateRole}
+					isLoading={
+						createRoleMutation.isPending || updateRoleMutation.isPending
+					}
+					mode={editingRole ? "edit" : "create"}
+				/>
+				<RolePermissionsModal />
 
-			<AlertDialog
-				open={!!deleteRoleId}
-				onOpenChange={() => setDeleteRoleId(null)}
-			>
-				<AlertDialogContent>
-					<AlertDialogHeader>
-						<AlertDialogTitle>Delete Role</AlertDialogTitle>
-						<AlertDialogDescription>
-							Are you sure you want to delete this role? This action cannot be
-							undone.
-						</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction
-							data-testid="confirm-delete-btn"
-							onClick={handleConfirmDelete}
-							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-						>
-							Delete
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
+				<AlertDialog
+					open={!!deleteRoleId}
+					onOpenChange={() => setDeleteRoleId(null)}
+				>
+					<AlertDialogContent>
+						<AlertDialogHeader>
+							<AlertDialogTitle>Delete Role</AlertDialogTitle>
+							<AlertDialogDescription>
+								Are you sure you want to delete this role? This action cannot be
+								undone.
+							</AlertDialogDescription>
+						</AlertDialogHeader>
+						<AlertDialogFooter>
+							<AlertDialogCancel>Cancel</AlertDialogCancel>
+							<AlertDialogAction
+								data-testid="confirm-delete-btn"
+								onClick={handleConfirmDelete}
+								className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+							>
+								Delete
+							</AlertDialogAction>
+						</AlertDialogFooter>
+					</AlertDialogContent>
+				</AlertDialog>
+			</div>
 		</div>
 	);
 }

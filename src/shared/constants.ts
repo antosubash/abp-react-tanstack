@@ -24,4 +24,6 @@ export const API_CONSTANTS = {
 export const QUERY_KEYS = {
 	// Authentication
 	AUTH_ME: ["auth", "me"] as const,
+	// Profile
+	PROFILE: ["profile", "my-profile"] as const,
 } as const;
