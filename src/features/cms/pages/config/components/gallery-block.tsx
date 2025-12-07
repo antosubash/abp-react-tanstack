@@ -281,8 +281,6 @@ export const GalleryBlock: ComponentConfig<GalleryBlockProps> = {
 						</Dialog.Content>
 					</Dialog.Portal>
 				</Dialog.Root>
-
-
 			</div>
 		);
 	},
