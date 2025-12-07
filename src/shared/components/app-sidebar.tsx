@@ -66,18 +66,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</SidebarGroupLabel>
 							<SidebarGroupContent>
 								<SidebarMenu>
-									{NAV_ITEMS.identityManagement.map((item) => (
-										<SidebarMenuItem key={item.title}>
-											<SidebarMenuButton asChild tooltip={item.title}>
-												<Link to={item.url}>
-													<item.icon className="size-4 shrink-0" />
-													<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
-														{item.title}
-													</span>
-												</Link>
-											</SidebarMenuButton>
-										</SidebarMenuItem>
-									))}
+									{NAV_ITEMS.identityManagement.map((item) => {
+										const IconComponent = item.icon;
+										return (
+											<SidebarMenuItem key={item.title}>
+												<SidebarMenuButton asChild tooltip={item.title}>
+													<Link to={item.url}>
+														{IconComponent ? (
+															<IconComponent className="size-4 shrink-0" />
+														) : null}
+														<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
+															{item.title}
+														</span>
+													</Link>
+												</SidebarMenuButton>
+											</SidebarMenuItem>
+										);
+									})}
 								</SidebarMenu>
 							</SidebarGroupContent>
 						</SidebarGroup>
@@ -88,18 +93,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</SidebarGroupLabel>
 							<SidebarGroupContent>
 								<SidebarMenu>
-									{NAV_ITEMS.cms.map((item) => (
-										<SidebarMenuItem key={item.title}>
-											<SidebarMenuButton asChild tooltip={item.title}>
-												<Link to={item.url}>
-													<item.icon className="size-4 shrink-0" />
-													<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
-														{item.title}
-													</span>
-												</Link>
-											</SidebarMenuButton>
-										</SidebarMenuItem>
-									))}
+									{NAV_ITEMS.cms.map((item) => {
+										const IconComponent = item.icon;
+										return (
+											<SidebarMenuItem key={item.title}>
+												<SidebarMenuButton asChild tooltip={item.title}>
+													<Link to={item.url}>
+														{IconComponent ? (
+															<IconComponent className="size-4 shrink-0" />
+														) : null}
+														<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
+															{item.title}
+														</span>
+													</Link>
+												</SidebarMenuButton>
+											</SidebarMenuItem>
+										);
+									})}
 								</SidebarMenu>
 							</SidebarGroupContent>
 						</SidebarGroup>
@@ -112,18 +122,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{NAV_ITEMS.system.map((item) => (
-								<SidebarMenuItem key={item.title}>
-									<SidebarMenuButton asChild tooltip={item.title}>
-										<Link to={item.url}>
-											<item.icon className="size-4 shrink-0" />
-											<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
-												{item.title}
-											</span>
-										</Link>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-							))}
+							{NAV_ITEMS.system.map((item) => {
+								const IconComponent = item.icon;
+								return (
+									<SidebarMenuItem key={item.title}>
+										<SidebarMenuButton asChild tooltip={item.title}>
+											<Link to={item.url}>
+												{IconComponent ? (
+													<IconComponent className="size-4 shrink-0" />
+												) : null}
+												<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
+													{item.title}
+												</span>
+											</Link>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								);
+							})}
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>
@@ -134,62 +149,69 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{NAV_ITEMS.demos.map((item) => (
-								<Collapsible key={item.title} asChild defaultOpen={false}>
-									<SidebarMenuItem>
-										{item.items ? (
-											<>
-												<div className="relative flex items-center group/nav-item">
-													<SidebarMenuButton
-														asChild
-														tooltip={item.title}
-														className="flex-1"
-													>
-														<Link to={item.url}>
-															<item.icon className="size-4 shrink-0" />
-															<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
-																{item.title}
-															</span>
-														</Link>
-													</SidebarMenuButton>
-													<CollapsibleTrigger asChild>
-														<button
-															type="button"
-															className="absolute right-2 p-1 hover:bg-sidebar-accent rounded-sm group-data-[collapsible=icon]:hidden"
+							{NAV_ITEMS.demos.map((item) => {
+								const IconComponent = item.icon;
+								return (
+									<Collapsible key={item.title} asChild defaultOpen={false}>
+										<SidebarMenuItem>
+											{item.items ? (
+												<>
+													<div className="relative flex items-center group/nav-item">
+														<SidebarMenuButton
+															asChild
+															tooltip={item.title}
+															className="flex-1"
 														>
-															<ChevronRight className="size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 shrink-0" />
-														</button>
-													</CollapsibleTrigger>
-												</div>
-												{!isCollapsed && (
-													<CollapsibleContent>
-														<SidebarMenuSub>
-															{item.items.map((subItem) => (
-																<SidebarMenuSubItem key={subItem.title}>
-																	<SidebarMenuSubTrigger asChild>
-																		<Link to={subItem.url}>
-																			<span>{subItem.title}</span>
-																		</Link>
-																	</SidebarMenuSubTrigger>
-																</SidebarMenuSubItem>
-															))}
-														</SidebarMenuSub>
-													</CollapsibleContent>
-												)}
-											</>
-										) : (
-											<SidebarMenuButton asChild tooltip={item.title}>
-												<Link to={item.url}>
-													<item.icon className="size-4 shrink-0" />
-													<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
-														{item.title}
-													</span>
-												</Link>
-											</SidebarMenuButton>
-										)}
-									</SidebarMenuItem>
-								</Collapsible>
-							))}
+															<Link to={item.url}>
+																{IconComponent ? (
+																	<IconComponent className="size-4 shrink-0" />
+																) : null}
+																<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
+																	{item.title}
+																</span>
+															</Link>
+														</SidebarMenuButton>
+														<CollapsibleTrigger asChild>
+															<button
+																type="button"
+																className="absolute right-2 p-1 hover:bg-sidebar-accent rounded-sm group-data-[collapsible=icon]:hidden"
+															>
+																<ChevronRight className="size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 shrink-0" />
+															</button>
+														</CollapsibleTrigger>
+													</div>
+													{!isCollapsed && (
+														<CollapsibleContent>
+															<SidebarMenuSub>
+																{item.items.map((subItem) => (
+																	<SidebarMenuSubItem key={subItem.title}>
+																		<SidebarMenuSubTrigger asChild>
+																			<Link to={subItem.url}>
+																				<span>{subItem.title}</span>
+																			</Link>
+																		</SidebarMenuSubTrigger>
+																	</SidebarMenuSubItem>
+																))}
+															</SidebarMenuSub>
+														</CollapsibleContent>
+													)}
+												</>
+											) : (
+												<SidebarMenuButton asChild tooltip={item.title}>
+													<Link to={item.url}>
+														{IconComponent ? (
+															<IconComponent className="size-4 shrink-0" />
+														) : null}
+														<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
+															{item.title}
+														</span>
+													</Link>
+												</SidebarMenuButton>
+											)}
+										</SidebarMenuItem>
+									</Collapsible>
+								);
+							})}
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>

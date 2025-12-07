@@ -1,7 +1,7 @@
 import type { PermissionGrantInfoDto } from "@/infrastructure/api/types.gen";
 
 // Define a simple interface for the permission group
-interface PermissionGroup {
+export interface PermissionGroup {
 	name: string;
 	displayName?: string;
 	permissions?: PermissionGrantInfoDto[];

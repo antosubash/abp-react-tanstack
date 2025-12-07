@@ -32,6 +32,15 @@ export const SETTINGS_LABELS = {
 		REQUIRE_APPROVAL: "Require Comment Approval",
 		SAVE: "Save Settings",
 	},
+	FEATURES: {
+		TITLE: "Feature Management",
+		DESCRIPTION: "Configure host-level feature flags",
+		PROVIDER_NAME: "Provider Name",
+		PROVIDER_KEY: "Provider Key",
+		SAVE: "Save Changes",
+		SAVING: "Saving...",
+		RESET: "Reset",
+	},
 	TEST_EMAIL_DIALOG: {
 		TITLE: "Send Test Email",
 		DESCRIPTION: "Send a test email to verify SMTP configuration",

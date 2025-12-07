@@ -1,7 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Clock, Mail, MessageSquare } from "lucide-react";
+import {
+	Clock,
+	Mail,
+	MessageSquare,
+	Settings as SettingsIcon,
+} from "lucide-react";
 import { CommentSettingsForm } from "@/features/settings/components/comment-settings-form";
 import { EmailSettingsForm } from "@/features/settings/components/email-settings-form";
+import { FeatureSettingsPanel } from "@/features/settings/components/feature-settings-panel";
 import { TimezoneSettingsForm } from "@/features/settings/components/timezone-settings-form";
 import { SETTINGS_LABELS } from "@/features/settings/constants";
 import { PageHeader } from "@/shared/components/page-header";
@@ -21,6 +27,7 @@ const SETTINGS_TAB_VALUE = {
 	EMAIL: "email",
 	TIMEZONE: "timezone",
 	COMMENTS: "comments",
+	FEATURES: "features",
 } as const;
 
 function SettingsPage() {
@@ -32,7 +39,7 @@ function SettingsPage() {
 			/>
 
 			<Tabs defaultValue={SETTINGS_TAB_VALUE.EMAIL} className="w-full">
-				<TabsList className="grid w-full grid-cols-3 mb-6">
+				<TabsList className="grid w-full grid-cols-4 mb-6">
 					<TabsTrigger
 						value={SETTINGS_TAB_VALUE.EMAIL}
 						className="flex items-center gap-2"
@@ -62,6 +69,16 @@ function SettingsPage() {
 							{SETTINGS_LABELS.COMMENTS.TITLE}
 						</span>
 						<span className="sm:hidden">Comments</span>
+					</TabsTrigger>
+					<TabsTrigger
+						value={SETTINGS_TAB_VALUE.FEATURES}
+						className="flex items-center gap-2"
+					>
+						<SettingsIcon className="h-4 w-4" />
+						<span className="hidden sm:inline">
+							{SETTINGS_LABELS.FEATURES.TITLE}
+						</span>
+						<span className="sm:hidden">Features</span>
 					</TabsTrigger>
 				</TabsList>
 
@@ -121,6 +138,25 @@ function SettingsPage() {
 						</div>
 					</div>
 					<CommentSettingsForm />
+				</TabsContent>
+
+				<TabsContent value={SETTINGS_TAB_VALUE.FEATURES} className="mt-6">
+					<div className="mb-6">
+						<div className="flex items-center gap-3 mb-4">
+							<div className="p-3 rounded-lg bg-muted">
+								<SettingsIcon className="h-8 w-8" />
+							</div>
+							<div>
+								<h2 className="text-2xl font-bold tracking-tight">
+									{SETTINGS_LABELS.FEATURES.TITLE}
+								</h2>
+								<p className="text-muted-foreground mt-1">
+									{SETTINGS_LABELS.FEATURES.DESCRIPTION}
+								</p>
+							</div>
+						</div>
+					</div>
+					<FeatureSettingsPanel />
 				</TabsContent>
 			</Tabs>
 		</PageLayout>
