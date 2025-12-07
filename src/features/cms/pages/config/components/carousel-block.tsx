@@ -1,4 +1,5 @@
 import type { ComponentConfig } from "@measured/puck";
+import { createCheckboxField } from "@/shared/components/puck-utils";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -63,24 +64,18 @@ export const CarouselBlock: ComponentConfig<CarouselBlockProps> = {
 			getItemSummary: (item) => item.title || "Slide",
 			label: "Slides",
 		},
-		// biome-ignore lint/suspicious/noExplicitAny: Puck type compatibility
-		autoPlay: { type: "checkbox" as any, label: "Auto Play" },
+		autoPlay: createCheckboxField("Auto Play"),
 		autoPlayInterval: { type: "number", label: "Auto Play Interval (ms)" },
-		// biome-ignore lint/suspicious/noExplicitAny: Puck type compatibility
-		showArrows: { type: "checkbox" as any, label: "Show Arrows" },
-		// biome-ignore lint/suspicious/noExplicitAny: Puck type compatibility
-		showDots: { type: "checkbox" as any, label: "Show Dots" },
-		// biome-ignore lint/suspicious/noExplicitAny: Puck type compatibility
-		loop: { type: "checkbox" as any, label: "Loop" },
-		// biome-ignore lint/suspicious/noExplicitAny: Puck type compatibility
-		pauseOnHover: { type: "checkbox" as any, label: "Pause on Hover" },
+		showArrows: createCheckboxField("Show Arrows"),
+		showDots: createCheckboxField("Show Dots"),
+		loop: createCheckboxField("Loop"),
+		pauseOnHover: createCheckboxField("Pause on Hover"),
 		height: { type: "text", label: "Height" },
 		width: { type: "text", label: "Width" },
 		maxWidth: { type: "text", label: "Max Width" },
 		padding: { type: "text", label: "Padding" },
 		borderRadius: { type: "text", label: "Border Radius" },
-		// biome-ignore lint/suspicious/noExplicitAny: Puck type compatibility
-		shadow: { type: "checkbox" as any, label: "Shadow" },
+		shadow: createCheckboxField("Shadow"),
 		arrowColor: { type: "text", label: "Arrow Color" },
 		arrowBackgroundColor: { type: "text", label: "Arrow Background Color" },
 		dotColor: { type: "text", label: "Dot Color" },

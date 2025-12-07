@@ -1,5 +1,5 @@
 import type { ComponentConfig } from "@measured/puck";
-import { createCheckboxField } from "@/shared/utils/puck";
+import { createCheckboxField } from "@/shared/components/puck-utils";
 
 export type WelcomeBlockProps = {
 	title: string;

@@ -120,7 +120,6 @@ export function PageForm({
 	// Update form when page changes
 	useEffect(() => {
 		if (page && mode === "edit") {
-			console.log("page", page);
 			// Parse and validate content structure
 			let content = page.content || "";
 			if (!content || content.trim() === "") {
@@ -132,7 +131,6 @@ export function PageForm({
 				// Parse and validate JSON structure
 				try {
 					const parsed = JSON.parse(content);
-					console.log("parsed", parsed);
 					// Validate it has the correct Puck data structure
 					if (
 						parsed &&
@@ -142,10 +140,8 @@ export function PageForm({
 						"root" in parsed &&
 						typeof parsed.root === "object"
 					) {
-						console.log("parsed is valid");
 						// Re-stringify to ensure proper formatting
 						content = JSON.stringify(parsed);
-						console.log("content", content);
 					} else {
 						// Invalid structure, use default
 						content = JSON.stringify({
