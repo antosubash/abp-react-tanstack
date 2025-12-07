@@ -1,3 +1,4 @@
+import { createCheckboxField } from "@/shared/utils/puck";
 import type { ComponentConfig } from "@measured/puck";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
@@ -64,8 +65,7 @@ export const GalleryBlock: ComponentConfig<GalleryBlockProps> = {
 		gap: { type: "text", label: "Gap" },
 		padding: { type: "text", label: "Padding" },
 		borderRadius: { type: "text", label: "Border Radius" },
-		// biome-ignore lint/suspicious/noExplicitAny: Puck type compatibility
-		shadow: { type: "checkbox" as any, label: "Shadow" },
+		shadow: createCheckboxField("Shadow"),
 		hoverEffect: {
 			type: "select",
 			options: [
@@ -75,8 +75,7 @@ export const GalleryBlock: ComponentConfig<GalleryBlockProps> = {
 			],
 			label: "Hover Effect",
 		},
-		// biome-ignore lint/suspicious/noExplicitAny: Puck type compatibility
-		lightbox: { type: "checkbox" as any, label: "Enable Lightbox" },
+		lightbox: createCheckboxField("Enable Lightbox"),
 		lightboxTheme: {
 			type: "select",
 			options: [
@@ -85,10 +84,8 @@ export const GalleryBlock: ComponentConfig<GalleryBlockProps> = {
 			],
 			label: "Lightbox Theme",
 		},
-		// biome-ignore lint/suspicious/noExplicitAny: Puck type compatibility
-		showCaptions: { type: "checkbox" as any, label: "Show Captions" },
-		// biome-ignore lint/suspicious/noExplicitAny: Puck type compatibility
-		showThumbnails: { type: "checkbox" as any, label: "Show Thumbnails" },
+		showCaptions: createCheckboxField("Show Captions"),
+		showThumbnails: createCheckboxField("Show Thumbnails"),
 		mobileColumns: {
 			type: "number",
 			label: "Columns (Mobile)",
@@ -101,8 +98,7 @@ export const GalleryBlock: ComponentConfig<GalleryBlockProps> = {
 			min: 1,
 			max: 4,
 		},
-		// biome-ignore lint/suspicious/noExplicitAny: Puck type compatibility
-		lazyLoading: { type: "checkbox" as any, label: "Lazy Loading" },
+		lazyLoading: createCheckboxField("Lazy Loading"),
 		imageQuality: {
 			type: "select",
 			options: [
@@ -182,11 +178,19 @@ export const GalleryBlock: ComponentConfig<GalleryBlockProps> = {
 		};
 
 		return (
-			<div style={{ padding }}>
+			<div
+				style={
+					{
+						padding,
+						"--gallery-cols-desktop": columns,
+						"--gallery-cols-tablet": tabletColumns,
+						"--gallery-cols-mobile": mobileColumns,
+					} as React.CSSProperties
+				}
+			>
 				<div
-					className="grid"
+					className="gallery-grid"
 					style={{
-						gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
 						gap,
 					}}
 				>
@@ -278,23 +282,7 @@ export const GalleryBlock: ComponentConfig<GalleryBlockProps> = {
 					</Dialog.Portal>
 				</Dialog.Root>
 
-				{/* Responsive Styles (inline injection for grid changes) */}
-				<style
-					dangerouslySetInnerHTML={{
-						__html: `
-                    @media (max-width: 1024px) {
-                        .grid[style*="grid-template-columns"] {
-                            grid-template-columns: repeat(${tabletColumns}, minmax(0, 1fr)) !important;
-                        }
-                    }
-                    @media (max-width: 640px) {
-                         .grid[style*="grid-template-columns"] {
-                            grid-template-columns: repeat(${mobileColumns}, minmax(0, 1fr)) !important;
-                        }
-                    }
-                `,
-					}}
-				/>
+
 			</div>
 		);
 	},

@@ -1,4 +1,5 @@
 import type { ComponentConfig } from "@measured/puck";
+import { createCheckboxField } from "@/shared/utils/puck";
 
 export type WelcomeBlockProps = {
 	title: string;
@@ -21,10 +22,7 @@ export const WelcomeBlock: ComponentConfig<WelcomeBlockProps> = {
 			type: "text",
 			label: "Description",
 		},
-		showTips: {
-			type: "checkbox" as any,
-			label: "Show Tips",
-		},
+		showTips: createCheckboxField("Show Tips"),
 		alignment: {
 			type: "select",
 			label: "Alignment",

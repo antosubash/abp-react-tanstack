@@ -1,5 +1,6 @@
 import type { ComponentConfig } from "@measured/puck";
 import { PUCK_COMPONENT_LABELS, PUCK_FIELD_LABELS } from "../../constants";
+import { createCheckboxField } from "@/shared/utils/puck";
 
 export const FormBlock: ComponentConfig = {
 	label: PUCK_COMPONENT_LABELS.FORM,
@@ -33,10 +34,7 @@ export const FormBlock: ComponentConfig = {
 						{ label: PUCK_FIELD_LABELS.TEXTAREA, value: "textarea" },
 					],
 				},
-				required: {
-					type: "checkbox" as any,
-					label: PUCK_FIELD_LABELS.FIELD_REQUIRED,
-				},
+				required: createCheckboxField(PUCK_FIELD_LABELS.FIELD_REQUIRED),
 			},
 			// defaultItem: {
 			// 	name: "field",

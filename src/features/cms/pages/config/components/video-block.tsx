@@ -1,4 +1,5 @@
 import type { ComponentConfig } from "@measured/puck";
+import { createCheckboxField } from "@/shared/utils/puck";
 import { PUCK_COMPONENT_LABELS, PUCK_FIELD_LABELS } from "../../constants";
 
 export const VideoBlock: ComponentConfig = {
@@ -16,14 +17,8 @@ export const VideoBlock: ComponentConfig = {
 			type: "textarea",
 			label: PUCK_FIELD_LABELS.DESCRIPTION,
 		},
-		autoplay: {
-			type: "checkbox" as any,
-			label: PUCK_FIELD_LABELS.AUTOPLAY,
-		},
-		controls: {
-			type: "checkbox" as any,
-			label: PUCK_FIELD_LABELS.CONTROLS,
-		},
+		autoplay: createCheckboxField(PUCK_FIELD_LABELS.AUTOPLAY),
+		controls: createCheckboxField(PUCK_FIELD_LABELS.CONTROLS),
 	},
 	defaultProps: {
 		videoUrl: "",

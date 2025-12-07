@@ -1,3 +1,4 @@
+import { createCheckboxField } from "@/shared/utils/puck";
 import type { ComponentConfig } from "@measured/puck";
 
 export type HeroBlockProps = {
@@ -35,10 +36,7 @@ export const HeroBlock: ComponentConfig<HeroBlockProps> = {
 			type: "text",
 			label: "Text Color",
 		},
-		showButton: {
-			type: "checkbox" as any,
-			label: "Show Button",
-		},
+		showButton: createCheckboxField("Show Button"),
 		buttonText: {
 			type: "text",
 			label: "Button Text",
@@ -74,10 +72,7 @@ export const HeroBlock: ComponentConfig<HeroBlockProps> = {
 				{ label: "Large", value: "large" },
 			],
 		},
-		showGradient: {
-			type: "checkbox" as any,
-			label: "Show Gradient",
-		},
+		showGradient: createCheckboxField("Show Gradient"),
 		gradientDirection: {
 			type: "select",
 			label: "Gradient Direction",
