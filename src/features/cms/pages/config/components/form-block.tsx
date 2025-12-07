@@ -34,16 +34,16 @@ export const FormBlock: ComponentConfig = {
 					],
 				},
 				required: {
-					type: "checkbox",
+					type: "checkbox" as any,
 					label: PUCK_FIELD_LABELS.FIELD_REQUIRED,
 				},
 			},
-			defaultItem: {
-				name: "field",
-				label: "Field Label",
-				type: "text",
-				required: false,
-			},
+			// defaultItem: {
+			// 	name: "field",
+			// 	label: "Field Label",
+			// 	type: "text",
+			// 	required: false,
+			// },
 		},
 		submitButtonText: {
 			type: "text",
@@ -64,33 +64,51 @@ export const FormBlock: ComponentConfig = {
 		return (
 			<div className="bg-card p-6 rounded-lg border my-4">
 				{title && <h3 className="text-xl font-semibold mb-2">{title}</h3>}
-				{description && <p className="text-muted-foreground mb-4">{description}</p>}
+				{description && (
+					<p className="text-muted-foreground mb-4">{description}</p>
+				)}
 				<form className="space-y-4">
-					{fields.map((field, index) => (
-						<div key={index}>
-							<label htmlFor={field.name} className="block text-sm font-medium mb-1">
-								{field.label}
-								{field.required && <span className="text-red-500 ml-1">*</span>}
-							</label>
-							{field.type === "textarea" ? (
-								<textarea
-									id={field.name}
-									name={field.name}
-									required={field.required}
-									rows={4}
-									className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-								/>
-							) : (
-								<input
-									id={field.name}
-									name={field.name}
-									type={field.type}
-									required={field.required}
-									className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-								/>
-							)}
-						</div>
-					))}
+					{fields.map(
+						(
+							field: {
+								name: string;
+								label: string;
+								type: string;
+								required: boolean;
+							},
+							index: number,
+						) => (
+							// biome-ignore lint/suspicious/noArrayIndexKey: Order is stable for form fields
+							<div key={index}>
+								<label
+									htmlFor={field.name}
+									className="block text-sm font-medium mb-1"
+								>
+									{field.label}
+									{field.required && (
+										<span className="text-red-500 ml-1">*</span>
+									)}
+								</label>
+								{field.type === "textarea" ? (
+									<textarea
+										id={field.name}
+										name={field.name}
+										required={field.required}
+										rows={4}
+										className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+									/>
+								) : (
+									<input
+										id={field.name}
+										name={field.name}
+										type={field.type}
+										required={field.required}
+										className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+									/>
+								)}
+							</div>
+						),
+					)}
 					<button
 						type="submit"
 						className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"

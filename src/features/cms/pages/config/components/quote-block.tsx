@@ -33,12 +33,13 @@ export const QuoteBlock: ComponentConfig = {
 		variant: "default",
 	},
 	render: ({ text, author, source, variant }) => {
-		const quoteClass = variant === "large" 
-			? "text-2xl font-light italic my-6" 
-			: variant === "border" 
-				? "border-l-4 border-primary pl-4 italic my-4" 
-				: "italic my-4";
-		
+		const quoteClass =
+			variant === "large"
+				? "text-2xl font-light italic my-6"
+				: variant === "border"
+					? "border-l-4 border-primary pl-4 italic my-4"
+					: "italic my-4";
+
 		return (
 			<blockquote className={quoteClass}>
 				<p>"{text}"</p>

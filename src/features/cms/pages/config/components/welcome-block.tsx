@@ -22,7 +22,7 @@ export const WelcomeBlock: ComponentConfig<WelcomeBlockProps> = {
 			label: "Description",
 		},
 		showTips: {
-			type: "checkbox",
+			type: "checkbox" as any,
 			label: "Show Tips",
 		},
 		alignment: {
@@ -51,9 +51,23 @@ export const WelcomeBlock: ComponentConfig<WelcomeBlockProps> = {
 			label: "Border Radius",
 		},
 	},
-	render: ({ title, description, showTips, alignment, backgroundColor, textColor, padding, borderRadius }) => {
-		const alignmentClass = alignment === "left" ? "text-left" : alignment === "right" ? "text-right" : "text-center";
-		
+	render: ({
+		title,
+		description,
+		showTips,
+		alignment,
+		backgroundColor,
+		textColor,
+		padding,
+		borderRadius,
+	}) => {
+		const alignmentClass =
+			alignment === "left"
+				? "text-left"
+				: alignment === "right"
+					? "text-right"
+					: "text-center";
+
 		return (
 			<div
 				style={{
@@ -81,7 +95,8 @@ export const WelcomeBlock: ComponentConfig<WelcomeBlockProps> = {
 	},
 	defaultProps: {
 		title: "Welcome to Your New Page",
-		description: "Start building your page by adding components from the sidebar.",
+		description:
+			"Start building your page by adding components from the sidebar.",
 		showTips: true,
 		alignment: "center",
 		backgroundColor: "#f8fafc",

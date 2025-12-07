@@ -33,13 +33,12 @@ export const GridBlock: ComponentConfig = {
 	},
 	render: ({ columns, gap, children }) => {
 		// Use the mapping to get the appropriate class
-		const gridClass = columnClasses[columns as keyof typeof columnClasses] || columnClasses["2"];
-		
+		const gridClass =
+			columnClasses[columns as keyof typeof columnClasses] ||
+			columnClasses["2"];
+
 		return (
-			<div 
-				className={gridClass}
-				style={{ gap: `${gap}px` }}
-			>
+			<div className={gridClass} style={{ gap: `${gap}px` }}>
 				{children}
 			</div>
 		);

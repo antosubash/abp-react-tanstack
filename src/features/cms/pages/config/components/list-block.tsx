@@ -21,9 +21,9 @@ export const ListBlock: ComponentConfig = {
 					label: PUCK_FIELD_LABELS.TEXT,
 				},
 			},
-			defaultItem: {
-				text: "List item",
-			},
+			// defaultItem: {
+			// 	text: "List item",
+			// },
 		},
 		variant: {
 			type: "select",
@@ -45,25 +45,28 @@ export const ListBlock: ComponentConfig = {
 		variant: "default",
 	},
 	render: ({ listType, items, variant }) => {
-		const listClass = variant === "bulleted" 
-			? "list-disc pl-5 space-y-1" 
-			: variant === "numbered" 
-				? "list-decimal pl-5 space-y-1" 
-				: "list-none pl-5 space-y-1";
-		
+		const listClass =
+			variant === "bulleted"
+				? "list-disc pl-5 space-y-1"
+				: variant === "numbered"
+					? "list-decimal pl-5 space-y-1"
+					: "list-none pl-5 space-y-1";
+
 		if (listType === "ordered") {
 			return (
 				<ol className={listClass}>
-					{items.map((item, index) => (
+					{items.map((item: { text: string }, index: number) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: List items may not have unique IDs
 						<li key={index}>{item.text}</li>
 					))}
 				</ol>
 			);
 		}
-		
+
 		return (
 			<ul className={listClass}>
-				{items.map((item, index) => (
+				{items.map((item: { text: string }, index: number) => (
+					// biome-ignore lint/suspicious/noArrayIndexKey: List items may not have unique IDs
 					<li key={index}>{item.text}</li>
 				))}
 			</ul>

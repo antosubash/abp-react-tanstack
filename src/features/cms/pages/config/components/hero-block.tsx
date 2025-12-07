@@ -36,7 +36,7 @@ export const HeroBlock: ComponentConfig<HeroBlockProps> = {
 			label: "Text Color",
 		},
 		showButton: {
-			type: "checkbox",
+			type: "checkbox" as any,
 			label: "Show Button",
 		},
 		buttonText: {
@@ -75,7 +75,7 @@ export const HeroBlock: ComponentConfig<HeroBlockProps> = {
 			],
 		},
 		showGradient: {
-			type: "checkbox",
+			type: "checkbox" as any,
 			label: "Show Gradient",
 		},
 		gradientDirection: {
@@ -123,14 +123,30 @@ export const HeroBlock: ComponentConfig<HeroBlockProps> = {
 		showGradient,
 		gradientDirection,
 		animation,
-		preset,
 	}) => {
-		const alignmentClass = alignment === "left" ? "text-left" : alignment === "right" ? "text-right" : "text-center";
-		
-		const subtitleSizeClass = subtitleSize === "small" ? "text-lg" : subtitleSize === "large" ? "text-2xl" : "text-xl";
-		
-		const animationClass = animation === "fade-in" ? "animate-fade-in" : animation === "slide-up" ? "animate-slide-up" : animation === "zoom-in" ? "animate-zoom-in" : "";
-		
+		const alignmentClass =
+			alignment === "left"
+				? "text-left"
+				: alignment === "right"
+					? "text-right"
+					: "text-center";
+
+		const subtitleSizeClass =
+			subtitleSize === "small"
+				? "text-lg"
+				: subtitleSize === "large"
+					? "text-2xl"
+					: "text-xl";
+
+		const animationClass =
+			animation === "fade-in"
+				? "animate-fade-in"
+				: animation === "slide-up"
+					? "animate-slide-up"
+					: animation === "zoom-in"
+						? "animate-zoom-in"
+						: "";
+
 		const getButtonClass = () => {
 			switch (buttonStyle) {
 				case "primary":
@@ -143,30 +159,35 @@ export const HeroBlock: ComponentConfig<HeroBlockProps> = {
 					return "bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md transition-colors";
 			}
 		};
-		
+
 		const backgroundStyle = showGradient
-			? { background: `linear-gradient(${gradientDirection}, ${backgroundColor}, ${backgroundColor}dd)` }
+			? {
+					background: `linear-gradient(${gradientDirection}, ${backgroundColor}, ${backgroundColor}dd)`,
+				}
 			: { backgroundColor };
-		
+
 		return (
 			<div
 				className={`hero-block py-20 px-6 ${alignmentClass} ${animationClass}`}
 				style={backgroundStyle}
 			>
 				<div className="max-w-4xl mx-auto">
-					<h1 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: textColor }}>
+					<h1
+						className="text-4xl md:text-5xl font-bold mb-6"
+						style={{ color: textColor }}
+					>
 						{title}
 					</h1>
 					{subtitle && (
-						<p className={`mb-8 ${subtitleSizeClass}`} style={{ color: textColor }}>
+						<p
+							className={`mb-8 ${subtitleSizeClass}`}
+							style={{ color: textColor }}
+						>
 							{subtitle}
 						</p>
 					)}
 					{showButton && buttonText && (
-						<a
-							href={buttonLink}
-							className={getButtonClass()}
-						>
+						<a href={buttonLink} className={getButtonClass()}>
 							{buttonText}
 						</a>
 					)}

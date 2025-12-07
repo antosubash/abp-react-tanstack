@@ -38,28 +38,26 @@ export const CardBlock: ComponentConfig = {
 		variant: "default",
 	},
 	render: ({ title, description, imageUrl, linkUrl, variant }) => {
-		const cardClass = variant === "outlined" 
-			? "border rounded-lg p-4" 
-			: variant === "elevated" 
-				? "shadow-lg rounded-lg p-4" 
-				: "bg-card rounded-lg p-4 border";
-		
+		const cardClass =
+			variant === "outlined"
+				? "border rounded-lg p-4"
+				: variant === "elevated"
+					? "shadow-lg rounded-lg p-4"
+					: "bg-card rounded-lg p-4 border";
+
 		return (
 			<div className={cardClass}>
 				{imageUrl && (
-					<img 
-						src={imageUrl} 
-						alt={title} 
-						className="w-full h-48 object-cover rounded-md mb-4" 
+					<img
+						src={imageUrl}
+						alt={title}
+						className="w-full h-48 object-cover rounded-md mb-4"
 					/>
 				)}
 				<h3 className="text-lg font-semibold mb-2">{title}</h3>
 				<p className="text-muted-foreground mb-4">{description}</p>
 				{linkUrl && (
-					<a 
-						href={linkUrl} 
-						className="text-primary hover:underline"
-					>
+					<a href={linkUrl} className="text-primary hover:underline">
 						Learn more
 					</a>
 				)}

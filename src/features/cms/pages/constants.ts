@@ -87,7 +87,7 @@ export const PUCK_COMPONENT_LABELS = {
 	TEXT: "Text",
 	BUTTON: "Button",
 	IMAGE: "Image",
-	
+
 	// New components
 	CARD: "Card",
 	LIST: "List",
@@ -107,43 +107,43 @@ export const PUCK_FIELD_LABELS = {
 	TEXT: "Text",
 	URL: "URL",
 	VARIANT: "Variant",
-	
+
 	// Card fields
 	IMAGE_URL: "Image URL",
 	LINK_URL: "Link URL",
-	
+
 	// List fields
 	LIST_TYPE: "List Type",
 	ITEMS: "Items",
 	ORDERED: "Ordered",
 	UNORDERED: "Unordered",
-	
+
 	// Quote fields
 	AUTHOR: "Author",
 	SOURCE: "Source",
-	
+
 	// Video fields
 	VIDEO_URL: "Video URL",
 	AUTOPLAY: "Autoplay",
 	CONTROLS: "Show Controls",
-	
+
 	// Divider fields
 	THICKNESS: "Thickness",
 	COLOR: "Color",
 	SOLID: "Solid",
 	DASHED: "Dashed",
 	DOTTED: "Dotted",
-	
+
 	// Container fields
 	BACKGROUND_COLOR: "Background Color",
 	PADDING: "Padding",
 	MARGIN: "Margin",
 	BORDER_RADIUS: "Border Radius",
-	
+
 	// Grid fields
 	COLUMNS: "Columns",
 	GAP: "Gap",
-	
+
 	// Form fields
 	FIELDS: "Fields",
 	SUBMIT_BUTTON_TEXT: "Submit Button Text",

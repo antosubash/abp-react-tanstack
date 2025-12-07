@@ -13,6 +13,13 @@ import { DividerBlock } from "./components/divider-block";
 import { ContainerBlock } from "./components/container-block";
 import { GridBlock } from "./components/grid-block";
 import { FormBlock } from "./components/form-block";
+import { WelcomeBlock } from "./components/welcome-block";
+import { SpacerBlock } from "./components/spacer-block";
+import { HeroBlock } from "./components/hero-block";
+import { TestimonialBlock } from "./components/testimonial-block";
+import { CarouselBlock } from "./components/carousel-block";
+import { TableBlock } from "./components/table-block";
+import { GalleryBlock } from "./components/gallery-block";
 
 export const puckConfig: Config = {
 	components: {
@@ -21,20 +28,29 @@ export const puckConfig: Config = {
 		TextBlock,
 		ButtonBlock,
 		ImageBlock,
-		
+
 		// Content components
 		CardBlock,
 		ListBlock,
 		QuoteBlock,
-		
+		WelcomeBlock,
+		SpacerBlock,
+		TestimonialBlock,
+		CarouselBlock,
+		TableBlock,
+		GalleryBlock,
+
+		// Map 'Hero' to HeroBlock as per JSON requirements
+		Hero: HeroBlock,
+
 		// Media components
 		VideoBlock,
-		
+
 		// Layout components
 		DividerBlock,
 		ContainerBlock,
 		GridBlock,
-		
+
 		// Form components
 		FormBlock,
 	},

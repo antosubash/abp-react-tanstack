@@ -30,18 +30,19 @@ export const DividerBlock: ComponentConfig = {
 		color: "#e5e7eb",
 	},
 	render: ({ variant, thickness, color }) => {
-		const borderStyle = variant === "dashed" 
-			? "border-dashed" 
-			: variant === "dotted" 
-				? "border-dotted" 
-				: "border-solid";
-		
+		const borderStyle =
+			variant === "dashed"
+				? "border-dashed"
+				: variant === "dotted"
+					? "border-dotted"
+					: "border-solid";
+
 		return (
-			<hr 
+			<hr
 				className={`my-6 ${borderStyle}`}
-				style={{ 
-					borderWidth: `${thickness}px`, 
-					borderColor: color 
+				style={{
+					borderWidth: `${thickness}px`,
+					borderColor: color,
 				}}
 			/>
 		);

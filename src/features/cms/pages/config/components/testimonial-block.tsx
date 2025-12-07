@@ -87,18 +87,26 @@ export const TestimonialBlock: ComponentConfig<TestimonialBlockProps> = {
 		textColor,
 		padding,
 	}) => {
-		const alignmentClass = alignment === "left" ? "text-left" : alignment === "right" ? "text-right" : "text-center";
-		
+		const alignmentClass =
+			alignment === "left"
+				? "text-left"
+				: alignment === "right"
+					? "text-right"
+					: "text-center";
+
 		const renderStars = () => {
 			return Array.from({ length: 5 }, (_, i) => (
 				<Star
+					// biome-ignore lint/suspicious/noArrayIndexKey: Static array of 5 stars
 					key={i}
 					size={16}
-					className={i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}
+					className={
+						i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+					}
 				/>
 			));
 		};
-		
+
 		const getCardClass = () => {
 			switch (style) {
 				case "card":
@@ -109,7 +117,7 @@ export const TestimonialBlock: ComponentConfig<TestimonialBlockProps> = {
 					return "rounded-lg";
 			}
 		};
-		
+
 		return (
 			<div
 				className={`testimonial-block ${alignmentClass} ${getCardClass()}`}
@@ -121,15 +129,13 @@ export const TestimonialBlock: ComponentConfig<TestimonialBlockProps> = {
 			>
 				<div className="flex flex-col space-y-4">
 					{quote && (
-						<blockquote className="text-lg italic">
-							"{quote}"
-						</blockquote>
+						<blockquote className="text-lg italic">"{quote}"</blockquote>
 					)}
-					
+
 					<div className="flex items-center space-x-1 justify-center">
 						{renderStars()}
 					</div>
-					
+
 					<div className="flex items-center space-x-4">
 						{avatar && (
 							<img
@@ -149,7 +155,8 @@ export const TestimonialBlock: ComponentConfig<TestimonialBlockProps> = {
 		);
 	},
 	defaultProps: {
-		quote: "This product has completely transformed our workflow. Highly recommended!",
+		quote:
+			"This product has completely transformed our workflow. Highly recommended!",
 		author: "John Doe",
 		position: "CEO",
 		company: "Tech Corp",
