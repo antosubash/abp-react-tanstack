@@ -15,6 +15,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile.index'
 import { Route as ProfileSecurityRouteImport } from './routes/profile.security'
+import { Route as PageSlugRouteImport } from './routes/page.$slug'
 import { Route as DemoClientRouteImport } from './routes/demo/client'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthMeRouteImport } from './routes/auth/me'
@@ -69,6 +70,11 @@ const ProfileSecurityRoute = ProfileSecurityRouteImport.update({
   id: '/security',
   path: '/security',
   getParentRoute: () => ProfileRoute,
+} as any)
+const PageSlugRoute = PageSlugRouteImport.update({
+  id: '/page/$slug',
+  path: '/page/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DemoClientRoute = DemoClientRouteImport.update({
   id: '/demo/client',
@@ -207,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/auth/me': typeof AuthMeRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/demo/client': typeof DemoClientRoute
+  '/page/$slug': typeof PageSlugRoute
   '/profile/security': typeof ProfileSecurityRoute
   '/profile/': typeof ProfileIndexRoute
   '/admin/cms/comments': typeof AdminCmsCommentsRoute
@@ -238,6 +245,7 @@ export interface FileRoutesByTo {
   '/auth/me': typeof AuthMeRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/demo/client': typeof DemoClientRoute
+  '/page/$slug': typeof PageSlugRoute
   '/profile/security': typeof ProfileSecurityRoute
   '/profile': typeof ProfileIndexRoute
   '/admin/cms/comments': typeof AdminCmsCommentsRoute
@@ -270,6 +278,7 @@ export interface FileRoutesById {
   '/auth/me': typeof AuthMeRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/demo/client': typeof DemoClientRoute
+  '/page/$slug': typeof PageSlugRoute
   '/profile/security': typeof ProfileSecurityRoute
   '/profile/': typeof ProfileIndexRoute
   '/admin/cms/comments': typeof AdminCmsCommentsRoute
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/auth/me'
     | '/auth/reset-password'
     | '/demo/client'
+    | '/page/$slug'
     | '/profile/security'
     | '/profile/'
     | '/admin/cms/comments'
@@ -335,6 +345,7 @@ export interface FileRouteTypes {
     | '/auth/me'
     | '/auth/reset-password'
     | '/demo/client'
+    | '/page/$slug'
     | '/profile/security'
     | '/profile'
     | '/admin/cms/comments'
@@ -366,6 +377,7 @@ export interface FileRouteTypes {
     | '/auth/me'
     | '/auth/reset-password'
     | '/demo/client'
+    | '/page/$slug'
     | '/profile/security'
     | '/profile/'
     | '/admin/cms/comments'
@@ -399,6 +411,7 @@ export interface RootRouteChildren {
   AuthMeRoute: typeof AuthMeRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   DemoClientRoute: typeof DemoClientRoute
+  PageSlugRoute: typeof PageSlugRoute
   AdminCmsCommentsRoute: typeof AdminCmsCommentsRoute
   AdminCmsPagesRoute: typeof AdminCmsPagesRouteWithChildren
   ApiProxySplatRoute: typeof ApiProxySplatRoute
@@ -454,6 +467,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/profile/security'
       preLoaderRoute: typeof ProfileSecurityRouteImport
       parentRoute: typeof ProfileRoute
+    }
+    '/page/$slug': {
+      id: '/page/$slug'
+      path: '/page/$slug'
+      fullPath: '/page/$slug'
+      preLoaderRoute: typeof PageSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/demo/client': {
       id: '/demo/client'
@@ -671,6 +691,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthMeRoute: AuthMeRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   DemoClientRoute: DemoClientRoute,
+  PageSlugRoute: PageSlugRoute,
   AdminCmsCommentsRoute: AdminCmsCommentsRoute,
   AdminCmsPagesRoute: AdminCmsPagesRouteWithChildren,
   ApiProxySplatRoute: ApiProxySplatRoute,

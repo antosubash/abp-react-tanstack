@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { AuthProvider } from "@/features/auth/hooks/use-auth";
+import { PagesLayout } from "@/shared/components/pages-layout";
 import { SidebarLayout } from "@/shared/components/sidebar-layout";
 import { Toaster } from "@/shared/components/ui/sonner";
 
@@ -70,9 +71,15 @@ function ConditionalLayout({ children }: { children: React.ReactNode }) {
 		"/profile",
 	];
 
+	const isPagesRoute =
+		location.pathname === "/page" || location.pathname.startsWith("/page/");
 	const shouldUseSidebar = sidebarRoutes.some((route) =>
 		location.pathname.startsWith(route),
 	);
+
+	if (isPagesRoute) {
+		return <PagesLayout>{children}</PagesLayout>;
+	}
 
 	if (shouldUseSidebar) {
 		return <SidebarLayout>{children}</SidebarLayout>;

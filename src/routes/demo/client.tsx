@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { DEMO_CONSTANTS } from "@/features/demo/constants";
+import { DEMO_CONSTANTS } from "@/infrastructure/constants";
 
 import { abpApplicationConfigurationGetOptions } from "@/infrastructure/api/@tanstack/react-query.gen";
 import type { LanguageInfo } from "@/infrastructure/api/types.gen";

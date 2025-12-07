@@ -1,21 +1,8 @@
-import {
-	IconBuilding,
-	IconCode,
-	IconDashboard,
-	IconFile,
-	IconFunction,
-	IconHome,
-	IconInnerShadowTop,
-	IconMessage,
-	IconNetwork,
-	IconNote,
-	IconSettings,
-	IconShield,
-	IconUsers,
-} from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 
+import { NAV_BRAND, NAV_ITEMS } from "@/shared/constants/navigation";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 import { NavMain } from "@/shared/components/nav-main";
 import { NavUser } from "@/shared/components/nav-user";
 import {
@@ -41,96 +28,12 @@ import {
 	useSidebar,
 } from "@/shared/components/ui/sidebar";
 
-const data = {
-	navMain: [
-		{
-			title: "Home",
-			url: "/",
-			icon: IconHome,
-		},
-		{
-			title: "Dashboard",
-			url: "/dashboard",
-			icon: IconDashboard,
-		},
-	],
-	identityManagement: [
-		{
-			title: "Users",
-			url: "/admin/users",
-			icon: IconUsers,
-		},
-		{
-			title: "Roles",
-			url: "/admin/roles",
-			icon: IconShield,
-		},
-		{
-			title: "Tenants",
-			url: "/admin/tenants",
-			icon: IconBuilding,
-		},
-	],
-	cms: [
-		{
-			title: "Pages",
-			url: "/admin/cms/pages",
-			icon: IconFile,
-		},
-		{
-			title: "Comments",
-			url: "/admin/cms/comments",
-			icon: IconMessage,
-		},
-	],
-	system: [
-		{
-			title: "Settings",
-			url: "/settings",
-			icon: IconSettings,
-		},
-	],
-	demos: [
-		{
-			title: "API Client",
-			url: "/demo/client",
-			icon: IconCode,
-		},
-		{
-			title: "Server Functions",
-			url: "/demo/start/server-funcs",
-			icon: IconFunction,
-		},
-		{
-			title: "API Request",
-			url: "/demo/start/api-request",
-			icon: IconNetwork,
-		},
-		{
-			title: "SSR Demos",
-			url: "/demo/start/ssr",
-			icon: IconNote,
-			items: [
-				{
-					title: "SPA Mode",
-					url: "/demo/start/ssr/spa-mode",
-				},
-				{
-					title: "Full SSR",
-					url: "/demo/start/ssr/full-ssr",
-				},
-				{
-					title: "Data Only",
-					url: "/demo/start/ssr/data-only",
-				},
-			],
-		},
-	],
-};
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+	const { authState } = useAuth();
 	const { state } = useSidebar();
 	const isCollapsed = state === "collapsed";
+	const userRoles = normalizeRoles(authState.user);
+	const isAdmin = userRoles.includes("admin");
 
 	return (
 		<Sidebar {...props}>
@@ -143,9 +46,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							className="data-[slot=sidebar-menu-button]:!p-1.5 group-data-[collapsible=icon]:!justify-center group-data-[collapsible=icon]:!px-2"
 						>
 							<div className="flex items-center gap-2 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center">
-								<IconInnerShadowTop className="!size-5 shrink-0" />
+								<NAV_BRAND.icon className="!size-5 shrink-0" />
 								<span className="text-base font-semibold group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
-									TanStack Start
+									{NAV_BRAND.title}
 								</span>
 							</div>
 						</SidebarMenuButton>
@@ -153,51 +56,55 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				</SidebarMenu>
 			</SidebarHeader>
 			<SidebarContent>
-				<NavMain items={data.navMain} />
+				<NavMain items={NAV_ITEMS.main} />
 
-				<SidebarGroup>
-					<SidebarGroupLabel className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0">
-						Identity Management
-					</SidebarGroupLabel>
-					<SidebarGroupContent>
-						<SidebarMenu>
-							{data.identityManagement.map((item) => (
-								<SidebarMenuItem key={item.title}>
-									<SidebarMenuButton asChild tooltip={item.title}>
-										<Link to={item.url}>
-											<item.icon className="size-4 shrink-0" />
-											<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
-												{item.title}
-											</span>
-										</Link>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-							))}
-						</SidebarMenu>
-					</SidebarGroupContent>
-				</SidebarGroup>
+				{isAdmin && (
+					<>
+						<SidebarGroup>
+							<SidebarGroupLabel className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0">
+								Identity Management
+							</SidebarGroupLabel>
+							<SidebarGroupContent>
+								<SidebarMenu>
+									{NAV_ITEMS.identityManagement.map((item) => (
+										<SidebarMenuItem key={item.title}>
+											<SidebarMenuButton asChild tooltip={item.title}>
+												<Link to={item.url}>
+													<item.icon className="size-4 shrink-0" />
+													<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
+														{item.title}
+													</span>
+												</Link>
+											</SidebarMenuButton>
+										</SidebarMenuItem>
+									))}
+								</SidebarMenu>
+							</SidebarGroupContent>
+						</SidebarGroup>
 
-				<SidebarGroup>
-					<SidebarGroupLabel className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0">
-						CMS
-					</SidebarGroupLabel>
-					<SidebarGroupContent>
-						<SidebarMenu>
-							{data.cms.map((item) => (
-								<SidebarMenuItem key={item.title}>
-									<SidebarMenuButton asChild tooltip={item.title}>
-										<Link to={item.url}>
-											<item.icon className="size-4 shrink-0" />
-											<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
-												{item.title}
-											</span>
-										</Link>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-							))}
-						</SidebarMenu>
-					</SidebarGroupContent>
-				</SidebarGroup>
+						<SidebarGroup>
+							<SidebarGroupLabel className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0">
+								CMS
+							</SidebarGroupLabel>
+							<SidebarGroupContent>
+								<SidebarMenu>
+									{NAV_ITEMS.cms.map((item) => (
+										<SidebarMenuItem key={item.title}>
+											<SidebarMenuButton asChild tooltip={item.title}>
+												<Link to={item.url}>
+													<item.icon className="size-4 shrink-0" />
+													<span className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:w-0">
+														{item.title}
+													</span>
+												</Link>
+											</SidebarMenuButton>
+										</SidebarMenuItem>
+									))}
+								</SidebarMenu>
+							</SidebarGroupContent>
+						</SidebarGroup>
+					</>
+				)}
 
 				<SidebarGroup>
 					<SidebarGroupLabel className="group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0">
@@ -205,7 +112,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{data.system.map((item) => (
+							{NAV_ITEMS.system.map((item) => (
 								<SidebarMenuItem key={item.title}>
 									<SidebarMenuButton asChild tooltip={item.title}>
 										<Link to={item.url}>
@@ -227,7 +134,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{data.demos.map((item) => (
+							{NAV_ITEMS.demos.map((item) => (
 								<Collapsible key={item.title} asChild defaultOpen={false}>
 									<SidebarMenuItem>
 										{item.items ? (
@@ -293,4 +200,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarRail />
 		</Sidebar>
 	);
+}
+
+function normalizeRoles(user: { roles?: string[] } | null): string[] {
+	if (!user) {
+		return [];
+	}
+
+	if (Array.isArray(user.roles)) {
+		return user.roles.map((role) => role.toLowerCase());
+	}
+
+	return [];
 }

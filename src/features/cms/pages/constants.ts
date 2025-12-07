@@ -5,6 +5,8 @@ export const PAGE_QUERY_KEYS = {
 	SLUG_EXISTS: (slug: string) => ["cms", "pages", "slug-exists", slug] as const,
 } as const;
 
+export const PAGE_PUBLIC_BASE_PATH = "/page";
+
 // Form Field Labels
 export const PAGE_FORM_LABELS = {
 	TITLE: "Title",
@@ -54,6 +56,7 @@ export const PAGE_BUTTON_LABELS = {
 	DELETE: "Delete",
 	EDIT: "Edit",
 	SET_HOMEPAGE: "Set as Homepage",
+	VIEW: "View",
 } as const;
 
 // Page Constants

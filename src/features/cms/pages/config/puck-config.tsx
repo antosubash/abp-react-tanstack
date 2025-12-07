@@ -23,36 +23,26 @@ import { GalleryBlock } from "./components/gallery-block";
 
 export const puckConfig: Config = {
 	components: {
-		// Basic components
-		HeadingBlock,
-		TextBlock,
-		ButtonBlock,
-		ImageBlock,
-
-		// Content components
-		CardBlock,
-		ListBlock,
-		QuoteBlock,
-		WelcomeBlock,
-		SpacerBlock,
-		TestimonialBlock,
-		CarouselBlock,
-		TableBlock,
-		GalleryBlock,
-
-		// Map 'Hero' to HeroBlock as per JSON requirements
+		// Register components with short keys to keep serialized JSON stable
+		Heading: HeadingBlock,
+		Text: TextBlock,
+		Button: ButtonBlock,
+		Image: ImageBlock,
+		Card: CardBlock,
+		List: ListBlock,
+		Quote: QuoteBlock,
+		Welcome: WelcomeBlock,
+		Spacer: SpacerBlock,
+		Testimonial: TestimonialBlock,
+		Carousel: CarouselBlock,
+		Table: TableBlock,
+		Gallery: GalleryBlock,
 		Hero: HeroBlock,
-
-		// Media components
-		VideoBlock,
-
-		// Layout components
-		DividerBlock,
-		ContainerBlock,
-		GridBlock,
-
-		// Form components
-		FormBlock,
+		Video: VideoBlock,
+		Divider: DividerBlock,
+		Container: ContainerBlock,
+		Grid: GridBlock,
+		Form: FormBlock,
 	},
 };
 
