@@ -1,6 +1,6 @@
 import { Puck } from "@measured/puck";
 import "@measured/puck/puck.css";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Data } from "@measured/puck";
 import { puckConfig, defaultPuckData } from "../config/puck-config";
 import { PAGE_BUTTON_LABELS } from "../constants";
@@ -80,11 +80,6 @@ export function PuckEditor({ value, onChange, disabled }: PuckEditorProps) {
 		onChangeRef.current(jsonString);
 	};
 
-	// Generate a key based on content to force re-render when data changes
-	const contentKey = useMemo(() => {
-		return JSON.stringify(puckData);
-	}, [puckData]);
-
 	// Update publish button text to "Save" after render
 	useEffect(() => {
 		if (disabled) return;
@@ -120,7 +115,6 @@ export function PuckEditor({ value, onChange, disabled }: PuckEditorProps) {
 				</div>
 			) : (
 				<Puck
-					key={contentKey}
 					config={puckConfig}
 					data={puckData}
 					onChange={(newData) => {
