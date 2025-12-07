@@ -32,6 +32,7 @@ import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
 import { Route as ApiProxySplatRouteImport } from './routes/api.proxy.$'
 import { Route as AdminCmsPagesRouteImport } from './routes/admin/cms.pages'
+import { Route as AdminCmsNavigationRouteImport } from './routes/admin/cms.navigation'
 import { Route as AdminCmsCommentsRouteImport } from './routes/admin/cms.comments'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
 import { Route as AdminCmsPagesIndexRouteImport } from './routes/admin/cms.pages.index'
@@ -156,6 +157,11 @@ const AdminCmsPagesRoute = AdminCmsPagesRouteImport.update({
   path: '/admin/cms/pages',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminCmsNavigationRoute = AdminCmsNavigationRouteImport.update({
+  id: '/admin/cms/navigation',
+  path: '/admin/cms/navigation',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminCmsCommentsRoute = AdminCmsCommentsRouteImport.update({
   id: '/admin/cms/comments',
   path: '/admin/cms/comments',
@@ -217,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/profile/security': typeof ProfileSecurityRoute
   '/profile/': typeof ProfileIndexRoute
   '/admin/cms/comments': typeof AdminCmsCommentsRoute
+  '/admin/cms/navigation': typeof AdminCmsNavigationRoute
   '/admin/cms/pages': typeof AdminCmsPagesRouteWithChildren
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -249,6 +256,7 @@ export interface FileRoutesByTo {
   '/profile/security': typeof ProfileSecurityRoute
   '/profile': typeof ProfileIndexRoute
   '/admin/cms/comments': typeof AdminCmsCommentsRoute
+  '/admin/cms/navigation': typeof AdminCmsNavigationRoute
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -282,6 +290,7 @@ export interface FileRoutesById {
   '/profile/security': typeof ProfileSecurityRoute
   '/profile/': typeof ProfileIndexRoute
   '/admin/cms/comments': typeof AdminCmsCommentsRoute
+  '/admin/cms/navigation': typeof AdminCmsNavigationRoute
   '/admin/cms/pages': typeof AdminCmsPagesRouteWithChildren
   '/api/proxy/$': typeof ApiProxySplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -317,6 +326,7 @@ export interface FileRouteTypes {
     | '/profile/security'
     | '/profile/'
     | '/admin/cms/comments'
+    | '/admin/cms/navigation'
     | '/admin/cms/pages'
     | '/api/proxy/$'
     | '/demo/api/names'
@@ -349,6 +359,7 @@ export interface FileRouteTypes {
     | '/profile/security'
     | '/profile'
     | '/admin/cms/comments'
+    | '/admin/cms/navigation'
     | '/api/proxy/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -381,6 +392,7 @@ export interface FileRouteTypes {
     | '/profile/security'
     | '/profile/'
     | '/admin/cms/comments'
+    | '/admin/cms/navigation'
     | '/admin/cms/pages'
     | '/api/proxy/$'
     | '/demo/api/names'
@@ -413,6 +425,7 @@ export interface RootRouteChildren {
   DemoClientRoute: typeof DemoClientRoute
   PageSlugRoute: typeof PageSlugRoute
   AdminCmsCommentsRoute: typeof AdminCmsCommentsRoute
+  AdminCmsNavigationRoute: typeof AdminCmsNavigationRoute
   AdminCmsPagesRoute: typeof AdminCmsPagesRouteWithChildren
   ApiProxySplatRoute: typeof ApiProxySplatRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
@@ -587,6 +600,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCmsPagesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/cms/navigation': {
+      id: '/admin/cms/navigation'
+      path: '/admin/cms/navigation'
+      fullPath: '/admin/cms/navigation'
+      preLoaderRoute: typeof AdminCmsNavigationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/cms/comments': {
       id: '/admin/cms/comments'
       path: '/admin/cms/comments'
@@ -693,6 +713,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoClientRoute: DemoClientRoute,
   PageSlugRoute: PageSlugRoute,
   AdminCmsCommentsRoute: AdminCmsCommentsRoute,
+  AdminCmsNavigationRoute: AdminCmsNavigationRoute,
   AdminCmsPagesRoute: AdminCmsPagesRouteWithChildren,
   ApiProxySplatRoute: ApiProxySplatRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
