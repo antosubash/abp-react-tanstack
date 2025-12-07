@@ -161,6 +161,7 @@ export const HeroBlock: ComponentConfig<HeroBlockProps> = {
 				}
 			: { backgroundColor };
 
+
 		return (
 			<div
 				className={`hero-block py-20 px-6 ${alignmentClass} ${animationClass}`}
