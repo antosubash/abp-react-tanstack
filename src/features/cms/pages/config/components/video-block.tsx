@@ -1,5 +1,5 @@
 import type { ComponentConfig } from "@measured/puck";
-import { createCheckboxField } from "@/shared/utils/puck";
+import { createCheckboxField } from "@/shared/components/puck-utils";
 import { PUCK_COMPONENT_LABELS, PUCK_FIELD_LABELS } from "../../constants";
 
 export const VideoBlock: ComponentConfig = {

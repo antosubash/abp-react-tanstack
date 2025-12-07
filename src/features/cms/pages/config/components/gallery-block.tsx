@@ -1,4 +1,4 @@
-import { createCheckboxField } from "@/shared/utils/puck";
+import { createCheckboxField } from "@/shared/components/puck-utils";
 import type { ComponentConfig } from "@measured/puck";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
