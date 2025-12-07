@@ -1,4 +1,4 @@
-import { createCheckboxField } from "@/shared/components/puck-utils";
+import { createCheckboxField } from "@/shared/utils/puck";
 import type { ComponentConfig } from "@measured/puck";
 
 export type HeroBlockProps = {
@@ -160,7 +160,6 @@ export const HeroBlock: ComponentConfig<HeroBlockProps> = {
 					background: `linear-gradient(${gradientDirection}, ${backgroundColor}, ${backgroundColor}dd)`,
 				}
 			: { backgroundColor };
-
 
 		return (
 			<div

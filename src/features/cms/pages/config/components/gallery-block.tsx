@@ -1,4 +1,4 @@
-import { createCheckboxField } from "@/shared/components/puck-utils";
+import { createCheckboxField } from "@/shared/utils/puck";
 import type { ComponentConfig } from "@measured/puck";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
@@ -281,6 +281,8 @@ export const GalleryBlock: ComponentConfig<GalleryBlockProps> = {
 						</Dialog.Content>
 					</Dialog.Portal>
 				</Dialog.Root>
+
+
 			</div>
 		);
 	},
