@@ -1,7 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { PageComments } from "@/features/cms/comments/components/page-comments";
-import { ENTITY_TYPES } from "@/features/cms/comments/constants";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { PuckRender } from "@/features/cms/pages/components/puck-render";
 import { pagesPublicFindBySlugOptions } from "@/infrastructure/api/@tanstack/react-query.gen";
 import { PageHeader } from "@/shared/components/page-header";
@@ -16,13 +14,12 @@ const PAGE_COPY = {
 };
 
 export const Route = createFileRoute("/page/$slug")({
-	ssr: false,
 	component: PageComponent,
 });
 
 function PageComponent() {
 	const { slug } = Route.useParams();
-	const { data: page, isLoading } = useQuery(
+	const { data: page, isLoading } = useSuspenseQuery(
 		pagesPublicFindBySlugOptions({ query: { slug } }),
 	);
 
@@ -48,9 +45,6 @@ function PageComponent() {
 	return (
 		<div className="space-y-6">
 			<PuckRender content={pageContent} />
-			{page.id && (
-				<PageComments entityId={page.id} entityType={ENTITY_TYPES.PAGE} />
-			)}
 		</div>
 	);
 }

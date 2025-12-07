@@ -6,7 +6,6 @@ import {
 	IconFunction,
 	IconHome,
 	IconInnerShadowTop,
-	IconListDetails,
 	IconMessage,
 	IconNetwork,
 	IconNote,
@@ -25,7 +24,6 @@ const NAV_LABELS = {
 	TENANTS: "Tenants",
 	PAGES: "Pages",
 	COMMENTS: "Comments",
-	NAVIGATION: "Navigation",
 	SETTINGS: "Settings",
 	PROFILE: "Profile",
 	API_CLIENT: "API Client",
@@ -86,11 +84,6 @@ export const NAV_ITEMS: {
 			title: NAV_LABELS.PAGES,
 			url: "/admin/cms/pages",
 			icon: IconFile,
-		},
-		{
-			title: NAV_LABELS.NAVIGATION,
-			url: "/admin/cms/navigation",
-			icon: IconListDetails,
 		},
 		{
 			title: NAV_LABELS.COMMENTS,
