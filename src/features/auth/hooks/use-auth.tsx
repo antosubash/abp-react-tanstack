@@ -20,6 +20,7 @@ export interface User {
 	given_name?: string;
 	family_name?: string;
 	updated_at?: number;
+	roles?: string[];
 }
 
 export interface AuthState {
@@ -57,11 +58,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		(localStorage.getItem("test-mode") === "true" ||
 			sessionStorage.getItem("test-mode") === "true");
 
-	// Query for user data
-	const { data: userData, isLoading } = useQuery({
+	// Query for user data via session endpoint
+	const {
+		data: userData,
+		isLoading,
+		error,
+	} = useQuery({
 		queryKey: QUERY_KEYS.AUTH_ME,
-		queryFn: async () => {
-			// Return mock data in test mode
+		queryFn: async ({ signal }) => {
 			if (isTestMode) {
 				return {
 					user: {
@@ -74,13 +78,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 						given_name: "Test",
 						family_name: "User",
 						updated_at: Date.now(),
+						roles: ["admin"],
 					},
 					expiresAt: Date.now() + 3600000, // 1 hour from now
 				};
 			}
 
-			const response = await fetch("/auth/me");
+			const response = await fetch("/auth/me", { signal });
 			if (!response.ok) {
+				if (response.status === 401 || response.status === 403) {
+					return null;
+				}
 				throw new Error("Failed to fetch user data");
 			}
 			return response.json();
@@ -89,14 +97,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		staleTime: 5 * 60 * 1000, // 5 minutes
 	});
 
+	const mappedUser = userData?.user || null;
+
 	// Update auth state when user data changes
 	useEffect(() => {
 		setAuthState({
-			user: userData?.user || null,
+			user: mappedUser,
 			isLoading,
-			isAuthenticated: !!userData?.user,
+			isAuthenticated: !!mappedUser,
+			error: error instanceof Error ? error.message : undefined,
 		});
-	}, [userData, isLoading]);
+	}, [mappedUser, isLoading, error]);
 
 	// Login function
 	const login = async () => {
@@ -139,28 +150,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	// Logout function
 	const logout = async () => {
 		try {
-			const response = await fetch("/auth/logout");
-			if (response.redirected) {
-				window.location.href = response.url;
-			} else {
-				// Fallback: clear local state and redirect
-				setAuthState({
-					user: null,
-					isLoading: false,
-					isAuthenticated: false,
-				});
-				queryClient.clear();
-				window.location.href = "/";
-			}
-		} catch (error) {
-			console.error("Logout failed:", error);
-			// Fallback: clear local state and redirect
+			// Clear local state first
 			setAuthState({
 				user: null,
 				isLoading: false,
 				isAuthenticated: false,
 			});
 			queryClient.clear();
+
+			// Navigate to logout endpoint - this will trigger server-side logout
+			// and redirect to OIDC provider's end session endpoint
+			// Using window.location.href ensures the browser follows the redirect properly
+			window.location.href = "/auth/logout";
+		} catch (error) {
+			console.error("Logout failed:", error);
+			// Fallback: redirect to home
 			window.location.href = "/";
 		}
 	};

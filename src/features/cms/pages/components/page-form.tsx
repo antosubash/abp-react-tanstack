@@ -23,6 +23,7 @@ import {
 	PAGE_VALIDATION_MESSAGES,
 } from "../constants";
 import { PuckEditor } from "./puck-editor";
+import { defaultPuckData } from "../config/puck-config";
 
 // Helper function to generate slug from title
 const generateSlug = (title: string): string => {
@@ -120,19 +121,14 @@ export function PageForm({
 	// Update form when page changes
 	useEffect(() => {
 		if (page && mode === "edit") {
-			console.log("page", page);
 			// Parse and validate content structure
 			let content = page.content || "";
 			if (!content || content.trim() === "") {
-				content = JSON.stringify({
-					content: [],
-					root: { props: {} },
-				});
+				content = JSON.stringify(defaultPuckData);
 			} else {
 				// Parse and validate JSON structure
 				try {
 					const parsed = JSON.parse(content);
-					console.log("parsed", parsed);
 					// Validate it has the correct Puck data structure
 					if (
 						parsed &&
@@ -142,23 +138,15 @@ export function PageForm({
 						"root" in parsed &&
 						typeof parsed.root === "object"
 					) {
-						console.log("parsed is valid");
 						// Re-stringify to ensure proper formatting
 						content = JSON.stringify(parsed);
-						console.log("content", content);
 					} else {
 						// Invalid structure, use default
-						content = JSON.stringify({
-							content: [],
-							root: { props: {} },
-						});
+						content = JSON.stringify(defaultPuckData);
 					}
 				} catch {
 					// Invalid JSON, use default
-					content = JSON.stringify({
-						content: [],
-						root: { props: {} },
-					});
+					content = JSON.stringify(defaultPuckData);
 				}
 			}
 			form.reset({
@@ -172,10 +160,7 @@ export function PageForm({
 			setIsSlugManuallyEdited(true);
 		} else if (mode === "create") {
 			// Initialize with default serialized Puck data structure
-			const defaultContent = JSON.stringify({
-				content: [],
-				root: { props: {} },
-			});
+			const defaultContent = JSON.stringify(defaultPuckData);
 			form.reset({
 				title: "",
 				slug: "",
@@ -202,26 +187,17 @@ export function PageForm({
 		let serializedContent = data.content || "";
 		if (!serializedContent || serializedContent === "") {
 			// If content is empty, serialize default empty structure
-			serializedContent = JSON.stringify({
-				content: [],
-				root: { props: {} },
-			});
+			serializedContent = JSON.stringify(defaultPuckData);
 		} else {
 			// Validate that content is valid JSON
 			try {
 				const parsed = JSON.parse(serializedContent);
 				if (!parsed || typeof parsed !== "object") {
-					serializedContent = JSON.stringify({
-						content: [],
-						root: { props: {} },
-					});
+					serializedContent = JSON.stringify(defaultPuckData);
 				}
 			} catch {
 				// If invalid JSON, use default
-				serializedContent = JSON.stringify({
-					content: [],
-					root: { props: {} },
-				});
+				serializedContent = JSON.stringify(defaultPuckData);
 			}
 		}
 
@@ -229,8 +205,18 @@ export function PageForm({
 			...data,
 			content: serializedContent,
 		});
-		form.reset();
-		setIsSlugManuallyEdited(false);
+		if (mode === "create") {
+			const defaultContent = JSON.stringify(defaultPuckData);
+			form.reset({
+				title: "",
+				slug: "",
+				content: defaultContent,
+				layoutName: "",
+				script: "",
+				style: "",
+			});
+			setIsSlugManuallyEdited(false);
+		}
 	};
 
 	return (

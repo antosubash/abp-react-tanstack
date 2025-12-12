@@ -97,8 +97,16 @@ export async function createSession(
 			// Continue with claims only
 		}
 
+		const accessTokenPayload = decodeJwtPayload(accessToken);
+		const roles = mergeRoles(
+			extractRoles(userInfo),
+			extractRoles(accessTokenPayload ?? {}),
+		);
 		const sessionData: SessionData = {
-			user: userInfo as unknown as User,
+			user: {
+				...(userInfo as unknown as User),
+				roles,
+			},
 			accessToken,
 			refreshToken: tokenResponse.refresh_token,
 			idToken: tokenResponse.id_token,
@@ -111,6 +119,75 @@ export async function createSession(
 		console.error("Session creation failed:", error);
 		throw new Error("Failed to create user session");
 	}
+}
+
+function extractRoles(userInfo: Record<string, unknown>): string[] {
+	const roles = new Set<string>();
+
+	const addRole = (value: unknown) => {
+		if (typeof value === "string") {
+			roles.add(value.toLowerCase());
+		} else if (Array.isArray(value)) {
+			value.forEach((v) => {
+				if (typeof v === "string") {
+					roles.add(v.toLowerCase());
+				}
+			});
+		}
+	};
+
+	addRole(userInfo.roles);
+	addRole(userInfo.role);
+	addRole((userInfo as Record<string, unknown>)["cognito:groups"]);
+
+	const realmAccess = (userInfo as Record<string, unknown>).realm_access;
+	if (realmAccess && typeof realmAccess === "object") {
+		addRole((realmAccess as { roles?: unknown }).roles);
+	}
+
+	const resourceAccess = (userInfo as Record<string, unknown>).resource_access;
+	if (resourceAccess && typeof resourceAccess === "object") {
+		Object.values(resourceAccess as Record<string, unknown>).forEach(
+			(entry) => {
+				if (entry && typeof entry === "object") {
+					addRole((entry as { roles?: unknown }).roles);
+				}
+			},
+		);
+	}
+
+	return Array.from(roles);
+}
+
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
+	try {
+		const parts = token.split(".");
+		if (parts.length < 2) {
+			return null;
+		}
+		const payload = parts[1]
+			.replace(/-/g, "+")
+			.replace(/_/g, "/")
+			.padEnd(Math.ceil(parts[1].length / 4) * 4, "=");
+		const json = Buffer.from(payload, "base64").toString("utf-8");
+		return JSON.parse(json) as Record<string, unknown>;
+	} catch (error) {
+		console.warn("Failed to decode access token payload:", error);
+		return null;
+	}
+}
+
+function mergeRoles(...roleLists: string[][]): string[] {
+	const combined = new Set<string>();
+	for (const list of roleLists) {
+		if (!list) {
+			continue;
+		}
+		for (const role of list) {
+			combined.add(role.toLowerCase());
+		}
+	}
+	return Array.from(combined);
 }
 
 /**
@@ -142,7 +219,7 @@ export async function performLogout(): Promise<{ endSessionUrl?: string }> {
 			// Build end session URL for RP-initiated logout
 			try {
 				const endSessionURL = await getEndSessionUrl(
-					session.accessToken || "", // idTokenHint - use stored ID token if available
+					session.idToken || "", // idTokenHint - use stored ID token for proper end session
 					OIDC_CONSTANTS.BASE_URL, // postLogoutRedirectUri - absolute URI to home page after logout
 				);
 				endSessionUrl = endSessionURL.toString();

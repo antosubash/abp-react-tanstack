@@ -3,6 +3,7 @@ import {
 	IconPencil,
 	IconTrash,
 	IconDatabase,
+	IconShield,
 } from "@tabler/icons-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { TenantDto } from "@/infrastructure/api/types.gen";
@@ -32,6 +33,7 @@ interface TenantsTableProps {
 	}) => void;
 	onEditTenant: (tenant: TenantDto) => void;
 	onOpenConnectionString: (tenant: TenantDto) => void;
+	onManageFeatures: (tenant: TenantDto) => void;
 	onDeleteTenant: (tenantId: string) => void;
 	isDeleting: boolean;
 }
@@ -46,6 +48,7 @@ export function TenantsTable({
 	onPaginationChange,
 	onEditTenant,
 	onOpenConnectionString,
+	onManageFeatures,
 	onDeleteTenant,
 	isDeleting,
 }: TenantsTableProps) {
@@ -88,6 +91,10 @@ export function TenantsTable({
 						<DropdownMenuItem onClick={() => handleEditTenant(row.original)}>
 							<IconPencil className="mr-2 h-4 w-4" />
 							Edit
+						</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => onManageFeatures(row.original)}>
+							<IconShield className="mr-2 h-4 w-4" />
+							Features
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							onClick={() => handleOpenConnection(row.original)}

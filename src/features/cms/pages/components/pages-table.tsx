@@ -1,4 +1,10 @@
-import { IconDots, IconHome, IconPencil, IconTrash } from "@tabler/icons-react";
+import {
+	IconDots,
+	IconEye,
+	IconHome,
+	IconPencil,
+	IconTrash,
+} from "@tabler/icons-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { VoloCmsKitAdminPagesPageDto } from "@/infrastructure/api/types.gen";
 import { Button } from "@/shared/components/ui/button";
@@ -11,7 +17,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { TableRenderer } from "@/shared/components/ui/table-renderer";
-import { PAGE_BUTTON_LABELS } from "../constants";
+import { PAGE_BUTTON_LABELS, PAGE_PUBLIC_BASE_PATH } from "../constants";
 
 interface PagesTableProps {
 	pages: VoloCmsKitAdminPagesPageDto[];
@@ -58,6 +64,11 @@ export function PagesTable({
 
 	const handleSetAsHomepage = (pageId: string) => {
 		onSetAsHomepage(pageId);
+	};
+
+	const handleViewPage = (slug: string) => {
+		if (!slug) return;
+		window.open(`${PAGE_PUBLIC_BASE_PATH}/${slug}`, "_blank");
 	};
 
 	const columns: ColumnDef<VoloCmsKitAdminPagesPageDto>[] = [
@@ -123,7 +134,9 @@ export function PagesTable({
 			header: "Slug",
 			cell: ({ row }) => (
 				<div className="font-mono text-sm text-muted-foreground">
-					/{row.original.slug}
+					{row.original.slug
+						? `${PAGE_PUBLIC_BASE_PATH}/${row.original.slug}`
+						: "-"}
 				</div>
 			),
 		},
@@ -167,6 +180,13 @@ export function PagesTable({
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
+							<DropdownMenuItem
+								onClick={() => handleViewPage(page.slug || "")}
+								data-testid="btn-view-page"
+							>
+								<IconEye className="mr-2 h-4 w-4" />
+								{PAGE_BUTTON_LABELS.VIEW}
+							</DropdownMenuItem>
 							<DropdownMenuItem
 								onClick={() => handleEditPage(page)}
 								data-testid="btn-edit-page"

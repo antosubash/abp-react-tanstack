@@ -114,7 +114,9 @@ export function DashboardCharts({
 									className="w-3 h-3 rounded-full"
 									style={{ backgroundColor: entry.color }}
 								/>
-								<span className="text-sm text-muted-foreground">{entry.name}</span>
+								<span className="text-sm text-muted-foreground">
+									{entry.name}
+								</span>
 							</div>
 						))}
 					</div>
@@ -178,8 +180,16 @@ export function DashboardCharts({
 							/>
 							<defs>
 								<linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-									<stop offset="5%" stopColor="var(--chart-2)" stopOpacity={0.8} />
-									<stop offset="95%" stopColor="var(--chart-2)" stopOpacity={0.3} />
+									<stop
+										offset="5%"
+										stopColor="var(--chart-2)"
+										stopOpacity={0.8}
+									/>
+									<stop
+										offset="95%"
+										stopColor="var(--chart-2)"
+										stopOpacity={0.3}
+									/>
 								</linearGradient>
 							</defs>
 						</BarChart>

@@ -1,43 +1,42 @@
-import { useAppSession, type User } from "@/infrastructure/auth/session";
+import { useQuery } from "@tanstack/react-query";
 
 export function useAuth() {
-	const sessionManager = useAppSession();
-	type SessionManagerWithData = {
-		data?: { user?: User } | null;
-		isPending?: boolean;
-	};
-	const sessionManagerTyped = sessionManager as SessionManagerWithData | null;
-	const session = sessionManagerTyped?.data ?? null;
-	const isLoading =
-		sessionManager &&
-		typeof sessionManager === "object" &&
-		"isPending" in sessionManager
-			? (sessionManager.isPending as boolean)
-			: false;
+	const { data: appConfig, isLoading } = useQuery({
+		queryKey: ["auth", "me"],
+		queryFn: async ({ signal }) => {
+			const response = await fetch("/auth/me", { signal });
+			if (!response.ok) {
+				if (response.status === 401 || response.status === 403) {
+					return null;
+				}
+				throw new Error("Failed to fetch user data");
+			}
+			return response.json();
+		},
+		retry: false,
+		staleTime: 5 * 60 * 1000,
+	});
+
+	const user = appConfig?.user ?? null;
 
 	return {
-		user: session?.user || null,
-		isAuthenticated: !!session?.user,
+		user,
+		isAuthenticated: !!user,
 		isLoading,
 		login: async () => {
-			// This would be implemented with actual login logic
 			window.location.href = "/auth/login";
 		},
 		logout: async () => {
-			// This would be implemented with actual logout logic
 			window.location.href = "/auth/logout";
 		},
 		refresh: async () => {
-			// This would be implemented with actual refresh logic
 			window.location.reload();
 		},
-		clearError: () => {
-			// This would be implemented with actual error clearing logic
-		},
+		clearError: () => {},
 		authState: {
-			isAuthenticated: !!session?.user,
+			isAuthenticated: !!user,
 			isLoading,
-			user: session?.user || null,
+			user,
 		},
 	};
 }

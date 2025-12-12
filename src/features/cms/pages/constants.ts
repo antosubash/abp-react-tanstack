@@ -5,6 +5,8 @@ export const PAGE_QUERY_KEYS = {
 	SLUG_EXISTS: (slug: string) => ["cms", "pages", "slug-exists", slug] as const,
 } as const;
 
+export const PAGE_PUBLIC_BASE_PATH = "/page";
+
 // Form Field Labels
 export const PAGE_FORM_LABELS = {
 	TITLE: "Title",
@@ -54,6 +56,7 @@ export const PAGE_BUTTON_LABELS = {
 	DELETE: "Delete",
 	EDIT: "Edit",
 	SET_HOMEPAGE: "Set as Homepage",
+	VIEW: "View",
 } as const;
 
 // Page Constants
@@ -78,4 +81,80 @@ export const PUCK_EDITOR_CONSTANTS = {
 	CONTENT_PLACEHOLDER: "Use the editor to add content blocks",
 	NO_CONTENT: "No content available",
 	INVALID_CONTENT: "Invalid content format",
+} as const;
+
+// Puck Component Labels
+export const PUCK_COMPONENT_LABELS = {
+	// Existing components
+	HEADING: "Heading",
+	TEXT: "Text",
+	BUTTON: "Button",
+	IMAGE: "Image",
+
+	// New components
+	CARD: "Card",
+	LIST: "List",
+	QUOTE: "Quote",
+	VIDEO: "Video",
+	DIVIDER: "Divider",
+	CONTAINER: "Container",
+	GRID: "Grid",
+	FORM: "Form",
+} as const;
+
+// Puck Component Field Labels
+export const PUCK_FIELD_LABELS = {
+	// Common fields
+	TITLE: "Title",
+	DESCRIPTION: "Description",
+	TEXT: "Text",
+	URL: "URL",
+	VARIANT: "Variant",
+
+	// Card fields
+	IMAGE_URL: "Image URL",
+	LINK_URL: "Link URL",
+
+	// List fields
+	LIST_TYPE: "List Type",
+	ITEMS: "Items",
+	ORDERED: "Ordered",
+	UNORDERED: "Unordered",
+
+	// Quote fields
+	AUTHOR: "Author",
+	SOURCE: "Source",
+
+	// Video fields
+	VIDEO_URL: "Video URL",
+	AUTOPLAY: "Autoplay",
+	CONTROLS: "Show Controls",
+
+	// Divider fields
+	THICKNESS: "Thickness",
+	COLOR: "Color",
+	SOLID: "Solid",
+	DASHED: "Dashed",
+	DOTTED: "Dotted",
+
+	// Container fields
+	BACKGROUND_COLOR: "Background Color",
+	PADDING: "Padding",
+	MARGIN: "Margin",
+	BORDER_RADIUS: "Border Radius",
+
+	// Grid fields
+	COLUMNS: "Columns",
+	GAP: "Gap",
+
+	// Form fields
+	FIELDS: "Fields",
+	SUBMIT_BUTTON_TEXT: "Submit Button Text",
+	FIELD_TYPE: "Field Type",
+	FIELD_NAME: "Field Name",
+	FIELD_LABEL: "Field Label",
+	FIELD_REQUIRED: "Required",
+	TEXT_INPUT: "Text Input",
+	EMAIL_INPUT: "Email Input",
+	TEXTAREA: "Textarea",
 } as const;

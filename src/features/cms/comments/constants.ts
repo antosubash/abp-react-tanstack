@@ -9,8 +9,8 @@ export const COMMENT_QUERY_KEYS = {
 
 // Entity Types
 export const ENTITY_TYPES = {
-	PAGE: "cms-kit-page",
-	BLOG_POST: "cms-kit-blog-post",
+	PAGE: "Page",
+	BLOG_POST: "BlogPost",
 } as const;
 
 // Comment Approval Status

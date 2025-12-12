@@ -18,6 +18,7 @@ export interface User {
 	given_name?: string;
 	family_name?: string;
 	updated_at?: number;
+	roles?: string[];
 }
 
 export type SessionData = {

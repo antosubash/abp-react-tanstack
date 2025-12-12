@@ -16,6 +16,7 @@ import { TenantConnectionStringModal } from "./tenant-connection-string-modal";
 import { TenantForm, type TenantFormData } from "./tenant-form";
 import { TenantsHeader } from "./tenants-header";
 import { TenantsTable } from "./tenants-table";
+import { TenantFeaturesModal } from "./tenant-features-modal";
 
 export function TenantsList() {
 	const [sorting, setSorting] = useState([]);
@@ -42,6 +43,7 @@ export function TenantsList() {
 	} = useTenantFormStore();
 
 	const { openModal: openConnectionStringModal } = useTenantConnectionStore();
+	const [featuresTenant, setFeaturesTenant] = useState<TenantDto | null>(null);
 
 	const {
 		data: tenantsResponse,
@@ -145,6 +147,14 @@ export function TenantsList() {
 		openConnectionStringModal(tenant);
 	};
 
+	const handleManageFeatures = (tenant: TenantDto) => {
+		setFeaturesTenant(tenant);
+	};
+
+	const handleCloseFeatures = () => {
+		setFeaturesTenant(null);
+	};
+
 	if (isError) {
 		return (
 			<Alert variant="destructive">
@@ -172,6 +182,7 @@ export function TenantsList() {
 				onPaginationChange={setPagination}
 				onEditTenant={handleEditTenant}
 				onOpenConnectionString={handleOpenConnectionString}
+				onManageFeatures={handleManageFeatures}
 				onDeleteTenant={handleDeleteTenant}
 				isDeleting={deleteTenantMutation.isPending}
 			/>
@@ -188,6 +199,13 @@ export function TenantsList() {
 				mode={editingTenant ? "edit" : "create"}
 			/>
 			<TenantConnectionStringModal />
+			<TenantFeaturesModal
+				tenant={featuresTenant || undefined}
+				open={!!featuresTenant}
+				onOpenChange={(open) => {
+					if (!open) handleCloseFeatures();
+				}}
+			/>
 		</div>
 	);
 }

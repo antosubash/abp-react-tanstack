@@ -14,6 +14,10 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import { COMMENT_BUTTON_LABELS } from "../constants";
 import type { CommentNode } from "../hooks/use-comments-tree";
+import {
+	InlineCommentForm,
+	type InlineCommentFormData,
+} from "./inline-comment-form";
 
 interface CommentItemProps {
 	comment: CommentNode;
@@ -22,9 +26,23 @@ interface CommentItemProps {
 	onReply?: (comment: CommentNode) => void;
 	onEdit?: (comment: CommentNode) => void;
 	onDelete?: (commentId: string) => void;
+	onSubmitReply?: (
+		parentComment: CommentNode,
+		data: InlineCommentFormData,
+	) => Promise<void>;
+	onSubmitEdit?: (
+		comment: CommentNode,
+		data: InlineCommentFormData,
+	) => Promise<void>;
 	canEdit?: boolean;
 	canDelete?: boolean;
 	canReply?: boolean;
+	currentUserId?: string;
+	replyingToId?: string | null;
+	editingId?: string | null;
+	onCancelReply?: () => void;
+	onCancelEdit?: () => void;
+	isSubmitting?: boolean;
 }
 
 export function CommentItem({
@@ -34,10 +52,24 @@ export function CommentItem({
 	onReply,
 	onEdit,
 	onDelete,
+	onSubmitReply,
+	onSubmitEdit,
 	canEdit = false,
 	canDelete = false,
 	canReply = true,
+	currentUserId,
+	replyingToId,
+	editingId,
+	onCancelReply,
+	onCancelEdit,
+	isSubmitting = false,
 }: CommentItemProps) {
+	const isOwner = currentUserId && comment.author?.id === currentUserId;
+	const canEditThis = canEdit || isOwner;
+	const canDeleteThis = canDelete || isOwner;
+	const isReplying = replyingToId === comment.id;
+	const isEditing = editingId === comment.id;
+
 	const formattedDate = comment.creationTime
 		? new Date(comment.creationTime).toLocaleDateString("en-US", {
 				year: "numeric",
@@ -48,7 +80,20 @@ export function CommentItem({
 			})
 		: "";
 
-	const hasActions = canEdit || canDelete || (canReply && depth < maxDepth);
+	const canReplyAtThisLevel = canReply && depth === 0;
+	const hasActions = canEditThis || canDeleteThis || canReplyAtThisLevel;
+
+	const handleSubmitReply = async (data: InlineCommentFormData) => {
+		if (onSubmitReply) {
+			await onSubmitReply(comment, data);
+		}
+	};
+
+	const handleSubmitEdit = async (data: InlineCommentFormData) => {
+		if (onSubmitEdit) {
+			await onSubmitEdit(comment, data);
+		}
+	};
 
 	return (
 		<div className="space-y-3">
@@ -79,13 +124,26 @@ export function CommentItem({
 									{formattedDate}
 								</span>
 							</div>
-							<p className="mt-1 text-sm text-foreground whitespace-pre-wrap break-words">
-								{comment.text}
-							</p>
+							{isEditing ? (
+								<div className="mt-2">
+									<InlineCommentForm
+										comment={comment}
+										onSubmit={handleSubmitEdit}
+										onCancel={onCancelEdit}
+										isLoading={isSubmitting}
+										mode="edit"
+										autoFocus
+									/>
+								</div>
+							) : (
+								<p className="mt-1 text-sm text-foreground whitespace-pre-wrap break-words">
+									{comment.text}
+								</p>
+							)}
 						</div>
 
 						{/* Actions menu */}
-						{hasActions && (
+						{hasActions && !isEditing && (
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<Button
@@ -98,7 +156,7 @@ export function CommentItem({
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end">
-									{canReply && depth < maxDepth && onReply && (
+									{canReplyAtThisLevel && onReply && (
 										<DropdownMenuItem
 											onClick={() => onReply(comment)}
 											data-testid="btn-reply-comment"
@@ -107,11 +165,9 @@ export function CommentItem({
 											{COMMENT_BUTTON_LABELS.REPLY}
 										</DropdownMenuItem>
 									)}
-									{canEdit && onEdit && (
+									{canEditThis && onEdit && (
 										<>
-											{canReply && depth < maxDepth && (
-												<DropdownMenuSeparator />
-											)}
+											{canReplyAtThisLevel && <DropdownMenuSeparator />}
 											<DropdownMenuItem
 												onClick={() => onEdit(comment)}
 												data-testid="btn-edit-comment"
@@ -121,7 +177,7 @@ export function CommentItem({
 											</DropdownMenuItem>
 										</>
 									)}
-									{canDelete && onDelete && (
+									{canDeleteThis && onDelete && (
 										<>
 											<DropdownMenuSeparator />
 											<DropdownMenuItem
@@ -141,6 +197,19 @@ export function CommentItem({
 				</div>
 			</div>
 
+			{/* Inline reply form */}
+			{isReplying && (
+				<div className={depth > 0 ? "ml-8" : ""}>
+					<InlineCommentForm
+						onSubmit={handleSubmitReply}
+						onCancel={onCancelReply}
+						isLoading={isSubmitting}
+						mode="reply"
+						autoFocus
+					/>
+				</div>
+			)}
+
 			{/* Render nested replies */}
 			{comment.children && comment.children.length > 0 && depth < maxDepth && (
 				<div className="space-y-3">
@@ -153,9 +222,17 @@ export function CommentItem({
 							onReply={onReply}
 							onEdit={onEdit}
 							onDelete={onDelete}
+							onSubmitReply={onSubmitReply}
+							onSubmitEdit={onSubmitEdit}
 							canEdit={canEdit}
 							canDelete={canDelete}
 							canReply={canReply}
+							currentUserId={currentUserId}
+							replyingToId={replyingToId}
+							editingId={editingId}
+							onCancelReply={onCancelReply}
+							onCancelEdit={onCancelEdit}
+							isSubmitting={isSubmitting}
 						/>
 					))}
 				</div>

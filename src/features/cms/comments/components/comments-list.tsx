@@ -1,19 +1,34 @@
-import type { VoloCmsKitPublicCommentsCommentDto } from "@/infrastructure/api/types.gen";
+import type { CommentWithDetailsDto } from "@/infrastructure/api/types.gen";
 import { Button } from "@/shared/components/ui/button";
 import { COMMENT_BUTTON_LABELS } from "../constants";
 import { type CommentNode, useCommentsTree } from "../hooks/use-comments-tree";
 import { CommentItem } from "./comment-item";
+import type { InlineCommentFormData } from "./inline-comment-form";
 
 interface CommentsListProps {
-	comments: VoloCmsKitPublicCommentsCommentDto[];
+	comments: CommentWithDetailsDto[];
 	entityType: string;
 	entityId: string;
 	onReply?: (comment: CommentNode) => void;
 	onEdit?: (comment: CommentNode) => void;
 	onDelete?: (commentId: string) => void;
+	onSubmitReply?: (
+		parentComment: CommentNode,
+		data: InlineCommentFormData,
+	) => Promise<void>;
+	onSubmitEdit?: (
+		comment: CommentNode,
+		data: InlineCommentFormData,
+	) => Promise<void>;
 	canEdit?: boolean;
 	canDelete?: boolean;
 	canReply?: boolean;
+	currentUserId?: string;
+	replyingToId?: string | null;
+	editingId?: string | null;
+	onCancelReply?: () => void;
+	onCancelEdit?: () => void;
+	isSubmitting?: boolean;
 	isLoading?: boolean;
 	hasMore?: boolean;
 	onLoadMore?: () => void;
@@ -26,9 +41,17 @@ export function CommentsList({
 	onReply,
 	onEdit,
 	onDelete,
+	onSubmitReply,
+	onSubmitEdit,
 	canEdit = false,
 	canDelete = false,
 	canReply = true,
+	currentUserId,
+	replyingToId,
+	editingId,
+	onCancelReply,
+	onCancelEdit,
+	isSubmitting = false,
 	isLoading = false,
 	hasMore = false,
 	onLoadMore,
@@ -62,9 +85,17 @@ export function CommentsList({
 					onReply={onReply}
 					onEdit={onEdit}
 					onDelete={onDelete}
+					onSubmitReply={onSubmitReply}
+					onSubmitEdit={onSubmitEdit}
 					canEdit={canEdit}
 					canDelete={canDelete}
 					canReply={canReply}
+					currentUserId={currentUserId}
+					replyingToId={replyingToId}
+					editingId={editingId}
+					onCancelReply={onCancelReply}
+					onCancelEdit={onCancelEdit}
+					isSubmitting={isSubmitting}
 				/>
 			))}
 
