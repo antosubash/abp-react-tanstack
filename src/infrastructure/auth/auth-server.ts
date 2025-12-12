@@ -219,7 +219,7 @@ export async function performLogout(): Promise<{ endSessionUrl?: string }> {
 			// Build end session URL for RP-initiated logout
 			try {
 				const endSessionURL = await getEndSessionUrl(
-					session.accessToken || "", // idTokenHint - use stored ID token if available
+					session.idToken || "", // idTokenHint - use stored ID token for proper end session
 					OIDC_CONSTANTS.BASE_URL, // postLogoutRedirectUri - absolute URI to home page after logout
 				);
 				endSessionUrl = endSessionURL.toString();

@@ -150,28 +150,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	// Logout function
 	const logout = async () => {
 		try {
-			const response = await fetch("/auth/logout");
-			if (response.redirected) {
-				window.location.href = response.url;
-			} else {
-				// Fallback: clear local state and redirect
-				setAuthState({
-					user: null,
-					isLoading: false,
-					isAuthenticated: false,
-				});
-				queryClient.clear();
-				window.location.href = "/";
-			}
-		} catch (error) {
-			console.error("Logout failed:", error);
-			// Fallback: clear local state and redirect
+			// Clear local state first
 			setAuthState({
 				user: null,
 				isLoading: false,
 				isAuthenticated: false,
 			});
 			queryClient.clear();
+
+			// Navigate to logout endpoint - this will trigger server-side logout
+			// and redirect to OIDC provider's end session endpoint
+			// Using window.location.href ensures the browser follows the redirect properly
+			window.location.href = "/auth/logout";
+		} catch (error) {
+			console.error("Logout failed:", error);
+			// Fallback: redirect to home
 			window.location.href = "/";
 		}
 	};
