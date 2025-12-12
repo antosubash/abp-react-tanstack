@@ -17,10 +17,6 @@ import {
 } from "@/shared/components/ui/table";
 import { cn } from "@/shared/utils";
 import {
-	usePermissions,
-	CMS_PERMISSIONS,
-} from "@/shared/hooks/use-permissions";
-import {
 	MENU_ITEM_BUTTONS,
 	MENU_ITEM_EMPTY_STATES,
 	MENU_ITEM_MESSAGES,
@@ -86,12 +82,6 @@ export function MenuItemsTable({
 	permissionLabels,
 	isLoading = false,
 }: MenuItemsTableProps) {
-	const { hasPermission } = usePermissions();
-
-	const canCreate = hasPermission(CMS_PERMISSIONS.MENU_ITEMS_CREATE);
-	const canUpdate = hasPermission(CMS_PERMISSIONS.MENU_ITEMS_UPDATE);
-	const canDelete = hasPermission(CMS_PERMISSIONS.MENU_ITEMS_DELETE);
-
 	return (
 		<div className="border rounded-lg">
 			<Table>
@@ -158,47 +148,39 @@ export function MenuItemsTable({
 								</TableCell>
 								<TableCell>
 									<div className="flex justify-end gap-2">
-										{canCreate && (
-											<Button
-												variant="ghost"
-												size="sm"
-												onClick={() => onAddChild(item)}
-												title={MENU_ITEM_BUTTONS.ADD_CHILD}
-											>
-												<IconPlus className="size-4" />
-											</Button>
-										)}
-										{canUpdate && (
-											<>
-												<Button
-													variant="ghost"
-													size="sm"
-													onClick={() => onMove(item)}
-													title={MENU_ITEM_BUTTONS.MOVE}
-												>
-													<IconArrowsSort className="size-4" />
-												</Button>
-												<Button
-													variant="ghost"
-													size="sm"
-													onClick={() => onEdit(item)}
-													title={MENU_ITEM_BUTTONS.EDIT}
-												>
-													<IconPencil className="size-4" />
-												</Button>
-											</>
-										)}
-										{canDelete && (
-											<Button
-												variant="ghost"
-												size="sm"
-												onClick={() => onDelete(item)}
-												title={MENU_ITEM_BUTTONS.DELETE}
-												className="text-destructive"
-											>
-												<IconTrash className="size-4" />
-											</Button>
-										)}
+										<Button
+											variant="ghost"
+											size="sm"
+											onClick={() => onAddChild(item)}
+											title={MENU_ITEM_BUTTONS.ADD_CHILD}
+										>
+											<IconPlus className="size-4" />
+										</Button>
+										<Button
+											variant="ghost"
+											size="sm"
+											onClick={() => onMove(item)}
+											title={MENU_ITEM_BUTTONS.MOVE}
+										>
+											<IconArrowsSort className="size-4" />
+										</Button>
+										<Button
+											variant="ghost"
+											size="sm"
+											onClick={() => onEdit(item)}
+											title={MENU_ITEM_BUTTONS.EDIT}
+										>
+											<IconPencil className="size-4" />
+										</Button>
+										<Button
+											variant="ghost"
+											size="sm"
+											onClick={() => onDelete(item)}
+											title={MENU_ITEM_BUTTONS.DELETE}
+											className="text-destructive"
+										>
+											<IconTrash className="size-4" />
+										</Button>
 									</div>
 								</TableCell>
 							</TableRow>

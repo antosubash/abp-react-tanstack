@@ -1,17 +1,9 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { Puck } from "@measured/puck";
+import "@measured/puck/puck.css";
+import { useEffect, useRef, useState } from "react";
 import type { Data } from "@measured/puck";
-import { ErrorBoundary } from "@/shared/components/error-boundary";
 import { puckConfig, defaultPuckData } from "../config/puck-config";
 import { PAGE_BUTTON_LABELS } from "../constants";
-
-// Lazy load Puck editor to reduce initial bundle size (~180KB)
-const Puck = lazy(() =>
-	import("@measured/puck").then((module) => {
-		// Also import the CSS
-		import("@measured/puck/puck.css");
-		return { default: module.Puck };
-	}),
-);
 
 interface PuckEditorProps {
 	value: string;
@@ -113,84 +105,25 @@ export function PuckEditor({ value, onChange, disabled }: PuckEditorProps) {
 	}, [disabled]);
 
 	return (
-		<ErrorBoundary
-			errorMessage="Failed to load the page editor. Please refresh the page and try again."
-			onError={(error, errorInfo) => {
-				// Log to error tracking service (e.g., Sentry)
-				console.error("Puck Editor Error:", error, errorInfo);
-			}}
+		<div
+			className="border rounded-lg overflow-hidden"
+			data-testid="puck-editor"
 		>
-			<div
-				className="border rounded-lg overflow-hidden"
-				data-testid="puck-editor"
-			>
-				{disabled ? (
-					<div className="p-8 text-center text-muted-foreground">
-						Editor is disabled
-					</div>
-				) : (
-					<Suspense fallback={<PuckEditorSkeleton />}>
-						<Puck
-							config={puckConfig}
-							data={puckData}
-							onChange={(newData) => {
-								setPuckData(newData);
-								onChangeRef.current(JSON.stringify(newData));
-							}}
-							onPublish={handleSave}
-						/>
-					</Suspense>
-				)}
-			</div>
-		</ErrorBoundary>
-	);
-}
-
-/**
- * Loading skeleton for Puck editor
- * Displays while the Puck library is being lazy loaded
- */
-function PuckEditorSkeleton() {
-	return (
-		<output className="flex h-[600px]" aria-label="Loading editor">
-			{/* Left sidebar skeleton */}
-			<div className="w-64 border-r bg-muted/10 p-4 space-y-4">
-				<div className="h-8 bg-muted rounded animate-pulse" />
-				<div className="space-y-2">
-					{[...Array(8)].map((_, i) => (
-						<div
-							// biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton elements that never change
-							key={`sidebar-${i}`}
-							className="h-12 bg-muted rounded animate-pulse"
-						/>
-					))}
+			{disabled ? (
+				<div className="p-8 text-center text-muted-foreground">
+					Editor is disabled
 				</div>
-			</div>
-
-			{/* Main canvas skeleton */}
-			<div className="flex-1 p-8 space-y-4">
-				<div className="h-12 bg-muted rounded animate-pulse" />
-				<div className="h-32 bg-muted rounded animate-pulse" />
-				<div className="h-24 bg-muted rounded animate-pulse" />
-				<div className="h-40 bg-muted rounded animate-pulse" />
-			</div>
-
-			{/* Right sidebar skeleton */}
-			<div className="w-80 border-l bg-muted/10 p-4 space-y-4">
-				<div className="h-8 bg-muted rounded animate-pulse" />
-				<div className="space-y-3">
-					{[...Array(6)].map((_, i) => (
-						<div
-							// biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton elements that never change
-							key={`field-${i}`}
-							className="space-y-2"
-						>
-							<div className="h-4 bg-muted rounded animate-pulse w-1/3" />
-							<div className="h-10 bg-muted rounded animate-pulse" />
-						</div>
-					))}
-				</div>
-			</div>
-		</output>
+			) : (
+				<Puck
+					config={puckConfig}
+					data={puckData}
+					onChange={(newData) => {
+						setPuckData(newData);
+						onChangeRef.current(JSON.stringify(newData));
+					}}
+					onPublish={handleSave}
+				/>
+			)}
+		</div>
 	);
 }
