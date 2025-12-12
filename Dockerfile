@@ -30,20 +30,13 @@ RUN addgroup -g 1001 -S nodejs && \
 # Set working directory
 WORKDIR /app
 
-# Copy package files for production dependencies
-COPY package*.json ./
-COPY pnpm-lock.yaml ./
-
-# Install only production dependencies
-RUN npm install -g pnpm && \
-    pnpm install --frozen-lockfile --prod && \
-    npm cache clean --force
-
-# Copy built application from builder stage
+# Copy built application and dependencies from builder stage
 COPY --from=builder --chown=tanstack:nodejs /app/.output ./.output
+COPY --from=builder --chown=tanstack:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=tanstack:nodejs /app/package.json ./package.json
 
 # Switch to non-root user
-USER nextjs
+USER tanstack
 
 # Expose port
 EXPOSE 3000
