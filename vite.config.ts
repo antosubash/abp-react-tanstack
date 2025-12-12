@@ -23,11 +23,6 @@ const config = defineConfig({
     }),
     viteReact(),
   ],
-  nitro: {
-    externals: {
-      inline: ["@tabler/icons-react"],
-    },
-  },
 });
 
 export default config;
