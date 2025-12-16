@@ -74,26 +74,26 @@ function App() {
 
 	return (
 		<div className="min-h-screen bg-background">
-			<section className="relative py-20 px-6 text-center overflow-hidden">
+			<section className="relative py-12 sm:py-16 md:py-20 px-4 sm:px-6 text-center overflow-hidden">
 				<div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10"></div>
 				<div className="relative max-w-5xl mx-auto">
-					<div className="flex items-center justify-center gap-6 mb-6">
+					<div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-4 sm:mb-6">
 						<img
 							src="/tanstack-circle-logo.png"
 							alt="TanStack Logo"
-							className="w-24 h-24 md:w-32 md:h-32"
+							className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32"
 						/>
-						<h1 className="text-6xl md:text-7xl font-black text-foreground [letter-spacing:-0.08em]">
+						<h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-foreground [letter-spacing:-0.08em]">
 							<span className="text-muted-foreground">TANSTACK</span>{" "}
 							<span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
 								START
 							</span>
 						</h1>
 					</div>
-					<p className="text-2xl md:text-3xl text-muted-foreground mb-4 font-light">
+					<p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-3 sm:mb-4 font-light px-4">
 						The framework for next generation AI applications
 					</p>
-					<p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
+					<p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto mb-6 sm:mb-8 px-4">
 						Full-stack framework powered by TanStack Router for React and Solid.
 						Build modern applications with server functions, streaming, and type
 						safety.
@@ -186,8 +186,8 @@ function App() {
 				</div>
 			</section>
 
-			<section className="py-16 px-6 max-w-7xl mx-auto">
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			<section className="py-12 sm:py-16 px-4 sm:px-6 max-w-7xl mx-auto">
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
 					{features.map((feature) => (
 						<Card
 							key={feature.title}

@@ -4,5 +4,9 @@ interface PageLayoutProps {
 }
 
 export function PageLayout({ children, className }: PageLayoutProps) {
-	return <div className={className}>{children}</div>;
+	return (
+		<div className={`px-4 sm:px-6 lg:px-8 py-4 sm:py-6 ${className || ""}`}>
+			{children}
+		</div>
+	);
 }

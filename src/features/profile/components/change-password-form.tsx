@@ -201,16 +201,21 @@ export function ChangePasswordForm() {
 						)}
 					</div>
 
-					<div className="flex gap-3 justify-end">
+					<div className="flex flex-col-reverse sm:flex-row gap-3 justify-end">
 						<Button
 							type="button"
 							variant="outline"
 							onClick={handleCancel}
 							disabled={changePassword.isPending}
+							className="w-full sm:w-auto"
 						>
 							{PROFILE_LABELS.SECURITY.CANCEL}
 						</Button>
-						<Button type="submit" disabled={changePassword.isPending}>
+						<Button
+							type="submit"
+							disabled={changePassword.isPending}
+							className="w-full sm:w-auto"
+						>
 							{changePassword.isPending && <Spinner className="mr-2" />}
 							{PROFILE_LABELS.SECURITY.SAVE}
 						</Button>
