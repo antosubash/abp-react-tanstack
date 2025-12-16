@@ -1,3 +1,4 @@
+import { IconChartBar, IconChartPie } from "@tabler/icons-react";
 import { useId } from "react";
 import {
 	Bar,
@@ -6,11 +7,10 @@ import {
 	Cell,
 	Pie,
 	PieChart,
+	Tooltip,
 	XAxis,
 	YAxis,
-	Tooltip,
 } from "recharts";
-import { IconChartBar, IconChartPie } from "@tabler/icons-react";
 import {
 	Card,
 	CardContent,
@@ -50,10 +50,10 @@ export function DashboardCharts({
 	} satisfies ChartConfig;
 
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+		<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8 w-full">
 			{/* Status Distribution Pie Chart */}
 			<Card
-				className="bg-card border-border hover:border-accent transition-colors"
+				className="bg-card border-border hover:border-accent transition-colors w-full min-w-0"
 				data-testid="status-chart"
 			>
 				<CardHeader>
@@ -125,7 +125,7 @@ export function DashboardCharts({
 
 			{/* Type Distribution Bar Chart */}
 			<Card
-				className="bg-card border-border hover:border-accent transition-colors"
+				className="bg-card border-border hover:border-accent transition-colors w-full min-w-0"
 				data-testid="type-chart"
 			>
 				<CardHeader>
@@ -141,34 +141,51 @@ export function DashboardCharts({
 						</div>
 					</div>
 				</CardHeader>
-				<CardContent>
+				<CardContent className="overflow-x-auto">
 					<ChartContainer
 						config={chartConfig}
-						className="h-[250px] sm:h-[300px]"
+						className="h-[280px] sm:h-[320px] min-w-[300px]"
 					>
 						<BarChart
 							data={rolesChartData}
-							margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+							margin={{
+								top: 20,
+								right: 10,
+								left: 0,
+								bottom: rolesChartData.length > 3 ? 80 : 60,
+							}}
 						>
 							<CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
 							<XAxis
 								dataKey="name"
 								stroke="var(--muted-foreground)"
-								fontSize={12}
-								angle={-45}
-								textAnchor="end"
-								height={80}
+								fontSize={11}
+								angle={rolesChartData.length > 3 ? -45 : 0}
+								textAnchor={rolesChartData.length > 3 ? "end" : "middle"}
+								height={rolesChartData.length > 3 ? 80 : 40}
 								interval={0}
+								tick={{ fill: "var(--muted-foreground)" }}
+								tickFormatter={(value) => {
+									const maxLength = 10;
+									return value.length > maxLength
+										? `${value.substring(0, maxLength)}...`
+										: value;
+								}}
 							/>
-							<YAxis stroke="var(--muted-foreground)" />
+							<YAxis
+								stroke="var(--muted-foreground)"
+								width={40}
+								tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
+							/>
 							<Tooltip
 								contentStyle={{
 									backgroundColor: "var(--card)",
 									border: "1px solid var(--border)",
 									borderRadius: "8px",
 									color: "var(--foreground)",
+									padding: "8px 12px",
 								}}
-								labelStyle={{ color: "var(--foreground)" }}
+								labelStyle={{ color: "var(--foreground)", fontWeight: 600 }}
 								formatter={(value, _name) => [value, "Count"]}
 							/>
 							<Bar
