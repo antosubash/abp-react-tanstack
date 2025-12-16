@@ -2,7 +2,7 @@ import type {
 	TokenEndpointResponse,
 	TokenEndpointResponseHelpers,
 } from "openid-client";
-import { OIDC_CONSTANTS } from "../constants";
+import { OIDC_CONSTANTS, TOKEN_REFRESH_THRESHOLD } from "../constants";
 import {
 	getEndSessionUrl,
 	getUserInfo,
@@ -10,6 +10,10 @@ import {
 	revokeToken,
 } from "./oidc";
 import { type SessionData, sessionUtils, type User } from "./session";
+
+// Refresh lock to prevent concurrent refresh attempts
+let isRefreshing = false;
+let refreshPromise: Promise<SessionData | null> | null = null;
 
 /**
  * Get session from request
@@ -22,32 +26,66 @@ export async function getUserSession(): Promise<SessionData | null> {
 			return null;
 		}
 
-		// Check if token is expired and try to refresh
-		if (Date.now() >= sessionData.expiresAt) {
-			if (sessionData.refreshToken) {
+		// Get expiration from JWT token if available, fallback to stored expiresAt
+		const tokenExpiration = getTokenExpiration(sessionData.accessToken);
+		const expirationTime = tokenExpiration ?? sessionData.expiresAt;
+
+		// Check if token needs refresh (proactive: 15 minutes before expiration)
+		const now = Date.now();
+		const needsRefresh = now >= expirationTime - TOKEN_REFRESH_THRESHOLD;
+
+		if (needsRefresh) {
+			if (!sessionData.refreshToken) {
+				// No refresh token available, clear session
+				await sessionUtils.clear();
+				return null;
+			}
+
+			// Check if refresh is already in progress
+			if (isRefreshing && refreshPromise) {
+				// Wait for ongoing refresh to complete
+				return refreshPromise;
+			}
+
+			// Start refresh with lock
+			isRefreshing = true;
+			refreshPromise = (async () => {
 				try {
-					const newTokens = await refreshToken(sessionData.refreshToken);
+					const newTokens = await refreshToken(sessionData.refreshToken!);
 					const accessToken = newTokens.access_token;
 					if (!accessToken) {
 						throw new Error("No access token in refresh response");
 					}
+
+					// Extract expiration from new token if available
+					const newTokenExpiration = getTokenExpiration(accessToken);
+					const newExpiresAt = newTokenExpiration
+						? newTokenExpiration
+						: Date.now() + (newTokens.expiresIn?.() || 3600) * 1000;
+
+					// Update session data
 					sessionData.accessToken = accessToken;
-					sessionData.refreshToken = newTokens.refresh_token;
-					sessionData.idToken = newTokens.id_token;
-					sessionData.expiresAt =
-						Date.now() + (newTokens.expiresIn?.() || 3600) * 1000;
+					// Preserve refresh token if provider doesn't return a new one
+					sessionData.refreshToken =
+						newTokens.refresh_token || sessionData.refreshToken;
+					sessionData.idToken = newTokens.id_token || sessionData.idToken;
+					sessionData.expiresAt = newExpiresAt;
+
 					await sessionUtils.update(sessionData);
+					return sessionData;
 				} catch (error) {
 					console.error("Token refresh failed:", error);
 					// Token refresh failed, clear session
 					await sessionUtils.clear();
 					return null;
+				} finally {
+					// Release lock
+					isRefreshing = false;
+					refreshPromise = null;
 				}
-			} else {
-				// No refresh token available, clear session
-				await sessionUtils.clear();
-				return null;
-			}
+			})();
+
+			return refreshPromise;
 		}
 
 		return sessionData;
@@ -102,6 +140,13 @@ export async function createSession(
 			extractRoles(userInfo),
 			extractRoles(accessTokenPayload ?? {}),
 		);
+
+		// Extract expiration from JWT token if available, otherwise use expiresIn
+		const tokenExpiration = getTokenExpiration(accessToken);
+		const expiresAt = tokenExpiration
+			? tokenExpiration
+			: Date.now() + (tokenResponse.expiresIn?.() || 3600) * 1000;
+
 		const sessionData: SessionData = {
 			user: {
 				...(userInfo as unknown as User),
@@ -110,7 +155,7 @@ export async function createSession(
 			accessToken,
 			refreshToken: tokenResponse.refresh_token,
 			idToken: tokenResponse.id_token,
-			expiresAt: Date.now() + (tokenResponse.expiresIn?.() || 3600) * 1000,
+			expiresAt,
 		};
 
 		await sessionUtils.update(sessionData);
@@ -175,6 +220,27 @@ function decodeJwtPayload(token: string): Record<string, unknown> | null {
 		console.warn("Failed to decode access token payload:", error);
 		return null;
 	}
+}
+
+/**
+ * Get token expiration from JWT access token
+ * Extracts the `exp` claim (expiration in seconds since epoch) and converts to milliseconds
+ * @param accessToken - JWT access token string
+ * @returns Expiration timestamp in milliseconds, or null if token is invalid or missing exp claim
+ */
+function getTokenExpiration(accessToken: string): number | null {
+	const payload = decodeJwtPayload(accessToken);
+	if (!payload) {
+		return null;
+	}
+
+	const exp = payload.exp;
+	if (typeof exp !== "number") {
+		return null;
+	}
+
+	// Convert from seconds to milliseconds
+	return exp * 1000;
 }
 
 function mergeRoles(...roleLists: string[][]): string[] {
