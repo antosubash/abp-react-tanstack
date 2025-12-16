@@ -20,16 +20,26 @@ function ProfileLayout() {
 			<Tabs defaultValue="general" className="space-y-4 sm:space-y-6">
 				<TabsList className="grid w-full grid-cols-2 gap-2">
 					<Link to={PROFILE_ROUTES.GENERAL}>
-						<TabsTrigger value="general" className="flex items-center gap-2 w-full">
+						<TabsTrigger
+							value="general"
+							className="flex items-center gap-2 w-full"
+						>
 							<User className="h-4 w-4" />
-							<span className="hidden sm:inline">{PROFILE_LABELS.TABS.GENERAL}</span>
+							<span className="hidden sm:inline">
+								{PROFILE_LABELS.TABS.GENERAL}
+							</span>
 							<span className="sm:hidden">General</span>
 						</TabsTrigger>
 					</Link>
 					<Link to={PROFILE_ROUTES.SECURITY}>
-						<TabsTrigger value="security" className="flex items-center gap-2 w-full">
+						<TabsTrigger
+							value="security"
+							className="flex items-center gap-2 w-full"
+						>
 							<Shield className="h-4 w-4" />
-							<span className="hidden sm:inline">{PROFILE_LABELS.TABS.SECURITY}</span>
+							<span className="hidden sm:inline">
+								{PROFILE_LABELS.TABS.SECURITY}
+							</span>
 							<span className="sm:hidden">Security</span>
 						</TabsTrigger>
 					</Link>

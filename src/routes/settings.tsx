@@ -102,7 +102,10 @@ function SettingsPage() {
 					<EmailSettingsForm />
 				</TabsContent>
 
-				<TabsContent value={SETTINGS_TAB_VALUE.TIMEZONE} className="mt-4 sm:mt-6">
+				<TabsContent
+					value={SETTINGS_TAB_VALUE.TIMEZONE}
+					className="mt-4 sm:mt-6"
+				>
 					<div className="mb-4 sm:mb-6">
 						<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
 							<div className="p-2 sm:p-3 rounded-lg bg-accent/10">
@@ -121,7 +124,10 @@ function SettingsPage() {
 					<TimezoneSettingsForm />
 				</TabsContent>
 
-				<TabsContent value={SETTINGS_TAB_VALUE.COMMENTS} className="mt-4 sm:mt-6">
+				<TabsContent
+					value={SETTINGS_TAB_VALUE.COMMENTS}
+					className="mt-4 sm:mt-6"
+				>
 					<div className="mb-4 sm:mb-6">
 						<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
 							<div className="p-2 sm:p-3 rounded-lg bg-primary/10">
@@ -140,7 +146,10 @@ function SettingsPage() {
 					<CommentSettingsForm />
 				</TabsContent>
 
-				<TabsContent value={SETTINGS_TAB_VALUE.FEATURES} className="mt-4 sm:mt-6">
+				<TabsContent
+					value={SETTINGS_TAB_VALUE.FEATURES}
+					className="mt-4 sm:mt-6"
+				>
 					<div className="mb-4 sm:mb-6">
 						<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
 							<div className="p-2 sm:p-3 rounded-lg bg-muted">
