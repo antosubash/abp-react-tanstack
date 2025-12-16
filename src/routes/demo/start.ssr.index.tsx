@@ -14,7 +14,7 @@ function RouteComponent() {
 			title: "SPA Mode",
 			description: "Single Page Application with client-side routing",
 			icon: <Layers className="h-6 w-6" />,
-			color: "bg-primary hover:bg-primary/90",
+			color: "bg-accent hover:bg-accent/90",
 		},
 		{
 			to: "/demo/start/ssr/full-ssr",
@@ -28,7 +28,7 @@ function RouteComponent() {
 			title: "Data Only",
 			description: "Server-side data fetching without full rendering",
 			icon: <Database className="h-6 w-6" />,
-			color: "bg-primary hover:bg-primary/90",
+			color: "bg-accent hover:bg-accent/90",
 		},
 	];
 
