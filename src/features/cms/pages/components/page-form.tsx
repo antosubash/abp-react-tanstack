@@ -274,13 +274,14 @@ export function PageForm({
 						)}
 					/>
 
-					<div className="flex justify-end gap-2">
+					<div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
 						<Button
 							type="button"
 							variant="outline"
 							onClick={() => navigate({ to: "/admin/cms/pages" })}
 							disabled={isLoading}
 							data-testid="btn-cancel-page"
+							className="w-full sm:w-auto"
 						>
 							{PAGE_BUTTON_LABELS.CANCEL}
 						</Button>
@@ -288,6 +289,7 @@ export function PageForm({
 							type="submit"
 							disabled={isLoading || slugExistsData === true}
 							data-testid="btn-submit-page"
+							className="w-full sm:w-auto"
 						>
 							{isLoading ? "Saving..." : PAGE_BUTTON_LABELS.SAVE}
 						</Button>

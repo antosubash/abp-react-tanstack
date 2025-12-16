@@ -302,8 +302,12 @@ export function EmailSettingsForm() {
 								/>
 							</div>
 
-							<div className="flex gap-3">
-								<Button type="submit" disabled={updateSettings.isPending}>
+							<div className="flex flex-col sm:flex-row gap-3">
+								<Button
+									type="submit"
+									disabled={updateSettings.isPending}
+									className="w-full sm:w-auto"
+								>
 									{updateSettings.isPending
 										? "Saving..."
 										: SETTINGS_LABELS.EMAIL.SAVE}
@@ -312,6 +316,7 @@ export function EmailSettingsForm() {
 									type="button"
 									variant="outline"
 									onClick={() => setTestEmailDialogOpen(true)}
+									className="w-full sm:w-auto"
 								>
 									<Mail className="mr-2 h-4 w-4" />
 									{SETTINGS_LABELS.EMAIL.TEST_EMAIL}

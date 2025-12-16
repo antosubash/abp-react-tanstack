@@ -39,7 +39,7 @@ function SettingsPage() {
 			/>
 
 			<Tabs defaultValue={SETTINGS_TAB_VALUE.EMAIL} className="w-full">
-				<TabsList className="grid w-full grid-cols-4 mb-6">
+				<TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-4 sm:mb-6 gap-2">
 					<TabsTrigger
 						value={SETTINGS_TAB_VALUE.EMAIL}
 						className="flex items-center gap-2"
@@ -82,17 +82,17 @@ function SettingsPage() {
 					</TabsTrigger>
 				</TabsList>
 
-				<TabsContent value={SETTINGS_TAB_VALUE.EMAIL} className="mt-6">
-					<div className="mb-6">
-						<div className="flex items-center gap-3 mb-4">
-							<div className="p-3 rounded-lg bg-primary/10">
-								<Mail className="h-8 w-8 text-primary" />
+				<TabsContent value={SETTINGS_TAB_VALUE.EMAIL} className="mt-4 sm:mt-6">
+					<div className="mb-4 sm:mb-6">
+						<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+							<div className="p-2 sm:p-3 rounded-lg bg-primary/10">
+								<Mail className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
 							</div>
 							<div>
-								<h2 className="text-2xl font-bold tracking-tight">
+								<h2 className="text-xl sm:text-2xl font-bold tracking-tight">
 									{SETTINGS_LABELS.EMAIL.TITLE}
 								</h2>
-								<p className="text-muted-foreground mt-1">
+								<p className="text-sm sm:text-base text-muted-foreground mt-1">
 									Configure SMTP settings for sending emails from your
 									application
 								</p>
@@ -102,17 +102,17 @@ function SettingsPage() {
 					<EmailSettingsForm />
 				</TabsContent>
 
-				<TabsContent value={SETTINGS_TAB_VALUE.TIMEZONE} className="mt-6">
-					<div className="mb-6">
-						<div className="flex items-center gap-3 mb-4">
-							<div className="p-3 rounded-lg bg-accent/10">
-								<Clock className="h-8 w-8 text-accent-foreground" />
+				<TabsContent value={SETTINGS_TAB_VALUE.TIMEZONE} className="mt-4 sm:mt-6">
+					<div className="mb-4 sm:mb-6">
+						<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+							<div className="p-2 sm:p-3 rounded-lg bg-accent/10">
+								<Clock className="h-6 w-6 sm:h-8 sm:w-8 text-accent-foreground" />
 							</div>
 							<div>
-								<h2 className="text-2xl font-bold tracking-tight">
+								<h2 className="text-xl sm:text-2xl font-bold tracking-tight">
 									{SETTINGS_LABELS.TIMEZONE.TITLE}
 								</h2>
-								<p className="text-muted-foreground mt-1">
+								<p className="text-sm sm:text-base text-muted-foreground mt-1">
 									Set the default timezone for your application
 								</p>
 							</div>
@@ -121,17 +121,17 @@ function SettingsPage() {
 					<TimezoneSettingsForm />
 				</TabsContent>
 
-				<TabsContent value={SETTINGS_TAB_VALUE.COMMENTS} className="mt-6">
-					<div className="mb-6">
-						<div className="flex items-center gap-3 mb-4">
-							<div className="p-3 rounded-lg bg-primary/10">
-								<MessageSquare className="h-8 w-8 text-primary" />
+				<TabsContent value={SETTINGS_TAB_VALUE.COMMENTS} className="mt-4 sm:mt-6">
+					<div className="mb-4 sm:mb-6">
+						<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+							<div className="p-2 sm:p-3 rounded-lg bg-primary/10">
+								<MessageSquare className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
 							</div>
 							<div>
-								<h2 className="text-2xl font-bold tracking-tight">
+								<h2 className="text-xl sm:text-2xl font-bold tracking-tight">
 									{SETTINGS_LABELS.COMMENTS.TITLE}
 								</h2>
-								<p className="text-muted-foreground mt-1">
+								<p className="text-sm sm:text-base text-muted-foreground mt-1">
 									Configure comment moderation and approval settings
 								</p>
 							</div>
@@ -140,17 +140,17 @@ function SettingsPage() {
 					<CommentSettingsForm />
 				</TabsContent>
 
-				<TabsContent value={SETTINGS_TAB_VALUE.FEATURES} className="mt-6">
-					<div className="mb-6">
-						<div className="flex items-center gap-3 mb-4">
-							<div className="p-3 rounded-lg bg-muted">
-								<SettingsIcon className="h-8 w-8" />
+				<TabsContent value={SETTINGS_TAB_VALUE.FEATURES} className="mt-4 sm:mt-6">
+					<div className="mb-4 sm:mb-6">
+						<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+							<div className="p-2 sm:p-3 rounded-lg bg-muted">
+								<SettingsIcon className="h-6 w-6 sm:h-8 sm:w-8" />
 							</div>
 							<div>
-								<h2 className="text-2xl font-bold tracking-tight">
+								<h2 className="text-xl sm:text-2xl font-bold tracking-tight">
 									{SETTINGS_LABELS.FEATURES.TITLE}
 								</h2>
-								<p className="text-muted-foreground mt-1">
+								<p className="text-sm sm:text-base text-muted-foreground mt-1">
 									{SETTINGS_LABELS.FEATURES.DESCRIPTION}
 								</p>
 							</div>

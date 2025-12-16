@@ -12,6 +12,7 @@ import {
 	TableRow,
 } from "@/shared/components/ui/table";
 import { Button } from "@/shared/components/ui/button";
+import { Card, CardContent } from "@/shared/components/ui/card";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import {
 	Select,
@@ -20,6 +21,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/shared/components/ui/select";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 
 interface TableRendererProps<TData> {
 	data: TData[];
@@ -46,86 +48,168 @@ export function TableRenderer<TData>({
 	tableTestId,
 	rowTestId,
 }: TableRendererProps<TData>) {
+	const isMobile = useIsMobile();
 	const totalPages = Math.ceil(totalCount / pagination.pageSize);
 	const canPreviousPage = pagination.pageIndex > 0;
 	const canNextPage = pagination.pageIndex < totalPages - 1;
 
+	// Filter out select and actions columns for mobile card view
+	const displayColumns = columns.filter(
+		(col) => col.id !== "select" && col.id !== "actions",
+	);
+	const actionsColumn = columns.find((col) => col.id === "actions");
+
+	// Get cell content helper
+	const getCellContent = (
+		column: ColumnDef<TData>,
+		row: TData,
+		rowIndex: number,
+	): React.ReactNode => {
+		if (typeof column.cell === "function") {
+			try {
+				const cellContext = {
+					row: {
+						original: row,
+						index: rowIndex,
+					},
+				} as CellContext<TData, unknown>;
+				return column.cell(cellContext);
+			} catch {
+				return "";
+			}
+		} else if (column.cell) {
+			return column.cell;
+		} else if (column.header) {
+			return typeof column.header === "function"
+				? column.header({
+						column,
+						header: column,
+					} as HeaderContext<TData, unknown>)
+				: column.header;
+		}
+		return "";
+	};
+
+	// Get header text helper
+	const getHeaderText = (column: ColumnDef<TData>): string => {
+		if (typeof column.header === "function") {
+			return "";
+		}
+		return (column.header as string) || "";
+	};
+
 	return (
 		<div className="space-y-4">
-			<div className="rounded-md border overflow-x-auto">
-				<Table data-testid={tableTestId} className="min-w-[640px]">
-					<TableHeader>
-						<TableRow>
-							{columns.map((column, index) => (
-								<TableHead
-									key={
-										(column.id as string) ||
-										("accessorKey" in column
-											? (column.accessorKey as string)
-											: undefined) ||
-										`column-${index}`
-									}
-								>
-									{typeof column.header === "function"
-										? column.header({
-												column,
-												header: column,
-											} as HeaderContext<TData, unknown>)
-										: (column.header as string)}
-								</TableHead>
-							))}
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{data.map((row, index) => (
-							<TableRow
-								key={`row-${index}-${JSON.stringify(row)}`}
+			{isMobile ? (
+				// Mobile card view
+				<div className="space-y-3" data-testid={tableTestId}>
+					{data.length === 0 ? (
+						<Card>
+							<CardContent className="py-8 text-center text-muted-foreground">
+								No results.
+							</CardContent>
+						</Card>
+					) : (
+						data.map((row, index) => (
+							<Card
+								key={`mobile-row-${index}-${JSON.stringify(row)}`}
 								data-testid={rowTestId}
+								className="overflow-hidden"
 							>
-								{columns.map((column, colIndex) => {
-									let cellContent: React.ReactNode = "";
-									if (typeof column.cell === "function") {
-										try {
-											const cellContext = {
-												row: {
-													original: row,
-													index,
-												},
-											} as CellContext<TData, unknown>;
-											cellContent = column.cell(cellContext);
-										} catch {
-											cellContent = "";
+								<CardContent className="p-4 space-y-3">
+									{displayColumns.map((column, colIndex) => {
+										const headerText = getHeaderText(column);
+										const cellContent = getCellContent(column, row, index);
+
+										// Skip empty cells
+										if (!headerText && !cellContent) return null;
+
+										return (
+											<div
+												key={
+													(column.id as string) ||
+													("accessorKey" in column
+														? (column.accessorKey as string)
+														: undefined) ||
+													`mobile-cell-${index}-${colIndex}`
+												}
+												className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1"
+											>
+												{headerText && (
+													<span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+														{headerText}
+													</span>
+												)}
+												<div className="text-sm font-medium text-foreground">
+													{cellContent}
+												</div>
+											</div>
+										);
+									})}
+									{actionsColumn && (
+										<div className="pt-2 border-t flex justify-end">
+											{getCellContent(actionsColumn, row, index)}
+										</div>
+									)}
+								</CardContent>
+							</Card>
+						))
+					)}
+				</div>
+			) : (
+				// Desktop table view
+				<div className="rounded-md border overflow-x-auto">
+					<Table data-testid={tableTestId} className="min-w-[640px]">
+						<TableHeader>
+							<TableRow>
+								{columns.map((column, index) => (
+									<TableHead
+										key={
+											(column.id as string) ||
+											("accessorKey" in column
+												? (column.accessorKey as string)
+												: undefined) ||
+											`column-${index}`
 										}
-									} else if (column.cell) {
-										cellContent = column.cell;
-									} else if (column.header) {
-										cellContent =
-											typeof column.header === "function"
-												? column.header({
-														column,
-														header: column,
-													} as HeaderContext<TData, unknown>)
-												: column.header;
-									}
-									return (
-										<TableCell
-											key={
-												(column.id as string) ||
-												("accessorKey" in column
-													? (column.accessorKey as string)
-													: undefined) ||
-												`cell-${index}-${colIndex}`
-											}
-										>
-											{cellContent}
-										</TableCell>
-									);
-								})}
+									>
+										{typeof column.header === "function"
+											? column.header({
+													column,
+													header: column,
+												} as HeaderContext<TData, unknown>)
+											: (column.header as string)}
+									</TableHead>
+								))}
 							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</div>
+						</TableHeader>
+						<TableBody>
+							{data.map((row, index) => (
+								<TableRow
+									key={`row-${index}-${JSON.stringify(row)}`}
+									data-testid={rowTestId}
+								>
+									{columns.map((column, colIndex) => {
+										const cellContent = getCellContent(column, row, index);
+										return (
+											<TableCell
+												key={
+													(column.id as string) ||
+													("accessorKey" in column
+														? (column.accessorKey as string)
+														: undefined) ||
+													`cell-${index}-${colIndex}`
+												}
+											>
+												{cellContent}
+											</TableCell>
+										);
+									})}
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</div>
+			)}
 
 			{/* Pagination */}
 			<div

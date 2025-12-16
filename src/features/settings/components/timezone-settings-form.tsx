@@ -108,7 +108,11 @@ export function TimezoneSettingsForm() {
 							)}
 						/>
 
-						<Button type="submit" disabled={updateSettings.isPending}>
+						<Button
+							type="submit"
+							disabled={updateSettings.isPending}
+							className="w-full sm:w-auto"
+						>
 							{updateSettings.isPending
 								? "Saving..."
 								: SETTINGS_LABELS.TIMEZONE.SAVE}

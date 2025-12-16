@@ -247,18 +247,20 @@ export function ProfileForm() {
 						)}
 					</div>
 
-					<div className="flex gap-3 justify-end">
+					<div className="flex flex-col-reverse sm:flex-row gap-3 justify-end">
 						<Button
 							type="button"
 							variant="outline"
 							onClick={handleCancel}
 							disabled={updateProfile.isPending}
+							className="w-full sm:w-auto"
 						>
 							{PROFILE_LABELS.GENERAL.CANCEL}
 						</Button>
 						<Button
 							type="submit"
 							disabled={!isDirty || updateProfile.isPending}
+							className="w-full sm:w-auto"
 						>
 							{updateProfile.isPending && <Spinner className="mr-2" />}
 							{PROFILE_LABELS.GENERAL.SAVE}

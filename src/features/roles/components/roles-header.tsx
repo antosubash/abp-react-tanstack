@@ -13,7 +13,7 @@ export function RolesHeader({
 	isCreating,
 }: RolesHeaderProps) {
 	return (
-		<div className="flex items-center justify-between">
+		<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div className="flex items-center gap-2">
 				<IconShield className="h-5 w-5" />
 				<span className="text-sm text-muted-foreground">
@@ -24,6 +24,7 @@ export function RolesHeader({
 				onClick={onCreateRole}
 				disabled={isCreating}
 				data-testid="btn-create-role"
+				className="w-full sm:w-auto"
 			>
 				<IconPlus className="mr-2 h-4 w-4" />
 				{isCreating ? "Creating..." : "Add Role"}
