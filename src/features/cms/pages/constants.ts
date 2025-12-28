@@ -116,6 +116,7 @@ export const PUCK_FIELD_LABELS = {
 	CONTENT: "Content",
 	URL: "URL",
 	VARIANT: "Variant",
+	ALIGNMENT: "Alignment",
 
 	// Card fields
 	IMAGE_URL: "Image URL",

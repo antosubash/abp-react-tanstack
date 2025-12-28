@@ -2,6 +2,8 @@
  * Helper functions for the Hero Block component
  */
 
+import type { ReactElement } from "react";
+
 export function getHeightClass(
 	height: "small" | "medium" | "large" | "full",
 ): string {
@@ -192,7 +194,7 @@ export function getImageWidthClass(imageWidth: "1/3" | "1/2" | "2/3"): string {
 export function getShapeDivider(
 	shapeDivider: "none" | "wave" | "curve" | "slant" | "triangle",
 	textColor: string,
-): JSX.Element | null {
+): ReactElement | null {
 	const color = textColor || "#ffffff";
 
 	switch (shapeDivider) {
