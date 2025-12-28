@@ -100,6 +100,11 @@ export const PUCK_COMPONENT_LABELS = {
 	CONTAINER: "Container",
 	GRID: "Grid",
 	FORM: "Form",
+	ACCORDION: "Accordion",
+	ALERT: "Alert",
+	TABS: "Tabs",
+	CTA: "Call to Action",
+	STATS: "Statistics",
 } as const;
 
 // Puck Component Field Labels
@@ -108,8 +113,10 @@ export const PUCK_FIELD_LABELS = {
 	TITLE: "Title",
 	DESCRIPTION: "Description",
 	TEXT: "Text",
+	CONTENT: "Content",
 	URL: "URL",
 	VARIANT: "Variant",
+	ALIGNMENT: "Alignment",
 
 	// Card fields
 	IMAGE_URL: "Image URL",

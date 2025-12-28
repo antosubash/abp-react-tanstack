@@ -51,7 +51,10 @@ export async function getUserSession(): Promise<SessionData | null> {
 			isRefreshing = true;
 			refreshPromise = (async () => {
 				try {
-					const newTokens = await refreshToken(sessionData.refreshToken!);
+					if (!sessionData.refreshToken) {
+						throw new Error("No refresh token available");
+					}
+					const newTokens = await refreshToken(sessionData.refreshToken);
 					const accessToken = newTokens.access_token;
 					if (!accessToken) {
 						throw new Error("No access token in refresh response");

@@ -22,11 +22,17 @@ import {
 	AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
 import { Button } from "@/shared/components/ui/button";
+import {
+	usePermissions,
+	CMS_PERMISSIONS,
+} from "@/shared/hooks/use-permissions";
 import { PAGE_ACTION_MESSAGES, PAGE_DIALOG_TITLES } from "../constants";
 import { PagesHeader } from "./pages-header";
 import { PagesTable } from "./pages-table";
 
 export function PagesList() {
+	const { hasPermission } = usePermissions();
+	const canDelete = hasPermission(CMS_PERMISSIONS.PAGES_DELETE);
 	const [sorting, setSorting] = useState([]);
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
@@ -161,7 +167,7 @@ export function PagesList() {
 				searchValue={searchValue}
 			/>
 
-			{selectedPages.length > 0 && (
+			{selectedPages.length > 0 && canDelete && (
 				<div
 					className="flex flex-col sm:flex-row sm:items-center gap-2 p-4 bg-muted rounded-lg"
 					data-testid="bulk-actions"
