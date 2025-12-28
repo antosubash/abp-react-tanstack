@@ -10,7 +10,7 @@ const Puck = lazy(() =>
 		// Also import the CSS
 		import("@measured/puck/puck.css");
 		return { default: module.Puck };
-	})
+	}),
 );
 
 interface PuckEditorProps {
@@ -152,13 +152,17 @@ export function PuckEditor({ value, onChange, disabled }: PuckEditorProps) {
  */
 function PuckEditorSkeleton() {
 	return (
-		<div className="flex h-[600px]" role="status" aria-label="Loading editor">
+		<output className="flex h-[600px]" aria-label="Loading editor">
 			{/* Left sidebar skeleton */}
 			<div className="w-64 border-r bg-muted/10 p-4 space-y-4">
 				<div className="h-8 bg-muted rounded animate-pulse" />
 				<div className="space-y-2">
 					{[...Array(8)].map((_, i) => (
-						<div key={i} className="h-12 bg-muted rounded animate-pulse" />
+						<div
+							// biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton elements that never change
+							key={`sidebar-${i}`}
+							className="h-12 bg-muted rounded animate-pulse"
+						/>
 					))}
 				</div>
 			</div>
@@ -176,13 +180,17 @@ function PuckEditorSkeleton() {
 				<div className="h-8 bg-muted rounded animate-pulse" />
 				<div className="space-y-3">
 					{[...Array(6)].map((_, i) => (
-						<div key={i} className="space-y-2">
+						<div
+							// biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton elements that never change
+							key={`field-${i}`}
+							className="space-y-2"
+						>
 							<div className="h-4 bg-muted rounded animate-pulse w-1/3" />
 							<div className="h-10 bg-muted rounded animate-pulse" />
 						</div>
 					))}
 				</div>
 			</div>
-		</div>
+		</output>
 	);
 }

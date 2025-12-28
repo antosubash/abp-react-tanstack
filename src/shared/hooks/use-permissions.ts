@@ -26,7 +26,7 @@ import { abpApplicationConfigurationGetOptions } from "@/infrastructure/api/@tan
  */
 export function usePermissions() {
 	const { data: appConfig, isLoading } = useQuery(
-		abpApplicationConfigurationGetOptions()
+		abpApplicationConfigurationGetOptions(),
 	);
 
 	const grantedPolicies = appConfig?.auth?.grantedPolicies ?? {};

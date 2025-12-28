@@ -20,6 +20,11 @@ import { TestimonialBlock } from "./components/testimonial-block";
 import { CarouselBlock } from "./components/carousel-block";
 import { TableBlock } from "./components/table-block";
 import { GalleryBlock } from "./components/gallery-block";
+import { AccordionBlock } from "./components/accordion-block";
+import { AlertBlock } from "./components/alert-block";
+import { TabsBlock } from "./components/tabs-block";
+import { CTABlock } from "./components/cta-block";
+import { StatsBlock } from "./components/stats-block";
 
 export const puckConfig: Config = {
 	components: {
@@ -43,6 +48,11 @@ export const puckConfig: Config = {
 		Container: ContainerBlock,
 		Grid: GridBlock,
 		Form: FormBlock,
+		Accordion: AccordionBlock,
+		Alert: AlertBlock,
+		Tabs: TabsBlock,
+		CTA: CTABlock,
+		Stats: StatsBlock,
 	},
 };
 

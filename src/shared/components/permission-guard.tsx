@@ -57,5 +57,5 @@ export function PermissionGuard({
 		hasAccess = hasAllPermissions(allOf);
 	}
 
-	return hasAccess ? <>{children}</> : <>{fallback}</>;
+	return hasAccess ? children : fallback;
 }

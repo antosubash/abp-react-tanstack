@@ -22,7 +22,10 @@ import {
 	AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
 import { Button } from "@/shared/components/ui/button";
-import { usePermissions, CMS_PERMISSIONS } from "@/shared/hooks/use-permissions";
+import {
+	usePermissions,
+	CMS_PERMISSIONS,
+} from "@/shared/hooks/use-permissions";
 import { PAGE_ACTION_MESSAGES, PAGE_DIALOG_TITLES } from "../constants";
 import { PagesHeader } from "./pages-header";
 import { PagesTable } from "./pages-table";
