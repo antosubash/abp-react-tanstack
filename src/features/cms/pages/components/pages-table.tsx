@@ -17,6 +17,10 @@ import {
 	DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { TableRenderer } from "@/shared/components/ui/table-renderer";
+import {
+	usePermissions,
+	CMS_PERMISSIONS,
+} from "@/shared/hooks/use-permissions";
 import { PAGE_BUTTON_LABELS, PAGE_PUBLIC_BASE_PATH } from "../constants";
 
 interface PagesTableProps {
@@ -54,6 +58,12 @@ export function PagesTable({
 	selectedPages,
 	onSelectedPagesChange,
 }: PagesTableProps) {
+	const { hasPermission } = usePermissions();
+
+	const canUpdate = hasPermission(CMS_PERMISSIONS.PAGES_UPDATE);
+	const canDelete = hasPermission(CMS_PERMISSIONS.PAGES_DELETE);
+	const canSetHome = hasPermission(CMS_PERMISSIONS.PAGES_SET_HOME);
+
 	const handleEditPage = (page: VoloCmsKitAdminPagesPageDto) => {
 		onEditPage(page);
 	};
@@ -187,30 +197,38 @@ export function PagesTable({
 								<IconEye className="mr-2 h-4 w-4" />
 								{PAGE_BUTTON_LABELS.VIEW}
 							</DropdownMenuItem>
-							<DropdownMenuItem
-								onClick={() => handleEditPage(page)}
-								data-testid="btn-edit-page"
-							>
-								<IconPencil className="mr-2 h-4 w-4" />
-								{PAGE_BUTTON_LABELS.EDIT}
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								onClick={() => handleSetAsHomepage(page.id || "")}
-								data-testid="btn-set-homepage"
-							>
-								<IconHome className="mr-2 h-4 w-4" />
-								{PAGE_BUTTON_LABELS.SET_HOMEPAGE}
-							</DropdownMenuItem>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem
-								onClick={() => handleDeletePage(page.id || "")}
-								disabled={isDeleting}
-								className="text-destructive focus:text-destructive"
-								data-testid="btn-delete-page"
-							>
-								<IconTrash className="mr-2 h-4 w-4" />
-								{PAGE_BUTTON_LABELS.DELETE}
-							</DropdownMenuItem>
+							{canUpdate && (
+								<DropdownMenuItem
+									onClick={() => handleEditPage(page)}
+									data-testid="btn-edit-page"
+								>
+									<IconPencil className="mr-2 h-4 w-4" />
+									{PAGE_BUTTON_LABELS.EDIT}
+								</DropdownMenuItem>
+							)}
+							{canSetHome && (
+								<DropdownMenuItem
+									onClick={() => handleSetAsHomepage(page.id || "")}
+									data-testid="btn-set-homepage"
+								>
+									<IconHome className="mr-2 h-4 w-4" />
+									{PAGE_BUTTON_LABELS.SET_HOMEPAGE}
+								</DropdownMenuItem>
+							)}
+							{canDelete && (
+								<>
+									<DropdownMenuSeparator />
+									<DropdownMenuItem
+										onClick={() => handleDeletePage(page.id || "")}
+										disabled={isDeleting}
+										className="text-destructive focus:text-destructive"
+										data-testid="btn-delete-page"
+									>
+										<IconTrash className="mr-2 h-4 w-4" />
+										{PAGE_BUTTON_LABELS.DELETE}
+									</DropdownMenuItem>
+								</>
+							)}
 						</DropdownMenuContent>
 					</DropdownMenu>
 				);

@@ -28,6 +28,8 @@ import {
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
 import { Input } from "@/shared/components/ui/input";
+import { PermissionGuard } from "@/shared/components/permission-guard";
+import { CMS_PERMISSIONS } from "@/shared/hooks/use-permissions";
 import {
 	MENU_ITEM_BUTTONS,
 	MENU_ITEM_EMPTY_STATES,
@@ -259,7 +261,11 @@ export function MenuItemsList() {
 		<div className="space-y-4">
 			<div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
 				<div className="flex gap-2">
-					<Button onClick={openRootCreate}>{MENU_ITEM_BUTTONS.ADD_ROOT}</Button>
+					<PermissionGuard permission={CMS_PERMISSIONS.MENU_ITEMS_CREATE}>
+						<Button onClick={openRootCreate}>
+							{MENU_ITEM_BUTTONS.ADD_ROOT}
+						</Button>
+					</PermissionGuard>
 					<Button
 						variant="outline"
 						onClick={() => adminQuery.refetch()}

@@ -17,8 +17,27 @@ import { Toaster } from "@/shared/components/ui/sonner";
 
 import appCss from "../styles.css?url";
 
-// Create a client
-const queryClient = new QueryClient();
+// Create a client with optimized CMS cache configuration
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			// Cache CMS content for 5 minutes before considering it stale
+			staleTime: 5 * 60 * 1000,
+			// Keep unused data in cache for 30 minutes
+			gcTime: 30 * 60 * 1000,
+			// Don't refetch on window focus for CMS content (users expect stable content)
+			refetchOnWindowFocus: false,
+			// Retry failed requests up to 3 times with exponential backoff
+			retry: 3,
+			// Limit to 1 retry for mutations to avoid duplicate submissions
+			retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+		},
+		mutations: {
+			// Only retry mutations once to avoid duplicate operations
+			retry: 1,
+		},
+	},
+});
 
 export const Route = createRootRoute({
 	head: () => ({
