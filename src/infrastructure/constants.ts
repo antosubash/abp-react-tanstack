@@ -27,6 +27,9 @@ export const OIDC_CONSTANTS = {
 	GRANT_TYPE: "authorization_code",
 } as const;
 
+// Token refresh threshold (15 minutes in milliseconds)
+export const TOKEN_REFRESH_THRESHOLD = 15 * 60 * 1000;
+
 export const DEMO_CONSTANTS = {
 	CLIENT: {
 		TITLE: "Generated API Client Demo",

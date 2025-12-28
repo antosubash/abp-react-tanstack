@@ -37,6 +37,10 @@ export function PageComments({ entityType, entityId }: PageCommentsProps) {
 
 	const comments = commentsResponse?.items ?? [];
 
+	if (!isAuthenticated) {
+		return null;
+	}
+
 	const invalidateComments = () => {
 		queryClient.invalidateQueries({
 			queryKey: COMMENT_QUERY_KEYS.ENTITY_COMMENTS(entityType, entityId),
@@ -83,10 +87,6 @@ export function PageComments({ entityType, entityId }: PageCommentsProps) {
 		},
 	});
 
-	if (!isAuthenticated) {
-		return null;
-	}
-
 	const handleCreateSubmit = async (data: InlineCommentFormData) => {
 		await createMutation.mutateAsync({
 			path: { entityType, entityId },
@@ -115,11 +115,8 @@ export function PageComments({ entityType, entityId }: PageCommentsProps) {
 		comment: CommentNode,
 		data: InlineCommentFormData,
 	) => {
-		if (!comment.id) {
-			return;
-		}
 		await updateMutation.mutateAsync({
-			path: { id: comment.id },
+			path: { id: comment.id! },
 			body: { text: data.text },
 		});
 	};
