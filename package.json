@@ -103,7 +103,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
-    "@hey-api/openapi-ts": "^0.88.0",
+    "@hey-api/openapi-ts": "^0.97.3",
     "@playwright/test": "^1.57.0",
     "@tanstack/devtools-vite": "^0.3.11",
     "@testing-library/dom": "^10.4.0",
