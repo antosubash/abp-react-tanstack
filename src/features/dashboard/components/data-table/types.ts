@@ -1,4 +1,28 @@
+import {
+	createFacetedRowModel,
+	createFacetedUniqueValues,
+	createFilteredRowModel,
+	createPaginatedRowModel,
+	createSortedRowModel,
+	filterFns,
+	sortFns,
+	stockFeatures,
+	tableFeatures,
+} from "@tanstack/react-table";
 import { z } from "zod";
+
+export const dashboardTableFeatures = tableFeatures({
+	...stockFeatures,
+	filteredRowModel: createFilteredRowModel(),
+	filterFns,
+	sortedRowModel: createSortedRowModel(),
+	sortFns,
+	paginatedRowModel: createPaginatedRowModel(),
+	facetedRowModel: createFacetedRowModel(),
+	facetedUniqueValues: createFacetedUniqueValues(),
+});
+
+export type DashboardTableFeatures = typeof dashboardTableFeatures;
 
 export const schema = z.object({
 	id: z.number(),

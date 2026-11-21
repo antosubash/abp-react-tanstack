@@ -52,7 +52,8 @@ export function PermissionGroup({
 							ref={(ref) => {
 								if (ref && "indeterminate" in ref) {
 									// Handle indeterminate state for partial selection
-									(ref as HTMLInputElement).indeterminate = isPartiallyGranted;
+									(ref as unknown as HTMLInputElement).indeterminate =
+										isPartiallyGranted;
 								}
 							}}
 							onCheckedChange={handleGroupChange}

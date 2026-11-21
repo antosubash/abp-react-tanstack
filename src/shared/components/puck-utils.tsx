@@ -1,5 +1,5 @@
 import { Checkbox } from "@/shared/components/ui/checkbox";
-import type { CustomField } from "@measured/puck";
+import type { CustomField } from "@puckeditor/core";
 
 // Wrapper to create a custom checkbox field since Puck doesn't have a native one
 export function createCheckboxField(label: string): CustomField<boolean> {

@@ -1,6 +1,6 @@
 import { createCheckboxField } from "@/shared/components/puck-utils";
 import { PUCK_FIELD_LABELS } from "../../constants";
-import type { Fields } from "@measured/puck";
+import type { Fields } from "@puckeditor/core";
 
 export const heroBlockFields: Fields = {
 	// Content Fields

@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getAuthUrl } from "@/infrastructure/auth/oidc";
-import { updateSession } from "@/infrastructure/auth/session";
-import { OIDC_CONSTANTS } from "@/infrastructure/constants";
+import { oidcSessionUtils } from "@/infrastructure/auth/session";
 
 interface LoginResponse {
 	authUrl: string;
@@ -17,15 +16,10 @@ export const Route = createFileRoute("/auth/login")({
 					const { url, state, codeVerifier } = await getAuthUrl();
 
 					// Store state and codeVerifier in session for callback verification
-					await updateSession(
-						{
-							password: OIDC_CONSTANTS.SESSION_SECRET,
-						},
-						{
-							oidcState: state,
-							codeVerifier,
-						},
-					);
+					await oidcSessionUtils.update({
+						oidcState: state,
+						codeVerifier,
+					});
 
 					return json({
 						authUrl: url.toString(),

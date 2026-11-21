@@ -1,17 +1,17 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, RowData, StockFeatures } from "@tanstack/react-table";
 import { useTable } from "@/shared/hooks/use-mobile";
 import { TableRenderer } from "./table-renderer";
 import { Skeleton } from "./skeleton";
 
-interface DataTableProps<TData> {
+interface DataTableProps<TData extends RowData> {
 	data: TData[];
-	columns: ColumnDef<TData>[];
+	columns: ColumnDef<StockFeatures, TData>[];
 	totalCount: number;
 	isError?: boolean;
 	error?: Error | null;
 }
 
-export function DataTable<TData>({
+export function DataTable<TData extends RowData>({
 	data,
 	columns,
 	totalCount,

@@ -19,7 +19,12 @@ export type ActionApiDescriptionModel = {
     parameters?: Array<ParameterApiDescriptionModel> | null;
     returnValue?: ReturnValueApiDescriptionModel;
     allowAnonymous?: boolean | null;
+    authorizeDatas?: Array<AuthorizeDataApiDescriptionModel> | null;
     implementFrom?: string | null;
+    summary?: string | null;
+    remarks?: string | null;
+    description?: string | null;
+    displayName?: string | null;
 };
 
 export type ApplicationApiDescriptionModel = {
@@ -102,6 +107,11 @@ export type ApplicationSettingConfigurationDto = {
     values?: {
         [key: string]: string | null;
     } | null;
+};
+
+export type AuthorizeDataApiDescriptionModel = {
+    policy?: string | null;
+    roles?: string | null;
 };
 
 export type BlogDto = {
@@ -249,6 +259,10 @@ export type ControllerApiDescriptionModel = {
     isIntegrationService?: boolean;
     apiVersion?: string | null;
     type?: string | null;
+    summary?: string | null;
+    remarks?: string | null;
+    description?: string | null;
+    displayName?: string | null;
     interfaces?: Array<ControllerInterfaceApiDescriptionModel> | null;
     actions?: {
         [key: string]: ActionApiDescriptionModel;
@@ -303,6 +317,7 @@ export type CreatePageInputDto = {
     content?: string | null;
     script?: string | null;
     style?: string | null;
+    status?: PageStatus;
 };
 
 export type CreateUpdateRatingInput = {
@@ -527,6 +542,22 @@ export type GetPermissionListResultDto = {
     groups?: Array<PermissionGroupDto> | null;
 };
 
+export type GetResourcePermissionDefinitionListResultDto = {
+    permissions?: Array<ResourcePermissionDefinitionDto> | null;
+};
+
+export type GetResourcePermissionListResultDto = {
+    permissions?: Array<ResourcePermissionGrantInfoDto> | null;
+};
+
+export type GetResourcePermissionWithProviderListResultDto = {
+    permissions?: Array<ResourcePermissionWithProdiverGrantInfoDto> | null;
+};
+
+export type GetResourceProviderListResultDto = {
+    providers?: Array<ResourceProviderDto> | null;
+};
+
 export type GlobalResourceDto = {
     readonly extraProperties?: {
         [key: string]: unknown;
@@ -553,6 +584,11 @@ export type GlobalResourcesUpdateDto = {
     } | null;
     style?: string | null;
     script?: string | null;
+};
+
+export type GrantedResourcePermissionDto = {
+    name?: string | null;
+    displayName?: string | null;
 };
 
 export type IanaTimeZone = {
@@ -814,6 +850,9 @@ export type MethodParameterApiDescriptionModel = {
     typeSimple?: string | null;
     isOptional?: boolean;
     defaultValue?: unknown;
+    summary?: string | null;
+    description?: string | null;
+    displayName?: string | null;
 };
 
 export type ModuleApiDescriptionModel = {
@@ -835,6 +874,7 @@ export type ModuleExtensionDto = {
 
 export type MultiTenancyInfoDto = {
     isEnabled?: boolean;
+    userSharingStrategy?: TenantUserSharingStrategy;
 };
 
 export type NameValue = {
@@ -856,6 +896,8 @@ export type PageLookupDto = {
     title?: string | null;
     slug?: string | null;
 };
+
+export type PageStatus = 0 | 1;
 
 export type PagedResultDtoOfBlogDto = {
     items?: Array<BlogDto> | null;
@@ -902,6 +944,11 @@ export type PagedResultDtoOfTenantDto = {
     totalCount?: number;
 };
 
+export type PagedResultDtoOfTodoDto = {
+    items?: Array<TodoDto> | null;
+    totalCount?: number;
+};
+
 export type PagedResultDtoOfVoloCmsKitAdminPagesPageDto = {
     items?: Array<VoloCmsKitAdminPagesPageDto> | null;
     totalCount?: number;
@@ -923,6 +970,9 @@ export type ParameterApiDescriptionModel = {
     constraintTypes?: Array<string> | null;
     bindingSourceId?: string | null;
     descriptorName?: string | null;
+    summary?: string | null;
+    description?: string | null;
+    displayName?: string | null;
 };
 
 export type PermissionGrantInfoDto = {
@@ -932,6 +982,7 @@ export type PermissionGrantInfoDto = {
     isGranted?: boolean;
     allowedProviders?: Array<string> | null;
     grantedProviders?: Array<ProviderInfoDto> | null;
+    isEditable?: boolean;
 };
 
 export type PermissionGroupDto = {
@@ -978,6 +1029,10 @@ export type PropertyApiDescriptionModel = {
     minimum?: string | null;
     maximum?: string | null;
     regex?: string | null;
+    isNullable?: boolean;
+    summary?: string | null;
+    description?: string | null;
+    displayName?: string | null;
 };
 
 export type ProviderInfoDto = {
@@ -1046,9 +1101,44 @@ export type ResetPasswordDto = {
     password: string;
 };
 
+export type ResourcePermissionDefinitionDto = {
+    name?: string | null;
+    displayName?: string | null;
+};
+
+export type ResourcePermissionGrantInfoDto = {
+    providerName?: string | null;
+    providerKey?: string | null;
+    providerDisplayName?: string | null;
+    providerNameDisplayName?: string | null;
+    permissions?: Array<GrantedResourcePermissionDto> | null;
+};
+
+export type ResourcePermissionWithProdiverGrantInfoDto = {
+    name?: string | null;
+    displayName?: string | null;
+    providers?: Array<string> | null;
+    isGranted?: boolean;
+};
+
+export type ResourceProviderDto = {
+    name?: string | null;
+    displayName?: string | null;
+};
+
 export type ReturnValueApiDescriptionModel = {
     type?: string | null;
     typeSimple?: string | null;
+    summary?: string | null;
+};
+
+export type SearchProviderKeyInfo = {
+    providerKey?: string | null;
+    providerDisplayName?: string | null;
+};
+
+export type SearchProviderKeyListResultDto = {
+    keys?: Array<SearchProviderKeyInfo> | null;
 };
 
 export type SendPasswordResetCodeDto = {
@@ -1122,9 +1212,24 @@ export type TenantUpdateDto = {
     concurrencyStamp?: string | null;
 };
 
+export type TenantUserSharingStrategy = 0 | 1;
+
 export type TimingDto = {
     timeZone?: VoloAbpAspNetCoreMvcApplicationConfigurationsTimeZone;
 };
+
+export type TodoDto = {
+    id?: string;
+    title?: string | null;
+    description?: string | null;
+    isCompleted?: boolean;
+    dueDate?: string | null;
+    priority?: TodoPriority;
+    creationTime?: string;
+    lastModificationTime?: string | null;
+};
+
+export type TodoPriority = 0 | 1 | 2;
 
 export type TypeApiDescriptionModel = {
     baseType?: string | null;
@@ -1133,6 +1238,10 @@ export type TypeApiDescriptionModel = {
     enumValues?: Array<unknown> | null;
     genericArguments?: Array<string> | null;
     properties?: Array<PropertyApiDescriptionModel> | null;
+    summary?: string | null;
+    remarks?: string | null;
+    description?: string | null;
+    displayName?: string | null;
 };
 
 export type UpdateBlogDto = {
@@ -1197,6 +1306,7 @@ export type UpdatePageInputDto = {
     content?: string | null;
     script?: string | null;
     style?: string | null;
+    status?: PageStatus;
     concurrencyStamp?: string | null;
 };
 
@@ -1219,6 +1329,12 @@ export type UpdateProfileDto = {
     surname?: string | null;
     phoneNumber?: string | null;
     concurrencyStamp?: string | null;
+};
+
+export type UpdateResourcePermissionsDto = {
+    providerName?: string | null;
+    providerKey?: string | null;
+    permissions?: Array<string> | null;
 };
 
 export type UserData = {
@@ -1294,6 +1410,7 @@ export type VoloCmsKitAdminPagesPageDto = {
     script?: string | null;
     style?: string | null;
     isHomePage?: boolean;
+    status?: PageStatus;
     concurrencyStamp?: string | null;
 };
 
@@ -1308,6 +1425,7 @@ export type VoloCmsKitContentsPageDto = {
     content?: string | null;
     script?: string | null;
     style?: string | null;
+    status?: PageStatus;
 };
 
 export type VoloCmsKitPublicCommentsCmsUserDto = {
@@ -1504,6 +1622,7 @@ export type CreatePageInputDtoWritable = {
     content?: string | null;
     script?: string | null;
     style?: string | null;
+    status?: PageStatus;
 };
 
 export type FeatureDtoWritable = {
@@ -1852,6 +1971,7 @@ export type UpdatePageInputDtoWritable = {
     content?: string | null;
     script?: string | null;
     style?: string | null;
+    status?: PageStatus;
     concurrencyStamp?: string | null;
 };
 
@@ -1905,6 +2025,7 @@ export type VoloCmsKitAdminPagesPageDtoWritable = {
     script?: string | null;
     style?: string | null;
     isHomePage?: boolean;
+    status?: PageStatus;
     concurrencyStamp?: string | null;
 };
 
@@ -1916,6 +2037,7 @@ export type VoloCmsKitContentsPageDtoWritable = {
     content?: string | null;
     script?: string | null;
     style?: string | null;
+    status?: PageStatus;
 };
 
 export type VoloCmsKitPublicCommentsCmsUserDtoWritable = {
@@ -1951,6 +2073,7 @@ export type AbpApiDefinitionGetData = {
     path?: never;
     query?: {
         IncludeTypes?: boolean;
+        IncludeDescriptions?: boolean;
     };
     url: '/api/abp/api-definition';
 };
@@ -2268,7 +2391,13 @@ export type AccountSendPasswordResetCodeResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type AccountSendPasswordResetCodeResponse = AccountSendPasswordResetCodeResponses[keyof AccountSendPasswordResetCodeResponses];
 
 export type AccountVerifyPasswordResetTokenData = {
     body?: VerifyPasswordResetTokenInput;
@@ -2356,7 +2485,13 @@ export type AccountResetPasswordResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type AccountResetPasswordResponse = AccountResetPasswordResponses[keyof AccountResetPasswordResponses];
 
 export type BlogAdminDeleteData = {
     body?: never;
@@ -2401,7 +2536,13 @@ export type BlogAdminDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type BlogAdminDeleteResponse = BlogAdminDeleteResponses[keyof BlogAdminDeleteResponses];
 
 export type BlogAdminGetData = {
     body?: never;
@@ -2683,7 +2824,13 @@ export type BlogAdminMoveAllBlogPostsResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type BlogAdminMoveAllBlogPostsResponse = BlogAdminMoveAllBlogPostsResponses[keyof BlogAdminMoveAllBlogPostsResponses];
 
 export type BlogFeatureGetOrDefaultData = {
     body?: never;
@@ -2823,7 +2970,13 @@ export type BlogFeatureAdminSetResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type BlogFeatureAdminSetResponse = BlogFeatureAdminSetResponses[keyof BlogFeatureAdminSetResponses];
 
 export type BlogPostAdminGetListData = {
     body?: never;
@@ -2967,7 +3120,13 @@ export type BlogPostAdminDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type BlogPostAdminDeleteResponse = BlogPostAdminDeleteResponses[keyof BlogPostAdminDeleteResponses];
 
 export type BlogPostAdminGetData = {
     body?: never;
@@ -3106,7 +3265,13 @@ export type BlogPostAdminPublishResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type BlogPostAdminPublishResponse = BlogPostAdminPublishResponses[keyof BlogPostAdminPublishResponses];
 
 export type BlogPostAdminDraftData = {
     body?: never;
@@ -3151,7 +3316,13 @@ export type BlogPostAdminDraftResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type BlogPostAdminDraftResponse = BlogPostAdminDraftResponses[keyof BlogPostAdminDraftResponses];
 
 export type BlogPostAdminCreateAndPublishData = {
     body?: CreateBlogPostDtoWritable;
@@ -3241,7 +3412,13 @@ export type BlogPostAdminSendToReviewResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type BlogPostAdminSendToReviewResponse = BlogPostAdminSendToReviewResponses[keyof BlogPostAdminSendToReviewResponses];
 
 export type BlogPostAdminCreateAndSendToReviewData = {
     body?: CreateBlogPostDtoWritable;
@@ -3575,7 +3752,13 @@ export type BlogPostPublicDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type BlogPostPublicDeleteResponse = BlogPostPublicDeleteResponses[keyof BlogPostPublicDeleteResponses];
 
 export type BlogPostPublicGetTagNameData = {
     body?: never;
@@ -3911,7 +4094,13 @@ export type CommentAdminDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type CommentAdminDeleteResponse = CommentAdminDeleteResponses[keyof CommentAdminDeleteResponses];
 
 export type CommentAdminGetData = {
     body?: never;
@@ -4003,7 +4192,13 @@ export type CommentAdminUpdateApprovalStatusResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type CommentAdminUpdateApprovalStatusResponse = CommentAdminUpdateApprovalStatusResponses[keyof CommentAdminUpdateApprovalStatusResponses];
 
 export type CommentAdminUpdateSettingsData = {
     body?: CommentSettingsDto;
@@ -4046,7 +4241,13 @@ export type CommentAdminUpdateSettingsResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type CommentAdminUpdateSettingsResponse = CommentAdminUpdateSettingsResponses[keyof CommentAdminUpdateSettingsResponses];
 
 export type CommentAdminGetWaitingCountData = {
     body?: never;
@@ -4232,7 +4433,13 @@ export type CommentPublicDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type CommentPublicDeleteResponse = CommentPublicDeleteResponses[keyof CommentPublicDeleteResponses];
 
 export type CommentPublicUpdateData = {
     body?: UpdateCommentInputWritable;
@@ -4322,7 +4529,13 @@ export type DynamicClaimsRefreshResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type DynamicClaimsRefreshResponse = DynamicClaimsRefreshResponses[keyof DynamicClaimsRefreshResponses];
 
 export type EmailSettingsGetData = {
     body?: never;
@@ -4410,7 +4623,13 @@ export type EmailSettingsUpdateResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type EmailSettingsUpdateResponse = EmailSettingsUpdateResponses[keyof EmailSettingsUpdateResponses];
 
 export type EmailSettingsSendTestEmailData = {
     body?: SendTestEmailInput;
@@ -4453,7 +4672,13 @@ export type EmailSettingsSendTestEmailResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type EmailSettingsSendTestEmailResponse = EmailSettingsSendTestEmailResponses[keyof EmailSettingsSendTestEmailResponses];
 
 export type EntityTagAdminRemoveTagFromEntityData = {
     body?: never;
@@ -4500,7 +4725,13 @@ export type EntityTagAdminRemoveTagFromEntityResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type EntityTagAdminRemoveTagFromEntityResponse = EntityTagAdminRemoveTagFromEntityResponses[keyof EntityTagAdminRemoveTagFromEntityResponses];
 
 export type EntityTagAdminAddTagToEntityData = {
     body?: EntityTagCreateDto;
@@ -4543,7 +4774,13 @@ export type EntityTagAdminAddTagToEntityResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type EntityTagAdminAddTagToEntityResponse = EntityTagAdminAddTagToEntityResponses[keyof EntityTagAdminAddTagToEntityResponses];
 
 export type EntityTagAdminSetEntityTagsData = {
     body?: EntityTagSetDto;
@@ -4586,7 +4823,13 @@ export type EntityTagAdminSetEntityTagsResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type EntityTagAdminSetEntityTagsResponse = EntityTagAdminSetEntityTagsResponses[keyof EntityTagAdminSetEntityTagsResponses];
 
 export type FeaturesDeleteData = {
     body?: never;
@@ -4632,7 +4875,13 @@ export type FeaturesDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type FeaturesDeleteResponse = FeaturesDeleteResponses[keyof FeaturesDeleteResponses];
 
 export type FeaturesGetData = {
     body?: never;
@@ -4726,7 +4975,13 @@ export type FeaturesUpdateResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type FeaturesUpdateResponse = FeaturesUpdateResponses[keyof FeaturesUpdateResponses];
 
 export type GlobalResourceAdminGetData = {
     body?: never;
@@ -4814,7 +5069,13 @@ export type GlobalResourceAdminSetGlobalResourcesResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type GlobalResourceAdminSetGlobalResourcesResponse = GlobalResourceAdminSetGlobalResourcesResponses[keyof GlobalResourceAdminSetGlobalResourcesResponses];
 
 export type GlobalResourcePublicGetGlobalScriptData = {
     body?: never;
@@ -4992,7 +5253,13 @@ export type LoginLogoutResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type LoginLogoutResponse = LoginLogoutResponses[keyof LoginLogoutResponses];
 
 export type LoginCheckPasswordData = {
     body?: VoloAbpAccountWebAreasAccountControllersModelsUserLoginInfo;
@@ -5276,7 +5543,13 @@ export type MediaDescriptorAdminDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type MediaDescriptorAdminDeleteResponse = MediaDescriptorAdminDeleteResponses[keyof MediaDescriptorAdminDeleteResponses];
 
 export type MenuItemAdminGetListData = {
     body?: never;
@@ -5411,7 +5684,13 @@ export type MenuItemAdminDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type MenuItemAdminDeleteResponse = MenuItemAdminDeleteResponses[keyof MenuItemAdminDeleteResponses];
 
 export type MenuItemAdminGetData = {
     body?: never;
@@ -5550,13 +5829,20 @@ export type MenuItemAdminMoveMenuItemResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type MenuItemAdminMoveMenuItemResponse = MenuItemAdminMoveMenuItemResponses[keyof MenuItemAdminMoveMenuItemResponses];
 
 export type MenuItemAdminGetPageLookupData = {
     body?: never;
     path?: never;
     query?: {
         Filter?: string;
+        Status?: PageStatus;
         Sorting?: string;
         SkipCount?: number;
         MaxResultCount?: number;
@@ -5649,6 +5935,53 @@ export type MenuItemAdminGetPermissionLookupResponses = {
 
 export type MenuItemAdminGetPermissionLookupResponse = MenuItemAdminGetPermissionLookupResponses[keyof MenuItemAdminGetPermissionLookupResponses];
 
+export type MenuItemAdminGetAvailableMenuOrderData = {
+    body?: never;
+    path?: never;
+    query?: {
+        parentId?: string;
+    };
+    url: '/api/cms-kit-admin/menu-items/available-order';
+};
+
+export type MenuItemAdminGetAvailableMenuOrderErrors = {
+    /**
+     * Bad Request
+     */
+    400: RemoteServiceErrorResponse;
+    /**
+     * Unauthorized
+     */
+    401: RemoteServiceErrorResponse;
+    /**
+     * Forbidden
+     */
+    403: RemoteServiceErrorResponse;
+    /**
+     * Not Found
+     */
+    404: RemoteServiceErrorResponse;
+    /**
+     * Internal Server Error
+     */
+    500: RemoteServiceErrorResponse;
+    /**
+     * Not Implemented
+     */
+    501: RemoteServiceErrorResponse;
+};
+
+export type MenuItemAdminGetAvailableMenuOrderError = MenuItemAdminGetAvailableMenuOrderErrors[keyof MenuItemAdminGetAvailableMenuOrderErrors];
+
+export type MenuItemAdminGetAvailableMenuOrderResponses = {
+    /**
+     * OK
+     */
+    200: number;
+};
+
+export type MenuItemAdminGetAvailableMenuOrderResponse = MenuItemAdminGetAvailableMenuOrderResponses[keyof MenuItemAdminGetAvailableMenuOrderResponses];
+
 export type MenuItemPublicGetListData = {
     body?: never;
     path?: never;
@@ -5737,7 +6070,13 @@ export type PageAdminDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type PageAdminDeleteResponse = PageAdminDeleteResponses[keyof PageAdminDeleteResponses];
 
 export type PageAdminGetData = {
     body?: never;
@@ -5838,6 +6177,7 @@ export type PageAdminGetListData = {
     path?: never;
     query?: {
         Filter?: string;
+        Status?: PageStatus;
         Sorting?: string;
         SkipCount?: number;
         MaxResultCount?: number;
@@ -5971,7 +6311,13 @@ export type PageAdminSetAsHomePageResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type PageAdminSetAsHomePageResponse = PageAdminSetAsHomePageResponses[keyof PageAdminSetAsHomePageResponses];
 
 export type PagesPublicFindBySlugData = {
     body?: never;
@@ -6204,7 +6550,410 @@ export type PermissionsUpdateResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type PermissionsUpdateResponse = PermissionsUpdateResponses[keyof PermissionsUpdateResponses];
+
+export type PermissionsGetByGroupData = {
+    body?: never;
+    path?: never;
+    query?: {
+        groupName?: string;
+        providerName?: string;
+        providerKey?: string;
+    };
+    url: '/api/permission-management/permissions/by-group';
+};
+
+export type PermissionsGetByGroupErrors = {
+    /**
+     * Bad Request
+     */
+    400: RemoteServiceErrorResponse;
+    /**
+     * Unauthorized
+     */
+    401: RemoteServiceErrorResponse;
+    /**
+     * Forbidden
+     */
+    403: RemoteServiceErrorResponse;
+    /**
+     * Not Found
+     */
+    404: RemoteServiceErrorResponse;
+    /**
+     * Internal Server Error
+     */
+    500: RemoteServiceErrorResponse;
+    /**
+     * Not Implemented
+     */
+    501: RemoteServiceErrorResponse;
+};
+
+export type PermissionsGetByGroupError = PermissionsGetByGroupErrors[keyof PermissionsGetByGroupErrors];
+
+export type PermissionsGetByGroupResponses = {
+    /**
+     * OK
+     */
+    200: GetPermissionListResultDto;
+};
+
+export type PermissionsGetByGroupResponse = PermissionsGetByGroupResponses[keyof PermissionsGetByGroupResponses];
+
+export type PermissionsGetResourceProviderKeyLookupServicesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        resourceName?: string;
+    };
+    url: '/api/permission-management/permissions/resource-provider-key-lookup-services';
+};
+
+export type PermissionsGetResourceProviderKeyLookupServicesErrors = {
+    /**
+     * Bad Request
+     */
+    400: RemoteServiceErrorResponse;
+    /**
+     * Unauthorized
+     */
+    401: RemoteServiceErrorResponse;
+    /**
+     * Forbidden
+     */
+    403: RemoteServiceErrorResponse;
+    /**
+     * Not Found
+     */
+    404: RemoteServiceErrorResponse;
+    /**
+     * Internal Server Error
+     */
+    500: RemoteServiceErrorResponse;
+    /**
+     * Not Implemented
+     */
+    501: RemoteServiceErrorResponse;
+};
+
+export type PermissionsGetResourceProviderKeyLookupServicesError = PermissionsGetResourceProviderKeyLookupServicesErrors[keyof PermissionsGetResourceProviderKeyLookupServicesErrors];
+
+export type PermissionsGetResourceProviderKeyLookupServicesResponses = {
+    /**
+     * OK
+     */
+    200: GetResourceProviderListResultDto;
+};
+
+export type PermissionsGetResourceProviderKeyLookupServicesResponse = PermissionsGetResourceProviderKeyLookupServicesResponses[keyof PermissionsGetResourceProviderKeyLookupServicesResponses];
+
+export type PermissionsSearchResourceProviderKeyData = {
+    body?: never;
+    path?: never;
+    query?: {
+        resourceName?: string;
+        serviceName?: string;
+        filter?: string;
+        page?: number;
+    };
+    url: '/api/permission-management/permissions/search-resource-provider-keys';
+};
+
+export type PermissionsSearchResourceProviderKeyErrors = {
+    /**
+     * Bad Request
+     */
+    400: RemoteServiceErrorResponse;
+    /**
+     * Unauthorized
+     */
+    401: RemoteServiceErrorResponse;
+    /**
+     * Forbidden
+     */
+    403: RemoteServiceErrorResponse;
+    /**
+     * Not Found
+     */
+    404: RemoteServiceErrorResponse;
+    /**
+     * Internal Server Error
+     */
+    500: RemoteServiceErrorResponse;
+    /**
+     * Not Implemented
+     */
+    501: RemoteServiceErrorResponse;
+};
+
+export type PermissionsSearchResourceProviderKeyError = PermissionsSearchResourceProviderKeyErrors[keyof PermissionsSearchResourceProviderKeyErrors];
+
+export type PermissionsSearchResourceProviderKeyResponses = {
+    /**
+     * OK
+     */
+    200: SearchProviderKeyListResultDto;
+};
+
+export type PermissionsSearchResourceProviderKeyResponse = PermissionsSearchResourceProviderKeyResponses[keyof PermissionsSearchResourceProviderKeyResponses];
+
+export type PermissionsGetResourceDefinitionsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        resourceName?: string;
+    };
+    url: '/api/permission-management/permissions/resource-definitions';
+};
+
+export type PermissionsGetResourceDefinitionsErrors = {
+    /**
+     * Bad Request
+     */
+    400: RemoteServiceErrorResponse;
+    /**
+     * Unauthorized
+     */
+    401: RemoteServiceErrorResponse;
+    /**
+     * Forbidden
+     */
+    403: RemoteServiceErrorResponse;
+    /**
+     * Not Found
+     */
+    404: RemoteServiceErrorResponse;
+    /**
+     * Internal Server Error
+     */
+    500: RemoteServiceErrorResponse;
+    /**
+     * Not Implemented
+     */
+    501: RemoteServiceErrorResponse;
+};
+
+export type PermissionsGetResourceDefinitionsError = PermissionsGetResourceDefinitionsErrors[keyof PermissionsGetResourceDefinitionsErrors];
+
+export type PermissionsGetResourceDefinitionsResponses = {
+    /**
+     * OK
+     */
+    200: GetResourcePermissionDefinitionListResultDto;
+};
+
+export type PermissionsGetResourceDefinitionsResponse = PermissionsGetResourceDefinitionsResponses[keyof PermissionsGetResourceDefinitionsResponses];
+
+export type PermissionsDeleteResourceData = {
+    body?: never;
+    path?: never;
+    query?: {
+        resourceName?: string;
+        resourceKey?: string;
+        providerName?: string;
+        providerKey?: string;
+    };
+    url: '/api/permission-management/permissions/resource';
+};
+
+export type PermissionsDeleteResourceErrors = {
+    /**
+     * Bad Request
+     */
+    400: RemoteServiceErrorResponse;
+    /**
+     * Unauthorized
+     */
+    401: RemoteServiceErrorResponse;
+    /**
+     * Forbidden
+     */
+    403: RemoteServiceErrorResponse;
+    /**
+     * Not Found
+     */
+    404: RemoteServiceErrorResponse;
+    /**
+     * Internal Server Error
+     */
+    500: RemoteServiceErrorResponse;
+    /**
+     * Not Implemented
+     */
+    501: RemoteServiceErrorResponse;
+};
+
+export type PermissionsDeleteResourceError = PermissionsDeleteResourceErrors[keyof PermissionsDeleteResourceErrors];
+
+export type PermissionsDeleteResourceResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type PermissionsDeleteResourceResponse = PermissionsDeleteResourceResponses[keyof PermissionsDeleteResourceResponses];
+
+export type PermissionsGetResourceData = {
+    body?: never;
+    path?: never;
+    query?: {
+        resourceName?: string;
+        resourceKey?: string;
+    };
+    url: '/api/permission-management/permissions/resource';
+};
+
+export type PermissionsGetResourceErrors = {
+    /**
+     * Bad Request
+     */
+    400: RemoteServiceErrorResponse;
+    /**
+     * Unauthorized
+     */
+    401: RemoteServiceErrorResponse;
+    /**
+     * Forbidden
+     */
+    403: RemoteServiceErrorResponse;
+    /**
+     * Not Found
+     */
+    404: RemoteServiceErrorResponse;
+    /**
+     * Internal Server Error
+     */
+    500: RemoteServiceErrorResponse;
+    /**
+     * Not Implemented
+     */
+    501: RemoteServiceErrorResponse;
+};
+
+export type PermissionsGetResourceError = PermissionsGetResourceErrors[keyof PermissionsGetResourceErrors];
+
+export type PermissionsGetResourceResponses = {
+    /**
+     * OK
+     */
+    200: GetResourcePermissionListResultDto;
+};
+
+export type PermissionsGetResourceResponse = PermissionsGetResourceResponses[keyof PermissionsGetResourceResponses];
+
+export type PermissionsUpdateResourceData = {
+    body?: UpdateResourcePermissionsDto;
+    path?: never;
+    query?: {
+        resourceName?: string;
+        resourceKey?: string;
+    };
+    url: '/api/permission-management/permissions/resource';
+};
+
+export type PermissionsUpdateResourceErrors = {
+    /**
+     * Bad Request
+     */
+    400: RemoteServiceErrorResponse;
+    /**
+     * Unauthorized
+     */
+    401: RemoteServiceErrorResponse;
+    /**
+     * Forbidden
+     */
+    403: RemoteServiceErrorResponse;
+    /**
+     * Not Found
+     */
+    404: RemoteServiceErrorResponse;
+    /**
+     * Internal Server Error
+     */
+    500: RemoteServiceErrorResponse;
+    /**
+     * Not Implemented
+     */
+    501: RemoteServiceErrorResponse;
+};
+
+export type PermissionsUpdateResourceError = PermissionsUpdateResourceErrors[keyof PermissionsUpdateResourceErrors];
+
+export type PermissionsUpdateResourceResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type PermissionsUpdateResourceResponse = PermissionsUpdateResourceResponses[keyof PermissionsUpdateResourceResponses];
+
+export type PermissionsGetResourceByProviderData = {
+    body?: never;
+    path?: never;
+    query?: {
+        resourceName?: string;
+        resourceKey?: string;
+        providerName?: string;
+        providerKey?: string;
+    };
+    url: '/api/permission-management/permissions/resource/by-provider';
+};
+
+export type PermissionsGetResourceByProviderErrors = {
+    /**
+     * Bad Request
+     */
+    400: RemoteServiceErrorResponse;
+    /**
+     * Unauthorized
+     */
+    401: RemoteServiceErrorResponse;
+    /**
+     * Forbidden
+     */
+    403: RemoteServiceErrorResponse;
+    /**
+     * Not Found
+     */
+    404: RemoteServiceErrorResponse;
+    /**
+     * Internal Server Error
+     */
+    500: RemoteServiceErrorResponse;
+    /**
+     * Not Implemented
+     */
+    501: RemoteServiceErrorResponse;
+};
+
+export type PermissionsGetResourceByProviderError = PermissionsGetResourceByProviderErrors[keyof PermissionsGetResourceByProviderErrors];
+
+export type PermissionsGetResourceByProviderResponses = {
+    /**
+     * OK
+     */
+    200: GetResourcePermissionWithProviderListResultDto;
+};
+
+export type PermissionsGetResourceByProviderResponse = PermissionsGetResourceByProviderResponses[keyof PermissionsGetResourceByProviderResponses];
 
 export type ProfileGetData = {
     body?: never;
@@ -6337,7 +7086,13 @@ export type ProfileChangePasswordResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type ProfileChangePasswordResponse = ProfileChangePasswordResponses[keyof ProfileChangePasswordResponses];
 
 export type RatingPublicDeleteData = {
     body?: never;
@@ -6383,7 +7138,13 @@ export type RatingPublicDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type RatingPublicDeleteResponse = RatingPublicDeleteResponses[keyof RatingPublicDeleteResponses];
 
 export type RatingPublicGetGroupedStarCountsData = {
     body?: never;
@@ -6574,7 +7335,13 @@ export type ReactionPublicDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type ReactionPublicDeleteResponse = ReactionPublicDeleteResponses[keyof ReactionPublicDeleteResponses];
 
 export type ReactionPublicCreateData = {
     body?: never;
@@ -6621,7 +7388,13 @@ export type ReactionPublicCreateResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type ReactionPublicCreateResponse = ReactionPublicCreateResponses[keyof ReactionPublicCreateResponses];
 
 export type RoleGetAllListData = {
     body?: never;
@@ -6809,7 +7582,13 @@ export type RoleDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type RoleDeleteResponse = RoleDeleteResponses[keyof RoleDeleteResponses];
 
 export type RoleGetData = {
     body?: never;
@@ -7043,7 +7822,13 @@ export type TagAdminDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type TagAdminDeleteResponse = TagAdminDeleteResponses[keyof TagAdminDeleteResponses];
 
 export type TagAdminGetData = {
     body?: never;
@@ -7378,7 +8163,13 @@ export type TenantDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type TenantDeleteResponse = TenantDeleteResponses[keyof TenantDeleteResponses];
 
 export type TenantGetData = {
     body?: never;
@@ -7612,7 +8403,13 @@ export type TenantDeleteDefaultConnectionStringResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type TenantDeleteDefaultConnectionStringResponse = TenantDeleteDefaultConnectionStringResponses[keyof TenantDeleteDefaultConnectionStringResponses];
 
 export type TenantGetDefaultConnectionStringData = {
     body?: never;
@@ -7706,7 +8503,13 @@ export type TenantUpdateDefaultConnectionStringResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type TenantUpdateDefaultConnectionStringResponse = TenantUpdateDefaultConnectionStringResponses[keyof TenantUpdateDefaultConnectionStringResponses];
 
 export type TimeZoneSettingsGetData = {
     body?: never;
@@ -7796,7 +8599,13 @@ export type TimeZoneSettingsUpdateResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type TimeZoneSettingsUpdateResponse = TimeZoneSettingsUpdateResponses[keyof TimeZoneSettingsUpdateResponses];
 
 export type TimeZoneSettingsGetTimezonesData = {
     body?: never;
@@ -7843,6 +8652,124 @@ export type TimeZoneSettingsGetTimezonesResponses = {
 
 export type TimeZoneSettingsGetTimezonesResponse = TimeZoneSettingsGetTimezonesResponses[keyof TimeZoneSettingsGetTimezonesResponses];
 
+export type TodoGetListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        IsCompleted?: boolean;
+        Priority?: TodoPriority;
+        Sorting?: string;
+        SkipCount?: number;
+        MaxResultCount?: number;
+    };
+    url: '/api/todos';
+};
+
+export type TodoGetListResponses = {
+    /**
+     * OK
+     */
+    200: PagedResultDtoOfTodoDto;
+};
+
+export type TodoGetListResponse = TodoGetListResponses[keyof TodoGetListResponses];
+
+export type TodoCreateData = {
+    body?: never;
+    path?: never;
+    query: {
+        Title: string;
+        Description?: string;
+        DueDate?: string;
+        Priority?: TodoPriority;
+    };
+    url: '/api/todos';
+};
+
+export type TodoCreateResponses = {
+    /**
+     * OK
+     */
+    200: TodoDto;
+};
+
+export type TodoCreateResponse = TodoCreateResponses[keyof TodoCreateResponses];
+
+export type TodoDeleteData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/todos/{id}';
+};
+
+export type TodoDeleteResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type TodoGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/todos/{id}';
+};
+
+export type TodoGetResponses = {
+    /**
+     * OK
+     */
+    200: TodoDto;
+};
+
+export type TodoGetResponse = TodoGetResponses[keyof TodoGetResponses];
+
+export type TodoUpdateData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query: {
+        Title: string;
+        Description?: string;
+        DueDate?: string;
+        Priority?: TodoPriority;
+    };
+    url: '/api/todos/{id}';
+};
+
+export type TodoUpdateResponses = {
+    /**
+     * OK
+     */
+    200: TodoDto;
+};
+
+export type TodoUpdateResponse = TodoUpdateResponses[keyof TodoUpdateResponses];
+
+export type TodoToggleCompleteData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/todos/{id}/toggle-complete';
+};
+
+export type TodoToggleCompleteResponses = {
+    /**
+     * OK
+     */
+    200: TodoDto;
+};
+
+export type TodoToggleCompleteResponse = TodoToggleCompleteResponses[keyof TodoToggleCompleteResponses];
+
 export type UserDeleteData = {
     body?: never;
     path: {
@@ -7886,7 +8813,13 @@ export type UserDeleteResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type UserDeleteResponse = UserDeleteResponses[keyof UserDeleteResponses];
 
 export type UserGetData = {
     body?: never;
@@ -8170,7 +9103,13 @@ export type UserUpdateRolesResponses = {
      * OK
      */
     200: unknown;
+    /**
+     * No Content
+     */
+    204: void;
 };
+
+export type UserUpdateRolesResponse = UserUpdateRolesResponses[keyof UserUpdateRolesResponses];
 
 export type UserGetAssignableRolesData = {
     body?: never;

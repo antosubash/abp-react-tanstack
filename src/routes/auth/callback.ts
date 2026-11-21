@@ -1,14 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { clearSession, getSession } from "@tanstack/react-start/server";
 import { createSession } from "@/infrastructure/auth/auth-server";
 import { exchangeCodeForTokens } from "@/infrastructure/auth/oidc";
-import type { SessionData } from "@/infrastructure/auth/session";
-import { OIDC_CONSTANTS } from "@/infrastructure/constants";
-
-type OIDCSessionData = SessionData & {
-	oidcState?: string;
-	codeVerifier?: string;
-};
+import { oidcSessionUtils } from "@/infrastructure/auth/session";
 
 export const Route = createFileRoute("/auth/callback")({
 	server: {
@@ -37,17 +30,9 @@ export const Route = createFileRoute("/auth/callback")({
 
 				try {
 					// Retrieve stored state and codeVerifier from session
-					const session = await getSession({
-						password: OIDC_CONSTANTS.SESSION_SECRET,
-					});
+					const sessionData = await oidcSessionUtils.get();
 
-					const sessionData = session?.data as OIDCSessionData;
-
-					if (
-						!session ||
-						!sessionData?.oidcState ||
-						!sessionData?.codeVerifier
-					) {
+					if (!sessionData?.oidcState || !sessionData?.codeVerifier) {
 						console.error("Missing session data");
 						return new Response(null, {
 							status: 302,
@@ -73,9 +58,7 @@ export const Route = createFileRoute("/auth/callback")({
 					await createSession(tokenSet);
 
 					// Clear the temporary OIDC session data
-					await clearSession({
-						password: OIDC_CONSTANTS.SESSION_SECRET,
-					});
+					await oidcSessionUtils.clear();
 
 					// Redirect to dashboard or home page
 					return new Response(null, {

@@ -1,4 +1,4 @@
-import type { Config } from "@measured/puck";
+import type { Config } from "@puckeditor/core";
 
 // Import individual components
 import { HeadingBlock } from "./components/heading-block";

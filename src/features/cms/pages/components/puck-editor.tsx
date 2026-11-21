@@ -1,7 +1,7 @@
-import { Puck } from "@measured/puck";
-import "@measured/puck/puck.css";
+import { Puck } from "@puckeditor/core";
+import "@puckeditor/core/puck.css";
 import { useEffect, useRef, useState } from "react";
-import type { Data } from "@measured/puck";
+import type { Data } from "@puckeditor/core";
 import { puckConfig, defaultPuckData } from "../config/puck-config";
 import { PAGE_BUTTON_LABELS } from "../constants";
 

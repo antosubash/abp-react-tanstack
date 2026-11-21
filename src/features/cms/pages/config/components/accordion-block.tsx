@@ -1,4 +1,4 @@
-import type { ComponentConfig } from "@measured/puck";
+import type { ComponentConfig } from "@puckeditor/core";
 import {
 	Accordion,
 	AccordionContent,
@@ -79,7 +79,7 @@ export const AccordionBlock: ComponentConfig = {
 					{items.map(
 						(item: { title: string; content: string }, index: number) => (
 							<AccordionItem
-								key={`${item.title}-${index}`}
+								key={`${item.title}-${item.content}`}
 								value={`item-${index}`}
 							>
 								<AccordionTrigger>{item.title}</AccordionTrigger>

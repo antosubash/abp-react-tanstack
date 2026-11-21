@@ -1,7 +1,9 @@
 import { defineConfig } from 'vitest/config'
-import viteTsConfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
+	resolve: {
+		tsconfigPaths: true,
+	},
 	test: {
 		environment: 'jsdom',
 		setupFiles: ['./src/test-utils/setup.ts'],
@@ -9,6 +11,7 @@ export default defineConfig({
 		exclude: ['node_modules', 'dist', '.output', 'e2e/'],
 		coverage: {
 			provider: 'v8',
+			reportsDirectory: './coverage',
 			reporter: ['text', 'html', 'lcov', 'json'],
 			thresholds: {
 				global: {
@@ -40,9 +43,4 @@ export default defineConfig({
 		globals: true,
 		globalSetup: './src/test-utils/global-setup.ts',
 	},
-	plugins: [
-		viteTsConfigPaths({
-			projects: ['./tsconfig.json'],
-		}),
-	],
 })

@@ -1,5 +1,5 @@
 import { createCheckboxField } from "@/shared/components/puck-utils";
-import type { ComponentConfig } from "@measured/puck";
+import type { ComponentConfig } from "@puckeditor/core";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
