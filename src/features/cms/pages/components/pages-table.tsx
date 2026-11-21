@@ -5,7 +5,7 @@ import {
 	IconPencil,
 	IconTrash,
 } from "@tabler/icons-react";
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import type { VoloCmsKitAdminPagesPageDto } from "@/infrastructure/api/types.gen";
 import { Button } from "@/shared/components/ui/button";
 import { Checkbox } from "@/shared/components/ui/checkbox";
@@ -71,7 +71,7 @@ export function PagesTable({
 		window.open(`${PAGE_PUBLIC_BASE_PATH}/${slug}`, "_blank");
 	};
 
-	const columns: ColumnDef<VoloCmsKitAdminPagesPageDto>[] = [
+	const columns: ColumnDef<StockFeatures, VoloCmsKitAdminPagesPageDto>[] = [
 		{
 			id: "select",
 			header: ({ table: _table }) => (

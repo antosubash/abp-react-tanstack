@@ -32,13 +32,17 @@ const ROUTE_DIRS = [
 	'src/routes',
 ];
 
+function toPosixPath(filePath) {
+	return filePath.split(path.sep).join('/');
+}
+
 /**
  * Check if a file path should be excluded from the check
  * @param {string} filePath - The file path to check
  * @returns {boolean} - True if the file should be excluded
  */
 function shouldExclude(filePath) {
-	const relativePath = path.relative(path.join(__dirname, '..'), filePath);
+	const relativePath = toPosixPath(path.relative(path.join(__dirname, '..'), filePath));
 	return EXCLUDE_PATTERNS.some(pattern => pattern.test(relativePath));
 }
 
@@ -48,7 +52,7 @@ function shouldExclude(filePath) {
  * @returns {boolean} - True if the file is in a route directory
  */
 function isRouteFile(filePath) {
-	const relativePath = path.relative(path.join(__dirname, '..'), filePath);
+	const relativePath = toPosixPath(path.relative(path.join(__dirname, '..'), filePath));
 	return ROUTE_DIRS.some(dir => relativePath.startsWith(dir));
 }
 
@@ -102,7 +106,7 @@ function isPascalCase(fileName) {
  * @returns {object} - Rules object with expectedCase and allowedExtensions
  */
 function getNamingRules(filePath, fileName) {
-	const relativePath = path.relative(path.join(__dirname, '..'), filePath);
+	const relativePath = toPosixPath(path.relative(path.join(__dirname, '..'), filePath));
 	let baseName = path.basename(fileName, path.extname(fileName));
 
 	// Strip .test suffix for test files

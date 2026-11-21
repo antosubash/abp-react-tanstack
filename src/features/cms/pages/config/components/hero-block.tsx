@@ -1,5 +1,5 @@
 import { createCheckboxField } from "@/shared/components/puck-utils";
-import type { ComponentConfig } from "@measured/puck";
+import type { ComponentConfig } from "@puckeditor/core";
 
 export type HeroBlockProps = {
 	title: string;

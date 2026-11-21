@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { json } from "@tanstack/react-start";
 import { APP_CONSTANTS } from "../constants";
 import { getUserSession } from "../infrastructure/auth/auth-server";
 
@@ -108,6 +107,11 @@ async function handleProxyRequest(request: Request) {
 
 		// Create a new response with the proxied data
 		const responseHeaders = new Headers(response.headers);
+		responseHeaders.delete("transfer-encoding");
+		responseHeaders.delete("content-encoding");
+		responseHeaders.delete("content-length");
+		responseHeaders.delete("connection");
+		responseHeaders.delete("keep-alive");
 
 		// Add CORS headers if needed
 		responseHeaders.set("Access-Control-Allow-Origin", "*");
@@ -137,7 +141,7 @@ async function handleProxyRequest(request: Request) {
 	} catch (error) {
 		console.error("Proxy error:", error);
 
-		return json(
+		return Response.json(
 			{
 				error: "Proxy request failed",
 				message: error instanceof Error ? error.message : "Unknown error",
@@ -174,14 +178,14 @@ function handleTestModeUserRequest(request: Request, _path: string) {
 
 	if (request.method === "GET") {
 		// Handle user list request
-		return json({
+		return Response.json({
 			items: mockUsers,
 			totalCount: mockUsers.length,
 		});
 	}
 
 	// For other methods, return success
-	return json({ success: true });
+	return Response.json({ success: true });
 }
 
 function handleTestModeRoleRequest(request: Request, _path: string) {
@@ -205,12 +209,12 @@ function handleTestModeRoleRequest(request: Request, _path: string) {
 
 	if (request.method === "GET") {
 		// Handle role list request
-		return json({
+		return Response.json({
 			items: mockRoles,
 			totalCount: mockRoles.length,
 		});
 	}
 
 	// For other methods, return success
-	return json({ success: true });
+	return Response.json({ success: true });
 }

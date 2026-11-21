@@ -29,9 +29,9 @@ import { TableCell, TableRow } from "@/shared/components/ui/table";
 import { useSortable } from "@dnd-kit/sortable";
 import { DragHandle } from "./drag-handle";
 import { TableCellViewer } from "./table-cell-viewer";
-import type { DataTableSchema } from "./types";
+import type { DashboardTableFeatures, DataTableSchema } from "./types";
 
-export const columns: ColumnDef<DataTableSchema>[] = [
+export const columns: ColumnDef<DashboardTableFeatures, DataTableSchema>[] = [
 	{
 		id: "drag",
 		header: () => null,
@@ -221,7 +221,11 @@ export const columns: ColumnDef<DataTableSchema>[] = [
 	},
 ];
 
-export function DraggableRow({ row }: { row: Row<DataTableSchema> }) {
+export function DraggableRow({
+	row,
+}: {
+	row: Row<DashboardTableFeatures, DataTableSchema>;
+}) {
 	const { transform, transition, setNodeRef, isDragging } = useSortable({
 		id: row.original.id,
 	});

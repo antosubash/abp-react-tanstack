@@ -1,7 +1,9 @@
 import type {
-	ColumnDef,
 	CellContext,
+	ColumnDef,
 	HeaderContext,
+	RowData,
+	StockFeatures,
 } from "@tanstack/react-table";
 import {
 	Table,
@@ -23,9 +25,9 @@ import {
 } from "@/shared/components/ui/select";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 
-interface TableRendererProps<TData> {
+interface TableRendererProps<TData extends RowData> {
 	data: TData[];
-	columns: ColumnDef<TData>[];
+	columns: ColumnDef<StockFeatures, TData>[];
 	pagination: {
 		pageIndex: number;
 		pageSize: number;
@@ -39,7 +41,7 @@ interface TableRendererProps<TData> {
 	rowTestId?: string;
 }
 
-export function TableRenderer<TData>({
+export function TableRenderer<TData extends RowData>({
 	data,
 	columns,
 	pagination,
@@ -61,7 +63,7 @@ export function TableRenderer<TData>({
 
 	// Get cell content helper
 	const getCellContent = (
-		column: ColumnDef<TData>,
+		column: ColumnDef<StockFeatures, TData>,
 		row: TData,
 		rowIndex: number,
 	): React.ReactNode => {
@@ -72,7 +74,7 @@ export function TableRenderer<TData>({
 						original: row,
 						index: rowIndex,
 					},
-				} as CellContext<TData, unknown>;
+				} as CellContext<StockFeatures, TData, unknown>;
 				return column.cell(cellContext);
 			} catch {
 				return "";
@@ -84,14 +86,14 @@ export function TableRenderer<TData>({
 				? column.header({
 						column,
 						header: column,
-					} as HeaderContext<TData, unknown>)
+					} as unknown as HeaderContext<StockFeatures, TData, unknown>)
 				: column.header;
 		}
 		return "";
 	};
 
 	// Get header text helper
-	const getHeaderText = (column: ColumnDef<TData>): string => {
+	const getHeaderText = (column: ColumnDef<StockFeatures, TData>): string => {
 		if (typeof column.header === "function") {
 			return "";
 		}
@@ -112,7 +114,7 @@ export function TableRenderer<TData>({
 					) : (
 						data.map((row, index) => (
 							<Card
-								key={`mobile-row-${index}-${JSON.stringify(row)}`}
+								key={`mobile-row-${JSON.stringify(row)}`}
 								data-testid={rowTestId}
 								className="overflow-hidden"
 							>
@@ -176,7 +178,11 @@ export function TableRenderer<TData>({
 											? column.header({
 													column,
 													header: column,
-												} as HeaderContext<TData, unknown>)
+												} as unknown as HeaderContext<
+													StockFeatures,
+													TData,
+													unknown
+												>)
 											: (column.header as string)}
 									</TableHead>
 								))}
@@ -185,7 +191,7 @@ export function TableRenderer<TData>({
 						<TableBody>
 							{data.map((row, index) => (
 								<TableRow
-									key={`row-${index}-${JSON.stringify(row)}`}
+									key={`row-${JSON.stringify(row)}`}
 									data-testid={rowTestId}
 								>
 									{columns.map((column, colIndex) => {

@@ -25,16 +25,10 @@ import {
 } from "@tabler/icons-react";
 import {
 	type ColumnFiltersState,
+	type ColumnVisibilityState,
 	flexRender,
-	getCoreRowModel,
-	getFacetedRowModel,
-	getFacetedUniqueValues,
-	getFilteredRowModel,
-	getPaginationRowModel,
-	getSortedRowModel,
 	type SortingState,
-	useReactTable,
-	type VisibilityState,
+	useTable,
 } from "@tanstack/react-table";
 import * as React from "react";
 import { Button } from "@/shared/components/ui/button";
@@ -68,13 +62,13 @@ import {
 	TabsTrigger,
 } from "@/shared/components/ui/tabs";
 import { columns, DraggableRow } from "./columns";
-import type { DataTableSchema } from "./types";
+import { type DataTableSchema, dashboardTableFeatures } from "./types";
 
 export function DataTable({ data: initialData }: { data: DataTableSchema[] }) {
 	const [data, setData] = React.useState(() => initialData);
 	const [rowSelection, setRowSelection] = React.useState({});
 	const [columnVisibility, setColumnVisibility] =
-		React.useState<VisibilityState>({});
+		React.useState<ColumnVisibilityState>({});
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[],
 	);
@@ -95,7 +89,8 @@ export function DataTable({ data: initialData }: { data: DataTableSchema[] }) {
 		[data],
 	);
 
-	const table = useReactTable({
+	const table = useTable({
+		features: dashboardTableFeatures,
 		data,
 		columns,
 		state: {
@@ -112,12 +107,6 @@ export function DataTable({ data: initialData }: { data: DataTableSchema[] }) {
 		onColumnFiltersChange: setColumnFilters,
 		onColumnVisibilityChange: setColumnVisibility,
 		onPaginationChange: setPagination,
-		getCoreRowModel: getCoreRowModel(),
-		getFilteredRowModel: getFilteredRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-		getSortedRowModel: getSortedRowModel(),
-		getFacetedRowModel: getFacetedRowModel(),
-		getFacetedUniqueValues: getFacetedUniqueValues(),
 	});
 
 	function handleDragEnd(event: DragEndEvent) {

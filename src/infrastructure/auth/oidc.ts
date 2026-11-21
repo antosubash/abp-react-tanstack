@@ -93,9 +93,13 @@ export async function getAuthUrl(): Promise<{
 	const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
 	const state = randomState();
 
+	const scope = Array.isArray(OIDC_CONSTANTS.SCOPES)
+		? OIDC_CONSTANTS.SCOPES.join(" ")
+		: String(OIDC_CONSTANTS.SCOPES);
+
 	const url = buildAuthorizationUrl(config, {
 		redirect_uri: OIDC_CONSTANTS.REDIRECT_URI,
-		scope: OIDC_CONSTANTS.SCOPES,
+		scope,
 		state,
 		code_challenge: codeChallenge,
 		code_challenge_method: "S256",

@@ -8,6 +8,69 @@ import { AuthProvider, useAuth } from "../hooks/use-auth";
 const fetchMock = vi.fn();
 global.fetch = fetchMock;
 
+function LoginTestComponent({ showError = false }: { showError?: boolean }) {
+	const { authState, login } = useAuth();
+
+	return (
+		<div>
+			<div data-testid="auth-status">
+				{authState.isLoading
+					? "Loading..."
+					: authState.isAuthenticated
+						? "Authenticated"
+						: "Not Authenticated"}
+			</div>
+			{showError && (
+				<div data-testid="error-message">{authState.error || ""}</div>
+			)}
+			<button type="button" onClick={login} data-testid="login-button">
+				Login
+			</button>
+		</div>
+	);
+}
+
+function LogoutTestComponent() {
+	const { authState, logout } = useAuth();
+
+	return (
+		<div>
+			<div data-testid="auth-status">
+				{authState.isLoading
+					? "Loading..."
+					: authState.isAuthenticated
+						? "Authenticated"
+						: "Not Authenticated"}
+			</div>
+			<button type="button" onClick={logout} data-testid="logout-button">
+				Logout
+			</button>
+		</div>
+	);
+}
+
+function RefreshTestComponent() {
+	const { authState, refresh } = useAuth();
+
+	return (
+		<div>
+			<div data-testid="auth-status">
+				{authState.isLoading
+					? "Loading..."
+					: authState.isAuthenticated
+						? "Authenticated"
+						: "Not Authenticated"}
+			</div>
+			<div data-testid="user-info">
+				{authState.user ? `User: ${authState.user.name}` : "No user"}
+			</div>
+			<button type="button" onClick={refresh} data-testid="refresh-button">
+				Refresh
+			</button>
+		</div>
+	);
+}
+
 describe.skip("Auth Flow Integration", () => {
 	let queryClient: QueryClient;
 
@@ -55,29 +118,10 @@ describe.skip("Auth Flow Integration", () => {
 			writable: true,
 		});
 
-		function TestComponent() {
-			const { authState, login } = useAuth();
-
-			return (
-				<div>
-					<div data-testid="auth-status">
-						{authState.isLoading
-							? "Loading..."
-							: authState.isAuthenticated
-								? "Authenticated"
-								: "Not Authenticated"}
-					</div>
-					<button type="button" onClick={login} data-testid="login-button">
-						Login
-					</button>
-				</div>
-			);
-		}
-
 		render(
 			<QueryClientProvider client={queryClient}>
 				<AuthProvider>
-					<TestComponent />
+					<LoginTestComponent />
 				</AuthProvider>
 			</QueryClientProvider>,
 		);
@@ -120,30 +164,10 @@ describe.skip("Auth Flow Integration", () => {
 			text: () => Promise.resolve("OIDC configuration error"),
 		});
 
-		function TestComponent() {
-			const { authState, login } = useAuth();
-
-			return (
-				<div>
-					<div data-testid="auth-status">
-						{authState.isLoading
-							? "Loading..."
-							: authState.isAuthenticated
-								? "Authenticated"
-								: "Not Authenticated"}
-					</div>
-					<div data-testid="error-message">{authState.error || ""}</div>
-					<button type="button" onClick={login} data-testid="login-button">
-						Login
-					</button>
-				</div>
-			);
-		}
-
 		render(
 			<QueryClientProvider client={queryClient}>
 				<AuthProvider>
-					<TestComponent />
+					<LoginTestComponent showError />
 				</AuthProvider>
 			</QueryClientProvider>,
 		);
@@ -198,29 +222,10 @@ describe.skip("Auth Flow Integration", () => {
 			writable: true,
 		});
 
-		function TestComponent() {
-			const { authState, logout } = useAuth();
-
-			return (
-				<div>
-					<div data-testid="auth-status">
-						{authState.isLoading
-							? "Loading..."
-							: authState.isAuthenticated
-								? "Authenticated"
-								: "Not Authenticated"}
-					</div>
-					<button type="button" onClick={logout} data-testid="logout-button">
-						Logout
-					</button>
-				</div>
-			);
-		}
-
 		render(
 			<QueryClientProvider client={queryClient}>
 				<AuthProvider>
-					<TestComponent />
+					<LogoutTestComponent />
 				</AuthProvider>
 			</QueryClientProvider>,
 		);
@@ -256,32 +261,10 @@ describe.skip("Auth Flow Integration", () => {
 				}),
 		});
 
-		function TestComponent() {
-			const { authState, refresh } = useAuth();
-
-			return (
-				<div>
-					<div data-testid="auth-status">
-						{authState.isLoading
-							? "Loading..."
-							: authState.isAuthenticated
-								? "Authenticated"
-								: "Not Authenticated"}
-					</div>
-					<div data-testid="user-info">
-						{authState.user ? `User: ${authState.user.name}` : "No user"}
-					</div>
-					<button type="button" onClick={refresh} data-testid="refresh-button">
-						Refresh
-					</button>
-				</div>
-			);
-		}
-
 		render(
 			<QueryClientProvider client={queryClient}>
 				<AuthProvider>
-					<TestComponent />
+					<RefreshTestComponent />
 				</AuthProvider>
 			</QueryClientProvider>,
 		);

@@ -1,4 +1,4 @@
-import type { ComponentConfig } from "@measured/puck";
+import type { ComponentConfig } from "@puckeditor/core";
 import { PUCK_COMPONENT_LABELS, PUCK_FIELD_LABELS } from "../../constants";
 
 export const DividerBlock: ComponentConfig = {

@@ -1,5 +1,5 @@
-import { Render } from "@measured/puck";
-import type { Data } from "@measured/puck";
+import { Render } from "@puckeditor/core";
+import type { Data } from "@puckeditor/core";
 import { puckConfig, defaultPuckData } from "../config/puck-config";
 import { PUCK_EDITOR_CONSTANTS } from "../constants";
 

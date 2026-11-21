@@ -1,4 +1,4 @@
-import type { ComponentConfig } from "@measured/puck";
+import type { ComponentConfig } from "@puckeditor/core";
 import {
 	Card,
 	CardContent,
@@ -161,18 +161,15 @@ export const StatsBlock: ComponentConfig = {
 		return (
 			<div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-4`}>
 				{stats.map(
-					(
-						stat: {
-							label: string;
-							value: string;
-							description: string;
-							icon: string;
-							color: string;
-						},
-						index: number,
-					) => (
+					(stat: {
+						label: string;
+						value: string;
+						description: string;
+						icon: string;
+						color: string;
+					}) => (
 						<Card
-							key={`${stat.label}-${stat.value}-${index}`}
+							key={`${stat.label}-${stat.value}`}
 							className="bg-card border-border hover:border-accent transition-colors"
 						>
 							<CardHeader className="pb-3">

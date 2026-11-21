@@ -1,4 +1,4 @@
-import type { ComponentConfig } from "@measured/puck";
+import type { ComponentConfig } from "@puckeditor/core";
 import {
 	Tabs,
 	TabsContent,
@@ -65,10 +65,7 @@ export const TabsBlock: ComponentConfig = {
 					<TabsList>
 						{tabs.map(
 							(tab: { label: string; content: string }, index: number) => (
-								<TabsTrigger
-									key={`${tab.label}-${index}`}
-									value={`tab-${index}`}
-								>
+								<TabsTrigger key={tab.label} value={`tab-${index}`}>
 									{tab.label}
 								</TabsTrigger>
 							),
@@ -76,10 +73,7 @@ export const TabsBlock: ComponentConfig = {
 					</TabsList>
 					{tabs.map(
 						(tab: { label: string; content: string }, index: number) => (
-							<TabsContent
-								key={`${tab.label}-content-${index}`}
-								value={`tab-${index}`}
-							>
+							<TabsContent key={`${tab.label}-content`} value={`tab-${index}`}>
 								<div className="py-4">{tab.content}</div>
 							</TabsContent>
 						),

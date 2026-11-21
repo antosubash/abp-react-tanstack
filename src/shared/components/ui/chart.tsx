@@ -117,8 +117,13 @@ function ChartTooltipContent({
 	color,
 	nameKey,
 	labelKey,
-}: React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
-	React.ComponentProps<"div"> & {
+}: Partial<
+	RechartsPrimitive.TooltipContentProps<
+		RechartsPrimitive.TooltipValueType,
+		string | number
+	>
+> &
+	Omit<React.ComponentProps<"div">, "content"> & {
 		hideLabel?: boolean;
 		hideIndicator?: boolean;
 		indicator?: "line" | "dot" | "dashed";
@@ -183,11 +188,15 @@ function ChartTooltipContent({
 					.map((item, index) => {
 						const key = `${nameKey || item.name || item.dataKey || "value"}`;
 						const itemConfig = getPayloadConfigFromPayload(config, item, key);
-						const indicatorColor = color || item.payload.fill || item.color;
+						const indicatorColor = color || item.payload?.fill || item.color;
+						const itemKey =
+							typeof item.dataKey === "function"
+								? index
+								: (item.dataKey ?? index);
 
 						return (
 							<div
-								key={item.dataKey}
+								key={itemKey}
 								className={cn(
 									"[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
 									indicator === "dot" && "items-center",
@@ -233,7 +242,7 @@ function ChartTooltipContent({
 													{itemConfig?.label || item.name}
 												</span>
 											</div>
-											{item.value && (
+											{item.value !== undefined && item.value !== null && (
 												<span className="text-foreground font-mono font-medium tabular-nums">
 													{item.value.toLocaleString()}
 												</span>
@@ -258,7 +267,10 @@ function ChartLegendContent({
 	verticalAlign = "bottom",
 	nameKey,
 }: React.ComponentProps<"div"> &
-	Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+	Pick<
+		RechartsPrimitive.DefaultLegendContentProps,
+		"payload" | "verticalAlign"
+	> & {
 		hideIcon?: boolean;
 		nameKey?: string;
 	}) {
@@ -278,13 +290,13 @@ function ChartLegendContent({
 		>
 			{payload
 				.filter((item) => item.type !== "none")
-				.map((item) => {
+				.map((item, index) => {
 					const key = `${nameKey || item.dataKey || "value"}`;
 					const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
 					return (
 						<div
-							key={item.value}
+							key={item.value ?? index}
 							className={cn(
 								"[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3",
 							)}

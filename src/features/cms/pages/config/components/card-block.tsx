@@ -1,4 +1,4 @@
-import type { ComponentConfig } from "@measured/puck";
+import type { ComponentConfig } from "@puckeditor/core";
 import { PUCK_COMPONENT_LABELS, PUCK_FIELD_LABELS } from "../../constants";
 
 export const CardBlock: ComponentConfig = {
@@ -58,7 +58,7 @@ export const CardBlock: ComponentConfig = {
 				<p className="text-muted-foreground mb-4">{description}</p>
 				{linkUrl && (
 					<a href={linkUrl} className="text-primary hover:underline">
-						Learn more
+						Learn more about {title || "this card"}
 					</a>
 				)}
 			</div>

@@ -1,6 +1,6 @@
-import { expect, afterEach, beforeAll, afterAll } from "vitest";
+import { afterEach, beforeAll, afterAll } from "vitest";
 import { cleanup } from "@testing-library/react";
-import * as matchers from "@testing-library/jest-dom/matchers";
+import "@testing-library/jest-dom/vitest";
 import { setupServer } from "msw/node";
 import { allHandlers } from "./mock-handlers";
 import {
@@ -59,13 +59,33 @@ function setupStructuredClone() {
 	}
 }
 
+function setupMatchMedia() {
+	if (
+		typeof window !== "undefined" &&
+		typeof window.matchMedia !== "function"
+	) {
+		Object.defineProperty(window, "matchMedia", {
+			value: (query: string) => ({
+				matches: false,
+				media: query,
+				onchange: null,
+				addListener: () => {},
+				removeListener: () => {},
+				addEventListener: () => {},
+				removeEventListener: () => {},
+				dispatchEvent: () => false,
+			}),
+			writable: true,
+			configurable: true,
+		});
+	}
+}
+
 // Apply all mocks
 setupURL();
 setupResizeObserver();
 setupStructuredClone();
-
-// Extend expect with jest-dom matchers
-expect.extend(matchers);
+setupMatchMedia();
 
 // Set up MSW server
 const server = setupServer(...allHandlers);
@@ -73,7 +93,7 @@ const server = setupServer(...allHandlers);
 // Start server before all tests
 beforeAll(() => {
 	server.listen({
-		onUnhandledRequest: "warn",
+		onUnhandledFrame: "warn",
 	});
 });
 

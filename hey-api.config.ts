@@ -16,14 +16,13 @@ export default defineConfig({
     clean: true, // Clean output directory before generating
   },
 
-  // Use fetch client (default)
-  client: 'fetch',
-
   // Plugins
   plugins: [
+    '@hey-api/typescript',
+    '@hey-api/sdk',
     {
       name: '@hey-api/client-fetch',
-      runtimeConfigPath: '../../hey-api',
+      runtimeConfigPath: './src/hey-api',
     },
     // Zod validation schemas
     {

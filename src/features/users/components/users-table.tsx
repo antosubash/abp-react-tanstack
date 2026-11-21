@@ -4,7 +4,7 @@ import {
 	IconShield,
 	IconTrash,
 } from "@tabler/icons-react";
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import type { IdentityUserDto } from "@/infrastructure/api/types.gen";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -67,7 +67,7 @@ export function UsersTable({
 		onDeleteUser(userId);
 	};
 
-	const columns: ColumnDef<IdentityUserDto>[] = [
+	const columns: ColumnDef<StockFeatures, IdentityUserDto>[] = [
 		{
 			id: "select",
 			header: ({ table: _table }) => (

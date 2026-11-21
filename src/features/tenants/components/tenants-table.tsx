@@ -5,7 +5,7 @@ import {
 	IconDatabase,
 	IconShield,
 } from "@tabler/icons-react";
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import type { TenantDto } from "@/infrastructure/api/types.gen";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -64,7 +64,7 @@ export function TenantsTable({
 		onDeleteTenant(tenantId);
 	};
 
-	const columns: ColumnDef<TenantDto>[] = [
+	const columns: ColumnDef<StockFeatures, TenantDto>[] = [
 		{
 			accessorKey: "name",
 			header: "Name",

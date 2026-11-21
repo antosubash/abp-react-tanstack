@@ -14,6 +14,11 @@ const OTPInput = React.forwardRef<
 		Array(maxLength).fill(""),
 	);
 
+	const slotIds = React.useMemo(
+		() => Array.from({ length: maxLength }, (_, slot) => `otp-slot-${slot}`),
+		[maxLength],
+	);
+
 	const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
 	const handleChange = (index: number, val: string) => {
@@ -44,14 +49,15 @@ const OTPInput = React.forwardRef<
 
 	return (
 		<div ref={ref} className={cn("flex gap-2", className)} {...props}>
-			{inputValues.map((val, index) => {
+			{slotIds.map((slotId, index) => {
+				const val = inputValues[index] ?? "";
 				const setInputRef = (el: HTMLInputElement | null) => {
 					inputRefs.current[index] = el;
 				};
 
 				return (
 					<input
-						key={`otp-input-${index}-${val}`}
+						key={slotId}
 						ref={setInputRef}
 						type="text"
 						inputMode="numeric"
